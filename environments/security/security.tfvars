@@ -132,7 +132,7 @@ disabled_rules = {
   aws_managed_rules_known_bad_inputs_rule_set = [
     "Log4JRCE_BODY"
   ]
-  aws_managed_rules_os_specific_rule_set = [
+  aws_managed_rules_windows_rule_set = [
     "WindowsShellCommands_BODY"
   ]
   aws_managed_rules_sqli_rule_set = [
