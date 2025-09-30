@@ -15,7 +15,6 @@
 # 
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
-#
 #################################################################
 
 alb_name    = "security-alb"
