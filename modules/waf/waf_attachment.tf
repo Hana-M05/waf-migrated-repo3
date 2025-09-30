@@ -7,7 +7,7 @@ data "aws_lb" "target_albs" {
 # Associate WAF with ALBs
 resource "aws_wafv2_web_acl_association" "alb_association" {
   for_each = data.aws_lb.target_albs
-  
+
   resource_arn = each.value.arn
   web_acl_arn  = aws_wafv2_web_acl.waf_acl.arn
 }

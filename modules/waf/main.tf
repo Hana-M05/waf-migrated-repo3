@@ -1,6 +1,6 @@
 resource "aws_wafv2_ip_set" "blacklist" {
   count = var.protection_rules.ip_blocking.enabled && length(var.protection_rules.ip_blocking.ips) > 0 ? 1 : 0
-  
+
   name               = "ip-blacklist-${var.environment}"
   description        = "IP addresses to block/monitor"
   scope              = "REGIONAL"
@@ -11,6 +11,10 @@ resource "aws_wafv2_ip_set" "blacklist" {
   tags = {
     Name        = "ip-blacklist-${var.environment}"
     Environment = var.environment
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -46,12 +50,12 @@ resource "aws_wafv2_web_acl" "waf_acl" {
           for_each = var.protection_rules.ip_blocking.action == "block" ? [1] : []
           content {}
         }
-        
+
         dynamic "allow" {
           for_each = var.protection_rules.ip_blocking.action == "allow" ? [1] : []
           content {}
         }
-        
+
         dynamic "count" {
           for_each = var.protection_rules.ip_blocking.action == "count" ? [1] : []
           content {}
@@ -84,12 +88,12 @@ resource "aws_wafv2_web_acl" "waf_acl" {
           for_each = var.protection_rules.path_blocking.action == "block" ? [1] : []
           content {}
         }
-        
+
         dynamic "allow" {
           for_each = var.protection_rules.path_blocking.action == "allow" ? [1] : []
           content {}
         }
-        
+
         dynamic "count" {
           for_each = var.protection_rules.path_blocking.action == "count" ? [1] : []
           content {}
@@ -161,7 +165,7 @@ resource "aws_wafv2_web_acl" "waf_acl" {
           for_each = rule.value.action == "block" ? [1] : []
           content {}
         }
-        
+
         dynamic "count" {
           for_each = rule.value.action == "count" ? [1] : []
           content {}

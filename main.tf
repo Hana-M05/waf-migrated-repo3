@@ -1,16 +1,20 @@
 module "waf" {
-  source                             = "./modules/waf"
-  alb_names                          = var.alb_names
-  disabled_rules                     = var.disabled_rules
-  environment                        = var.environment
-  region                             = var.region
-  protection_rules                   = var.protection_rules
+  source           = "./modules/waf"
+  for_each         = local.environments
+  
+  alb_names        = each.value.alb_names
+  disabled_rules   = each.value.disabled_rules
+  environment      = each.value.environment
+  region           = each.value.region
+  protection_rules = each.value.protection_rules
 }
 
 module "cloudwatch" {
   source      = "./modules/cloudwatch"
-  environment = var.environment
-  waf_acl_arn = module.waf.waf_acl_arn
+  for_each         = local.environments
+  
+  environment = each.value.environment
+  waf_acl_arn = module.waf[each.key].waf_acl_arn
 
   depends_on = [module.waf]
 }
