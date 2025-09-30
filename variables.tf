@@ -3,6 +3,18 @@ variable "alb_name" {
   description = "The name of the Application Load Balancer"
 }
 
+variable "blacklisted_ips" {
+  type        = list(string)
+  description = "List of IPs or CIDR blocks to be blacklisted"
+  default     = []
+}
+
+variable "blocked_endpoints" {
+  type        = list(string)
+  description = "List of URI paths to be blocked"
+  default     = []
+}
+
 variable "custom_rules" {
   type        = any
   description = "List of custom WAF rules to be created"

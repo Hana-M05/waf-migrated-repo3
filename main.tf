@@ -1,6 +1,8 @@
 module "waf" {
   source                             = "./modules/waf"
   alb_name                           = var.alb_name
+  blacklisted_ips                    = var.blacklisted_ips
+  blocked_endpoints                  = var.blocked_endpoints
   custom_rules                       = var.custom_rules
   environment                        = var.environment
   os_specific_ruleset                = var.os_specific_ruleset
