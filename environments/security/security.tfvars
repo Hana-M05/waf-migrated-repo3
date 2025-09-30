@@ -16,10 +16,6 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #
-# ACTIONS EXPLAINED:
-# - "block": Completely blocks the request (recommended for production)
-# - "count": Logs the request but allows it through (good for testing)
-# - "allow": Explicitly allows the request (rarely used)
 #################################################################
 
 alb_name    = "security-alb"
