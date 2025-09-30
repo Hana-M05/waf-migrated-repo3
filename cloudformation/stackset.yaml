@@ -11,7 +11,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: 'arn:aws:iam::419621816289:<role>'
+              AWS: "arn:aws:iam::966185269917:root"
             Action: 'sts:AssumeRole'
       Path: '/'
       Tags:
