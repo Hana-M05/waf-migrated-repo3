@@ -101,10 +101,14 @@ protection_rules = {
     action  = "block"
   }
 
-  os_protection = {
+  windows_protection = {
     enabled = true
     action  = "block"
-    os_type = "windows"
+  }
+
+  linux_protection = {
+    enabled = false
+    action  = "block"
   }
 }
 
