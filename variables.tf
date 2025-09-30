@@ -1,57 +1,76 @@
-variable "alb_name" {
-  type        = string
-  description = "The name of the Application Load Balancer"
-}
-
-variable "blacklisted_ips" {
+variable "alb_names" {
+  description = "The name of the Application Load Balancer to associate the WAF with"
   type        = list(string)
-  description = "List of IPs or CIDR blocks to be blacklisted"
-  default     = []
-}
-
-variable "blocked_endpoints" {
-  type        = list(string)
-  description = "List of URI paths to be blocked"
-  default     = []
-}
-
-variable "custom_rules" {
-  type        = any
-  description = "List of custom WAF rules to be created"
-  default     = []
 }
 
 variable "environment" {
+  description = "Environment name (e.g., production, staging, development)"
   type        = string
-  description = "The environment for the deployment (e.g., dev, staging, prod)"
-}
-
-variable "os_specific_ruleset" {
-  type        = string
-  description = "The OS specific managed ruleset to use (e.g., AWSManagedRulesWindowsRuleSet)"
-}
-
-variable "overrides_common_ruleset" {
-  type        = list(string)
-  description = "List of rule names to override in the Common Rule Set"
-}
-
-variable "overrides_known_bad_inputs_ruleset" {
-  type        = list(string)
-  description = "List of rule names to override in the Known Bad Inputs Rule Set"
-}
-
-variable "overrides_os_specific_ruleset" {
-  type        = list(string)
-  description = "List of rule names to override in the OS Specific Rule Set"
-}
-
-variable "overrides_sqli_ruleset" {
-  type        = list(string)
-  description = "List of rule names to override in the SQLi Rule Set"
 }
 
 variable "region" {
+  description = "AWS region to deploy resources in"
   type        = string
-  description = "The AWS region to deploy resources in"
+}
+
+variable "protection_rules" {
+  description = "Security protection rules configuration for the WAF"
+  type = object({
+    # Custom IP blocking rule
+    ip_blocking = optional(object({
+      enabled = optional(bool, false)
+      action  = optional(string, "block")  # block, count, or allow
+      ips     = optional(list(string), [])
+    }), {})
+    
+    # Custom path/endpoint blocking rule
+    path_blocking = optional(object({
+      enabled = optional(bool, false)
+      action  = optional(string, "block")  # block, count, or allow
+      paths   = optional(list(string), [])
+    }), {})
+    
+    # Protects against common web attacks
+    basic_protection = optional(object({
+      enabled = optional(bool, true)
+      action  = optional(string, "block")  # block, count, or allow
+    }), {})
+    
+    # Blocks known malicious requests
+    malicious_requests = optional(object({
+      enabled = optional(bool, true)
+      action  = optional(string, "block")  # block, count, or allow
+    }), {})
+    
+    # Protects against SQL injection attacks
+    sql_injection = optional(object({
+      enabled = optional(bool, true)
+      action  = optional(string, "block")  # block, count, or allow
+    }), {})
+    
+    # Windows system specific protection
+    windows_protection = optional(object({
+      enabled = optional(bool, true)
+      action  = optional(string, "block")  # block, count, or allow
+    }), {})
+
+    # Linux system specific protection
+    linux_protection = optional(object({
+      enabled = optional(bool, true)
+      action  = optional(string, "block")  # block, count, or allow
+    }), {})
+  })
+  default = {}
+}
+
+variable "disabled_rules" {
+  description = "Advanced: Specific AWS managed rules to disable if they cause false positives"
+  type = object({
+    basic_protection    = optional(list(string), [])
+    malicious_requests  = optional(list(string), [])
+    sql_injection      = optional(list(string), [])
+    windows_protection      = optional(list(string), [])
+    linux_protection      = optional(list(string), [])
+  })
+  default = {}
 }

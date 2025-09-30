@@ -17,10 +17,9 @@
 # the ALB name, environment, and region.
 #################################################################
 
-alb_name    = "security-alb"
+alb_names   = []
 environment = "security"
 region      = "us-east-1"
-
 #################################################################
 # SECURITY PROTECTION RULES
 # 
@@ -34,7 +33,7 @@ protection_rules = {
   # Block specific IP addresses from accessing your website.
   # Add IP addresses in CIDR format (use /32 for single IPs).
   #################################################################
-  blocked_ips = {
+  ip_blocking = {
     enabled = true
     action  = "block"
     ips = [
@@ -63,7 +62,7 @@ protection_rules = {
   # Block access to specific parts of your website like admin
   # areas, internal APIs, or sensitive endpoints.
   #################################################################
-  blocked_endpoints = {
+  path_blocking = {
     enabled = true
     action  = "block"
     paths = [
@@ -91,11 +90,6 @@ protection_rules = {
     action  = "block"
   }
 
-  xss_protection = {
-    enabled = true
-    action  = "block"
-  }
-
   windows_protection = {
     enabled = true
     action  = "block"
@@ -119,18 +113,19 @@ protection_rules = {
 # IP or path blocking rules.
 #################################################################
 disabled_rules = {
-  aws_managed_rules_common_rule_set = [
+  basic_protection = [
     "NoUserAgent_HEADER",
     "SizeRestrictions_BODY",
     "UserAgent_BadBots_HEADER"
   ]
-  aws_managed_rules_known_bad_inputs_rule_set = [
+  malicious_requests = [
     "Log4JRCE_BODY"
   ]
-  aws_managed_rules_windows_rule_set = [
-    "WindowsShellCommands_BODY"
-  ]
-  aws_managed_rules_sqli_rule_set = [
+  sql_injection = [
     "SQLi_BODY"
   ]
+  windows_protection = [
+    "WindowsShellCommands_BODY"
+  ]
+  linux_protection = []
 }

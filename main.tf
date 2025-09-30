@@ -1,15 +1,10 @@
 module "waf" {
   source                             = "./modules/waf"
-  alb_name                           = var.alb_name
-  blacklisted_ips                    = var.blacklisted_ips
-  blocked_endpoints                  = var.blocked_endpoints
-  custom_rules                       = var.custom_rules
+  alb_names                          = var.alb_names
+  disabled_rules                     = var.disabled_rules
   environment                        = var.environment
-  os_specific_ruleset                = var.os_specific_ruleset
-  overrides_common_ruleset           = var.overrides_common_ruleset
-  overrides_known_bad_inputs_ruleset = var.overrides_known_bad_inputs_ruleset
-  overrides_os_specific_ruleset      = var.overrides_os_specific_ruleset
-  overrides_sqli_ruleset             = var.overrides_sqli_ruleset
+  region                             = var.region
+  protection_rules                   = var.protection_rules
 }
 
 module "cloudwatch" {

@@ -1,10 +1,12 @@
 resource "aws_wafv2_ip_set" "blacklist" {
+  count = var.protection_rules.ip_blocking.enabled && length(var.protection_rules.ip_blocking.ips) > 0 ? 1 : 0
+  
   name               = "ip-blacklist-${var.environment}"
-  description        = "IP addresses to block"
-  scope              = "CLOUDFRONT"  # Use "REGIONAL" for ALB/API Gateway
+  description        = "IP addresses to block/monitor"
+  scope              = "REGIONAL"
   ip_address_version = "IPV4"
 
-  addresses = var.blacklisted_ips
+  addresses = var.protection_rules.ip_blocking.ips
 
   tags = {
     Name        = "ip-blacklist-${var.environment}"
@@ -32,189 +34,162 @@ resource "aws_wafv2_web_acl" "waf_acl" {
     sampled_requests_enabled   = true
   }
 
-  rule {
-    name    = "BlockSpecificEndpoints"
-    priority = 1
+  # IP Blocking Rule (Priority 1)
+  dynamic "rule" {
+    for_each = var.protection_rules.ip_blocking.enabled && length(var.protection_rules.ip_blocking.ips) > 0 ? [1] : []
+    content {
+      name     = "IPBlockingRule"
+      priority = local.rule_priorities.ip_blocking
 
-    action {
-      block {}
+      action {
+        dynamic "block" {
+          for_each = var.protection_rules.ip_blocking.action == "block" ? [1] : []
+          content {}
+        }
+        
+        dynamic "allow" {
+          for_each = var.protection_rules.ip_blocking.action == "allow" ? [1] : []
+          content {}
+        }
+        
+        dynamic "count" {
+          for_each = var.protection_rules.ip_blocking.action == "count" ? [1] : []
+          content {}
+        }
+      }
+
+      statement {
+        ip_set_reference_statement {
+          arn = aws_wafv2_ip_set.blacklist[0].arn
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "IPBlockingRule-${var.environment}"
+        sampled_requests_enabled   = true
+      }
     }
+  }
 
-    statement {
-      or_statement {
-        dynamic "statement" {
-          for_each = var.blocked_endpoints
+  # Path Blocking Rule (Priority 2)
+  dynamic "rule" {
+    for_each = var.protection_rules.path_blocking.enabled && length(var.protection_rules.path_blocking.paths) > 0 ? [1] : []
+    content {
+      name     = "PathBlockingRule"
+      priority = local.rule_priorities.path_blocking
+
+      action {
+        dynamic "block" {
+          for_each = var.protection_rules.path_blocking.action == "block" ? [1] : []
+          content {}
+        }
+        
+        dynamic "allow" {
+          for_each = var.protection_rules.path_blocking.action == "allow" ? [1] : []
+          content {}
+        }
+        
+        dynamic "count" {
+          for_each = var.protection_rules.path_blocking.action == "count" ? [1] : []
+          content {}
+        }
+      }
+
+      statement {
+        # Use OR statement only if there are multiple paths, otherwise use single statement
+        dynamic "or_statement" {
+          for_each = length(var.protection_rules.path_blocking.paths) > 1 ? [1] : []
           content {
-            byte_match_statement {
-              search_string         = statement.value
-              positional_constraint = "CONTAINS"
+            dynamic "statement" {
+              for_each = var.protection_rules.path_blocking.paths
+              content {
+                byte_match_statement {
+                  search_string         = statement.value
+                  positional_constraint = "CONTAINS"
 
-              field_to_match {
-                uri_path {}
+                  field_to_match {
+                    uri_path {}
+                  }
+
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                }
               }
+            }
+          }
+        }
 
-              text_transformation {
-                priority = 0
-                type     = "NONE"
+        # Use single byte_match_statement if there's only one path
+        dynamic "byte_match_statement" {
+          for_each = length(var.protection_rules.path_blocking.paths) == 1 ? [var.protection_rules.path_blocking.paths[0]] : []
+          content {
+            search_string         = byte_match_statement.value
+            positional_constraint = "CONTAINS"
+
+            field_to_match {
+              uri_path {}
+            }
+
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+          }
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "PathBlockingRule-${var.environment}"
+        sampled_requests_enabled   = true
+      }
+    }
+  }
+
+  # AWS Managed Rulesets (Priority 3+)
+  dynamic "rule" {
+    for_each = local.enabled_aws_rulesets
+    content {
+      name     = "AWS-${rule.value.aws_name}"
+      priority = rule.value.priority
+
+      override_action {
+        dynamic "none" {
+          for_each = rule.value.action == "block" ? [1] : []
+          content {}
+        }
+        
+        dynamic "count" {
+          for_each = rule.value.action == "count" ? [1] : []
+          content {}
+        }
+      }
+
+      statement {
+        managed_rule_group_statement {
+          name        = rule.value.aws_name
+          vendor_name = "AWS"
+
+          dynamic "rule_action_override" {
+            for_each = rule.value.overrides
+            content {
+              name = rule_action_override.value
+              action_to_use {
+                count {}
               }
             }
           }
         }
       }
-    }
 
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "BlockSpecificEndpoints-${var.environment}"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "IPBlacklistRule"
-    priority = 2
-    action {
-      block {}
-    }
-
-    statement {
-      ip_set_reference_statement {
-        arn = aws_wafv2_ip_set.blacklist.arn
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "AWS-${rule.value.aws_name}-${var.environment}"
+        sampled_requests_enabled   = true
       }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "IPBlacklistRule-${var.environment}"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWS-AWSManagedRulesCommonRuleSet"
-    priority = 3
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesCommonRuleSet"
-        vendor_name = "AWS"
-
-        dynamic "rule_action_override" {
-          for_each = var.overrides_common_ruleset
-          content {
-            name = rule_action_override.value
-            action_to_use {
-              count {}
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-AWSManagedRulesCommonRuleSet-${var.environment}"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWS-AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 4
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesKnownBadInputsRuleSet"
-        vendor_name = "AWS"
-
-        dynamic "rule_action_override" {
-          for_each = var.overrides_known_bad_inputs_ruleset
-          content {
-            name = rule_action_override.value
-            action_to_use {
-              count {}
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-AWSManagedRulesKnownBadInputsRuleSet-${var.environment}"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWS-${var.os_specific_ruleset}"
-    priority = 5
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = var.os_specific_ruleset
-        vendor_name = "AWS"
-
-        dynamic "rule_action_override" {
-          for_each = var.overrides_os_specific_ruleset
-          content {
-            name = rule_action_override.value
-            action_to_use {
-              count {}
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-${var.os_specific_ruleset}-${var.environment}"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWS-AWSManagedRulesSQLiRuleSet"
-    priority = 6
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesSQLiRuleSet"
-        vendor_name = "AWS"
-
-        dynamic "rule_action_override" {
-          for_each = var.overrides_sqli_ruleset
-          content {
-            name = rule_action_override.value
-            action_to_use {
-              count {}
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-AWSManagedRulesSQLiRuleSet-${var.environment}"
-      sampled_requests_enabled   = true
     }
   }
 }
