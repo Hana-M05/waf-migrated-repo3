@@ -47,10 +47,26 @@ Resources:
           # CloudWatch Logs permissions for WAF logging
           - Effect: Allow
             Action:
-              - 'logs:*'
+              - 'logs:DescribeLogGroups'
+              - 'logs:PutResourcePolicy'
+              - 'logs:DescribeResourcePolicies'
+              - 'logs:DeleteResourcePolicy'
+              - 'logs:CreateLogDelivery'
+              - 'logs:DeleteLogDelivery'
+              - 'logs:DescribeLogDeliveries'
+              - 'logs:GetLogDelivery'
+              - 'logs:ListLogDeliveries'
+              - 'logs:PutLogEvents'
+              - 'logs:CreateLogStream'
             Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'logs:*'
+            Resource: 
+              - 'arn:aws:logs:*:*:log-group:aws-waf-logs-client-*'
+              - 'arn:aws:logs:*:*:log-group:aws-waf-logs-client-*:*'
           
-          # IAM permissions for WAF service-linked roles (MISSING - this fixes your error!)
+          # IAM permissions for WAF service-linked roles
           - Effect: Allow
             Action:
               - 'iam:CreateServiceLinkedRole'
@@ -75,8 +91,8 @@ Resources:
               - 's3:GetBucketLocation'
               - 's3:ListBucketVersions'
             Resource: 
-              - 'arn:aws:s3:::*-tfstate*'
-              - 'arn:aws:s3:::*-tfstate*/*'
+              - 'arn:aws:s3:::s3-ue1-sharedservices-tfstate'
+              - 'arn:aws:s3:::s3-ue1-sharedservices-tfstate/aws-waf-tf-code.tfstate'
             
       Roles:
         - !Ref WAFProvisionerRole
