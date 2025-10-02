@@ -5,6 +5,11 @@ pipeline {
         }
     }
     
+    // Add webhook trigger for Git plugin
+    triggers {
+        pollSCM('') 
+    }
+    
     stages {
         stage('Checkout') {
             steps {
