@@ -47,7 +47,7 @@ pipeline {
         // Main Branch Deployment Stages
         stage('Deploy from Main') {
             when {
-                branch 'main'
+                branch 'origin/main'
             }
             stages {
                 stage('Terraform Init - Main') {
