@@ -40,7 +40,7 @@ resource "aws_iam_role" "bitbucket_terraform" {
             "${aws_iam_openid_connect_provider.bitbucket.url}:aud" = "ari:cloud:bitbucket::workspace/${local.bitbucket_workspace_uuid}"
           }
           StringLike = {
-            "${aws_iam_openid_connect_provider.bitbucket.url}:sub" = "ari:cloud:bitbucket::workspace/${local.bitbucket_workspace_uuid}:repository/${local.bitbucket_repo_uuid}:*"
+            "${aws_iam_openid_connect_provider.bitbucket.url}:sub" = "${local.bitbucket_repo_uuid}:*"
           }
         }
       }
