@@ -1,0 +1,93 @@
+image: hashicorp/terraform:latest
+
+pipelines:
+  # Pull Request validation (equivalent to your PR Validation stages)
+  pull-requests:
+    '**':
+      - step:
+          name: PR Validation - Terraform Init
+          oidc: true
+          script:
+            # AWS Authentication
+            - export AWS_ROLE_ARN=$AWS_ROLE_ARN
+            - export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+            
+            # Verify AWS authentication
+            - aws sts get-caller-identity
+            
+            # Terraform Init
+            - terraform init -no-color
+          caches:
+            - terraform
+
+      - step:
+          name: PR Validation - Terraform Validate
+          oidc: true
+          script:
+            - terraform validate -no-color
+          caches:
+            - terraform
+
+      - step:
+          name: PR Validation - Terraform Plan
+          oidc: true
+          script:            
+            # AWS Authentication
+            - export AWS_ROLE_ARN=$AWS_ROLE_ARN
+            - export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+            
+            # Terraform Plan
+            - terraform plan -input=false -no-color
+          caches:
+            - terraform
+
+  # Main branch deployment (equivalent to your Deploy from Main stages)
+  branches:
+    main:
+      - step:
+          name: Deploy from Main - Terraform Init
+          oidc: true
+          script:
+            # AWS Authentication
+            - export AWS_ROLE_ARN=$AWS_ROLE_ARN
+            - export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+            
+            # Verify AWS authentication
+            - aws sts get-caller-identity
+            
+            # Terraform Init
+            - terraform init -no-color
+          caches:
+            - terraform
+
+      - step:
+          name: Deploy from Main - Terraform Apply
+          oidc: true
+          script:
+            # AWS Authentication
+            - export AWS_ROLE_ARN=$AWS_ROLE_ARN
+            - export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+            
+            # Terraform Apply
+            - terraform apply --auto-approve -no-color
+          caches:
+            - terraform
+          artifacts:
+            - terraform.tfstate
+
+  # Feature branches and other branches (equivalent to your Debug stage)
+  branches:
+    '{feature/*,develop,staging}':
+      - step:
+          name: Debug - Feature Branch
+          script:
+            - echo "⚠️ This branch didn't match any deployment conditions"
+            - echo "Branch: $BITBUCKET_BRANCH"
+            - echo "Commit: $BITBUCKET_COMMIT"
+            - echo "This is a feature branch - no deployment will occur"
+            - echo "Create a pull request to run validation, or merge to main to deploy"
+
+# Cache definition for Terraform
+definitions:
+  caches:
+    terraform: ~/.terraform
