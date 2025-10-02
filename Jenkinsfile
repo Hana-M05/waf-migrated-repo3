@@ -89,17 +89,7 @@ pipeline {
                     }
                 }
                 
-                stage('Terraform Plan - Main') {
-                    steps {
-                        sh 'terraform plan -input=false -no-color'
-                    }
-                }
-                
                 stage('Terraform Apply - Main') {
-                    input {
-                        message "Do you want to apply?"
-                        ok "Confirm"
-                    }
                     steps {
                         echo "Deploying to production"
                         sh 'terraform apply --auto-approve -no-color'
