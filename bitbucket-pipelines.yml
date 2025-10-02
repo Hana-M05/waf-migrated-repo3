@@ -1,21 +1,22 @@
-image: hashicorp/terraform:latest
+image: amazon/aws-cli:latest
 
 definitions:
   scripts:
-    - &install-aws-cli |
-      echo "Installing AWS CLI..."
-      apk add --no-cache curl unzip
-      curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      unzip awscliv2.zip
-      ./aws/install
-      # Use the full path or add to PATH
-      export PATH="/usr/local/bin:$PATH"
+    - &install-terraform-and-setup |
+      echo "Installing Terraform via yum..."
+      
+      # Add HashiCorp repository
+      yum install -y yum-utils
+      yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+      
+      # Install Terraform
+      yum install -y terraform
+      
+      # Verify installations
+      terraform --version
       aws --version
-    
-    - &setup-aws-auth |
+      
       echo "Setting up AWS authentication..."
-      # Ensure AWS CLI is in PATH
-      export PATH="/usr/local/bin:$PATH"
       export AWS_ROLE_ARN=$AWS_ROLE_ARN
       export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
       aws sts get-caller-identity
@@ -27,8 +28,7 @@ pipelines:
           name: PR Validation
           oidc: true
           script:
-            - *install-aws-cli
-            - *setup-aws-auth
+            - *install-terraform-and-setup
             - terraform init -no-color
             - terraform validate -no-color
             - terraform plan -input=false -no-color
@@ -39,7 +39,6 @@ pipelines:
           name: Production Deployment
           oidc: true
           script:
-            - *install-aws-cli
-            - *setup-aws-auth
+            - *install-terraform-and-setup
             - terraform init -no-color
             - terraform apply --auto-approve -no-color
