@@ -1,19 +1,14 @@
-module "waf" {
-  source                             = "./modules/waf"
-  alb_name                           = var.alb_name
-  custom_rules                       = var.custom_rules
-  environment                        = var.environment
-  os_specific_ruleset                = var.os_specific_ruleset
-  overrides_common_ruleset           = var.overrides_common_ruleset
-  overrides_known_bad_inputs_ruleset = var.overrides_known_bad_inputs_ruleset
-  overrides_os_specific_ruleset      = var.overrides_os_specific_ruleset
-  overrides_sqli_ruleset             = var.overrides_sqli_ruleset
-}
+module "waf_wrapper_security" {
+  source = "./modules/waf-wrapper"
+  
+  providers = {
+    aws = aws.security
+  }
 
-module "cloudwatch" {
-  source      = "./modules/cloudwatch"
-  environment = var.environment
-  waf_acl_arn = module.waf.waf_acl_arn
-
-  depends_on = [module.waf]
+  # Key = environments/<subpath>/<filename>
+  alb_names        = local.environments["security-security"].alb_names
+  disabled_rules   = local.environments["security-security"].disabled_rules
+  environment      = local.environments["security-security"].environment
+  region           = local.environments["security-security"].region
+  protection_rules = local.environments["security-security"].protection_rules
 }

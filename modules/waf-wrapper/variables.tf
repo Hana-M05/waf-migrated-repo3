@@ -1,15 +1,11 @@
 variable "alb_names" {
-  description = "The name of the Application Load Balancer to associate the WAF with"
+  description = "List of ALB names to associate with the WAF Web ACL"
   type        = list(string)
+  default     = []
 }
 
 variable "environment" {
-  description = "Environment name (e.g., production, staging, development)"
-  type        = string
-}
-
-variable "region" {
-  description = "AWS region to deploy resources in"
+  description = "The environment name (e.g., dev, prod, security)"
   type        = string
 }
 
@@ -73,4 +69,10 @@ variable "disabled_rules" {
     linux_protection   = optional(list(string), [])
   })
   default = {}
+}
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-1"
 }

@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Single account WAF Provisioner role for testing WAF deployment permissions'
+
+Resources:
+  WAFProvisionerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: 'WAF_Provisioner'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: "arn:aws:iam::966185269917:root"
+            Action: 'sts:AssumeRole'
+      Path: '/'
+      Tags:
+        - Key: 'Purpose'
+          Value: 'WAFManagement'
+        - Key: 'ManagedBy'
+          Value: 'CloudFormation-SingleAccount'
+
+  WAFManagementPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: 'WAFManagementPolicy'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          # WAF v2 permissions
+          - Effect: Allow
+            Action:
+              - 'wafv2:*'
+            Resource: '*'
+          
+          # Load Balancer permissions for WAF association
+          - Effect: Allow
+            Action:
+              - 'elasticloadbalancing:DescribeLoadBalancers'
+              - 'elasticloadbalancing:DescribeListeners'
+              - 'elasticloadbalancing:SetWebAcl'
+              - 'elbv2:DescribeLoadBalancers'
+              - 'elbv2:DescribeListeners'
+              - 'elbv2:SetWebAcl'
+            Resource: '*'
+
+          # CloudWatch Logs permissions for WAF logging
+          - Effect: Allow
+            Action:
+              - 'logs:DescribeLogGroups'
+              - 'logs:PutResourcePolicy'
+              - 'logs:DescribeResourcePolicies'
+              - 'logs:DeleteResourcePolicy'
+              - 'logs:CreateLogDelivery'
+              - 'logs:DeleteLogDelivery'
+              - 'logs:DescribeLogDeliveries'
+              - 'logs:GetLogDelivery'
+              - 'logs:ListLogDeliveries'
+              - 'logs:PutLogEvents'
+              - 'logs:CreateLogStream'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'logs:*'
+            Resource: 
+              - 'arn:aws:logs:*:*:log-group:aws-waf-logs-client-*'
+              - 'arn:aws:logs:*:*:log-group:aws-waf-logs-client-*:*'
+          
+          # IAM permissions for WAF service-linked roles
+          - Effect: Allow
+            Action:
+              - 'iam:CreateServiceLinkedRole'
+              - 'iam:GetRole'
+              - 'iam:PassRole'
+            Resource: '*'
+            Condition:
+              StringEquals:
+                'iam:AWSServiceName': 
+                  - 'wafv2.amazonaws.com'
+          
+          # S3 permissions for Terraform state
+          - Effect: Allow
+            Action:
+              - 's3:GetObject'
+              - 's3:PutObject'
+              - 's3:DeleteObject'
+              - 's3:ListBucket'
+              - 's3:HeadObject'         
+              - 's3:GetObjectVersion'    
+              - 's3:GetBucketVersioning'
+              - 's3:GetBucketLocation'
+              - 's3:ListBucketVersions'
+            Resource: 
+              - 'arn:aws:s3:::s3-ue1-sharedservices-tfstate'
+              - 'arn:aws:s3:::s3-ue1-sharedservices-tfstate/aws-waf-tf-code.tfstate'
+            
+      Roles:
+        - !Ref WAFProvisionerRole
+
+Outputs:
+  RoleArn:
+    Description: 'ARN of the WAF Provisioner role'
+    Value: !GetAtt WAFProvisionerRole.Arn
+  
+  RoleName:
+    Description: 'Name of the WAF Provisioner role'
+    Value: !Ref WAFProvisionerRole
+  
+  TestAssumeRoleCommand:
+    Description: 'AWS CLI command to test role assumption'
+    Value: !Sub 'aws sts assume-role --role-arn ${WAFProvisionerRole.Arn} --role-session-name waf-test'
