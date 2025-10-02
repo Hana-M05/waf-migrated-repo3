@@ -4,7 +4,7 @@ pipeline {
             inheritFrom 'build-slave-terraform'
         }
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
@@ -85,4 +85,4 @@ pipeline {
             echo "❌ Build failed! Check logs for details."
         }
     }
-} 
+}
