@@ -1,20 +1,14 @@
-module "waf" {
-  source           = "./modules/waf"
-  for_each         = local.environments
+module "waf_wrapper_security" {
+  source = "./modules/waf-wrapper"
   
-  alb_names        = each.value.alb_names
-  disabled_rules   = each.value.disabled_rules
-  environment      = each.value.environment
-  region           = each.value.region
-  protection_rules = each.value.protection_rules
-}
+  providers = {
+    aws = aws.security
+  }
 
-module "cloudwatch" {
-  source      = "./modules/cloudwatch"
-  for_each         = local.environments
-  
-  environment = each.value.environment
-  waf_acl_arn = module.waf[each.key].waf_acl_arn
-
-  depends_on = [module.waf]
+  # Key = environments/<subpath>/<filename>
+  alb_names        = local.environments["security-security"].alb_names
+  disabled_rules   = local.environments["security-security"].disabled_rules
+  environment      = local.environments["security-security"].environment
+  region           = local.environments["security-security"].region
+  protection_rules = local.environments["security-security"].protection_rules
 }
