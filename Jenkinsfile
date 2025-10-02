@@ -4,7 +4,12 @@ pipeline {
             inheritFrom 'build-slave-terraform'
         }
     }
-
+    
+    // Polling trigger - can also be configured in job settings
+    triggers {
+        pollSCM('* * * * *') // Poll every minute
+    }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -85,4 +90,4 @@ pipeline {
             echo "❌ Build failed! Check logs for details."
         }
     }
-} 
+}
