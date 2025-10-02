@@ -1,7 +1,7 @@
 locals {
   bitbucket_fingerprint = "22D2AFA3B2AF7292F120ADBFAD56E654A73FB021"
   bitbucket_repo_uuid = "{1c89321f-9c54-4e6b-9793-ab339ab209f9}"
-  bitbucket_workspace_uuid = "{08320bb4-4352-4eb9-ba1b-50a9a3de64cf}"
+  bitbucket_workspace_uuid = "08320bb4-4352-4eb9-ba1b-50a9a3de64cf"
   bitbucket_workspace_name = "DudeSolutions"
 }
 # OIDC Identity Provider
