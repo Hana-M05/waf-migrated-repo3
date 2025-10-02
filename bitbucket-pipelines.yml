@@ -5,20 +5,19 @@ definitions:
     - &install-terraform-and-setup |
       echo "Installing Terraform via yum..."
       
-      # Add HashiCorp repository
+      # Install Terraform
       yum install -y yum-utils
       yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-      
-      # Install Terraform
       yum install -y terraform
       
-      # Verify installations
-      terraform --version
-      aws --version
-      
-      echo "Setting up AWS authentication..."
-      export AWS_ROLE_ARN=$AWS_ROLE_ARN
+      # Set up OIDC authentication
       export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+      export AWS_REGION=$AWS_DEFAULT_REGION
+      export AWS_ROLE_ARN=$AWS_ROLE_ARN
+      export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
+      echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
+      
+      # Verify authentication
       aws sts get-caller-identity
 
 pipelines:
