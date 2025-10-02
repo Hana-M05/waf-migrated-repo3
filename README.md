@@ -54,12 +54,14 @@ The WAF includes the following optional protection layers
 ## 📞 Support
 ### 🚨 Production Outages
 If there's a production outage caused by the WAF:
+
 1. SREs: Make immediate changes directly to the WAF in the AWS console to resolve the outage. 
 2. After resolution: Developers must update this repository to reflect the emergency changes made by SREs
 3. Follow-up: Submit a PR with the updated configuration to ensure infrastructure-as-code consistency
 
 ### 💬 General Support
 For general questions, new features, or non-urgent issues:
+
 1. Contact the DevSecOps team
 2. Include relevant environment details and specific requirements
 3. Allow time for proper review and testing cycles
