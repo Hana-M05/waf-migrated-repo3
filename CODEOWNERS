@@ -2,3 +2,5 @@
 environments/ @@"InformationSecurity"
 @@@DefaultReviewers @"Sam McManus" @"Ahmed Galal"
 @@@InformationSecurity @"Sam McManus" @"Lindsay Zastrow"
+
+AllGroupsCheck(n)
