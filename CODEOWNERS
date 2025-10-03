@@ -1,2 +1,4 @@
-* @"Sam McManus" @"Ahmed Galal" @"Mohamed Abou-Haggar" @"Mohamed Abdelrady"
-/environments/**/* @@"Information Security"
+* @@"DefaultReviewers
+/environments/**/* @@"InformationSecurity"
+@@@DefaultReviewers @"Sam McManus" @"Ahmed Galal" @"Mohamed Abou-Haggar" @"Mohamed Abdelrady"
+@@@InformationSecurity @"Sam McManus" @"Daniel Grinkevich"
