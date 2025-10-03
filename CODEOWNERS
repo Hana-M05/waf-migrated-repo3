@@ -1,4 +1,4 @@
-* @@"DefaultReviewers
-/environments/**/* @@"InformationSecurity"
-@@@DefaultReviewers @"Sam McManus" @"Ahmed Galal" @"Mohamed Abou-Haggar" @"Mohamed Abdelrady"
-@@@InformationSecurity @"Sam McManus" @"Ahmed Galal"
+* @@"DefaultReviewers"
+environments/ @@"InformationSecurity"
+@@@DefaultReviewers @"Sam McManus" @"Dan"
+@@@InformationSecurity @"Sam McManus" @"Lindsay Zastrow"
