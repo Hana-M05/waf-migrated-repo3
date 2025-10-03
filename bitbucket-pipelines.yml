@@ -1,43 +1,43 @@
-# image: amazon/aws-cli:latest
+image: amazon/aws-cli:latest
 
-# definitions:
-#   scripts:
-#     - &install-terraform-and-setup |
-#       echo "Installing Terraform via yum..."
+definitions:
+  scripts:
+    - &install-terraform-and-setup |
+      echo "Installing Terraform via yum..."
       
-#       # Install Terraform
-#       yum install -y yum-utils
-#       yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-#       yum install -y terraform
+      # Install Terraform
+      yum install -y yum-utils
+      yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+      yum install -y terraform
       
-#       # Set up OIDC authentication
-#       export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
-#       export AWS_REGION=$AWS_DEFAULT_REGION
-#       export AWS_ROLE_ARN=$AWS_ROLE_ARN
-#       export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
-#       echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
+      # Set up OIDC authentication
+      export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+      export AWS_REGION=$AWS_DEFAULT_REGION
+      export AWS_ROLE_ARN=$AWS_ROLE_ARN
+      export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
+      echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
       
-#       # Verify authentication
-#       aws sts get-caller-identity
+      # Verify authentication
+      aws sts get-caller-identity
 
-# pipelines:
-#   pull-requests:
-#     '**':
-#       - step:
-#           name: PR Validation
-#           oidc: true
-#           script:
-#             - *install-terraform-and-setup
-#             - terraform init -no-color
-#             - terraform validate -no-color
-#             - terraform plan -input=false -no-color
+pipelines:
+  pull-requests:
+    '**':
+      - step:
+          name: PR Validation
+          oidc: true
+          script:
+            - *install-terraform-and-setup
+            - terraform init -no-color
+            - terraform validate -no-color
+            - terraform plan -input=false -no-color
 
-#   branches:
-#     main:
-#       - step:
-#           name: Production Deployment
-#           oidc: true
-#           script:
-#             - *install-terraform-and-setup
-#             - terraform init -no-color
-#             - terraform apply --auto-approve -no-color
+  branches:
+    main:
+      - step:
+          name: Production Deployment
+          oidc: true
+          script:
+            - *install-terraform-and-setup
+            - terraform init -no-color
+            - terraform apply --auto-approve -no-color
