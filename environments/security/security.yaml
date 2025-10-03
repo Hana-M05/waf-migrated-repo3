@@ -114,4 +114,4 @@ disabled_rules:
     - "SQLi_BODY"
   windows_protection:
     - "WindowsShellCommands_BODY"
-  linux_protection: []
+  linux_protection: [] 
