@@ -30,7 +30,8 @@ The WAF includes the following optional protection layers
 ### For DevSecOps/Ops/Security Teams
 1. Add AWS provider for the new environment in `providers.tf`
 2. Add module block referencing the environment configuration in `main.tf`
-3. Deploy via Jenkins using terraform apply
+3. Add appropriate reviewers for the new environment in `CODEOWNERS`
+4. Deploy via Jenkins using terraform apply
 
 ## 🔒 Security Actions
 ### Block vs Count vs Allow
