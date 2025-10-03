@@ -5,4 +5,4 @@ terraform {
     key     = "aws-waf-tf-code.tfstate"
     encrypt = true
   }
-} 
+}
