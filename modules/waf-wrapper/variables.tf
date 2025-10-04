@@ -9,6 +9,11 @@ variable "environment" {
   type        = string
 }
 
+variable "product" {
+  description = "The product name, used for naming resources"
+  type        = string
+}
+
 variable "protection_rules" {
   description = "Security protection rules configuration for the WAF"
   type = object({

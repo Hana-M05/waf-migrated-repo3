@@ -1,18 +1,18 @@
-module "waf" {
-  source = "../waf"
-
-  alb_names        = var.alb_names
-  disabled_rules   = var.disabled_rules
-  environment      = var.environment
-  region           = var.region
-  protection_rules = var.protection_rules
-}
-
-module "cloudwatch" {
-  source = "../cloudwatch"
+module "s3" {
+  source = "../s3"
 
   environment = var.environment
-  waf_acl_arn = module.waf.waf_acl_arn
+  product     = var.product
+}
 
-  depends_on = [module.waf]
+module "waf" {
+  source     = "../waf"
+  depends_on = [module.s3]
+
+  alb_names               = var.alb_names
+  disabled_rules          = var.disabled_rules
+  environment             = var.environment
+  region                  = var.region
+  protection_rules        = var.protection_rules
+  waf_log_destination_arn = module.s3.waf_logs_destination_arn
 }

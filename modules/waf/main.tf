@@ -197,3 +197,22 @@ resource "aws_wafv2_web_acl" "waf_acl" {
     }
   }
 }
+
+resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
+  resource_arn = aws_wafv2_web_acl.waf_acl.arn
+  log_destination_configs = [
+    var.waf_log_destination_arn
+  ]
+
+  redacted_fields {
+    single_header {
+      name = "authorization"
+    }
+  }
+  
+  redacted_fields {
+    single_header {
+      name = "cookie"
+    }
+  }
+}

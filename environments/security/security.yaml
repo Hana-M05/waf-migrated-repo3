@@ -19,6 +19,7 @@
 
 alb_names: []
 environment: "security"
+product: "security"
 region: "us-east-1"
 
 #################################################################
