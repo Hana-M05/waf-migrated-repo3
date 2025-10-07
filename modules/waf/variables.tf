@@ -3,6 +3,16 @@ variable "alb_names" {
   type        = list(string)
 }
 
+variable "api_gateway_ids" {
+  description = "The IDs of the API Gateway v2 instances to associate the WAF with"
+  type        = list(string)
+}
+
+variable "cloudfront_distribution_ids" {
+  description = "The IDs of the CloudFront distributions to associate the WAF with"
+  type        = list(string)
+}
+
 variable "environment" {
   description = "Environment name (e.g., production, staging, development)"
   type        = string

@@ -18,6 +18,8 @@
 #################################################################
 
 alb_names: []
+api_gateway_ids: []
+cloudfront_distribution_ids: []
 environment: "security"
 region: "us-east-1"
 
