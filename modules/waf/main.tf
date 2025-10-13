@@ -3,7 +3,7 @@ resource "aws_wafv2_ip_set" "blacklist" {
 
   name               = "ip-blacklist-${var.environment}"
   description        = "IP addresses to block/monitor"
-  scope              = "REGIONAL"
+  scope              = var.global ? "CLOUDFRONT" : "REGIONAL"
   ip_address_version = "IPV4"
 
   addresses = var.protection_rules.ip_blocking.ips
@@ -20,7 +20,7 @@ resource "aws_wafv2_ip_set" "blacklist" {
 
 resource "aws_wafv2_web_acl" "waf_acl" {
   name        = "${var.environment}-waf-acl"
-  scope       = "REGIONAL"
+  scope       = var.global ? "CLOUDFRONT" : "REGIONAL"
   description = "WAF ACL for ${var.environment} environment"
 
   tags = {
