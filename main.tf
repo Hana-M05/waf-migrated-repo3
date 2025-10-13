@@ -12,8 +12,7 @@ module "waf_wrapper_security_us_east_1" {
   disabled_rules              = local.environments["security-prod-us-east-1"].disabled_rules
   environment                 = "prod-us-east-1"
   global                      = local.environments["security-prod-us-east-1"].global
-  product = "security"
-  region                      = local.environments["security-prod-us-east-1"].region
+  product                     = "security"
   protection_rules            = local.environments["security-prod-us-east-1"].protection_rules
 }
 
@@ -25,13 +24,12 @@ module "waf_wrapper_security_global" {
   }
 
   # Key = environments/<subpath>/<filename>
-  alb_names        = local.environments["security-security"].alb_names
+  alb_names                   = local.environments["security-prod-global"].alb_names
   api_gateway_ids             = local.environments["security-prod-global"].api_gateway_ids
   cloudfront_distribution_ids = local.environments["security-prod-global"].cloudfront_distribution_ids
-  disabled_rules   = local.environments["security-security"].disabled_rules
+  disabled_rules              = local.environments["security-prod-global"].disabled_rules
   environment                 = "prod-global"
   global                      = local.environments["security-prod-global"].global
-  product = "security"
-  region           = local.environments["security-security"].region
-  protection_rules = local.environments["security-security"].protection_rules
+  product                     = "security"
+  protection_rules            = local.environments["security-prod-global"].protection_rules
 }

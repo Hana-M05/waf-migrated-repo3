@@ -209,7 +209,7 @@ resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
       name = "authorization"
     }
   }
-  
+
   redacted_fields {
     single_header {
       name = "cookie"
