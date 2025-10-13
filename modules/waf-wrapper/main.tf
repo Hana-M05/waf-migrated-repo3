@@ -6,7 +6,7 @@ module "waf" {
   cloudfront_distribution_ids = var.cloudfront_distribution_ids
   disabled_rules              = var.disabled_rules
   environment                 = var.environment
-  region                      = var.region
+  global                      = var.global
   protection_rules            = var.protection_rules
 }
 

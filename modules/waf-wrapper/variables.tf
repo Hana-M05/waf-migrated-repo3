@@ -15,8 +15,14 @@ variable "cloudfront_distribution_ids" {
 }
 
 variable "environment" {
-  description = "The environment name (e.g., dev, prod, security)"
+  description = "Name of the environment (e.g., prod-us-east-1, prod-global)"
   type        = string
+}
+
+variable "global" {
+  description = "Boolean indicating if the WAF is for global (CloudFront) or regional resources"
+  type        = bool
+  default     = false
 }
 
 variable "protection_rules" {

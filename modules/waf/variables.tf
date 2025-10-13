@@ -18,9 +18,10 @@ variable "environment" {
   type        = string
 }
 
-variable "region" {
-  description = "AWS region to deploy resources in"
-  type        = string
+variable "global" {
+  description = "Boolean indicating if the WAF is for global (CloudFront) or regional resources"
+  type        = bool
+  default     = false
 }
 
 variable "protection_rules" {
