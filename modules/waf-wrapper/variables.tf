@@ -4,9 +4,25 @@ variable "alb_names" {
   default     = []
 }
 
+variable "api_gateway_ids" {
+  description = "List of API Gateway v2 IDs to associate with the WAF Web ACL"
+  type        = list(string)
+}
+
+variable "cloudfront_distribution_ids" {
+  description = "List of CloudFront distribution IDs to associate with the WAF Web ACL"
+  type        = list(string)
+}
+
 variable "environment" {
-  description = "The environment name (e.g., dev, prod, security)"
+  description = "Name of the environment (e.g., prod-us-east-1, prod-global)"
   type        = string
+}
+
+variable "global" {
+  description = "Boolean indicating if the WAF is for global (CloudFront) or regional resources"
+  type        = bool
+  default     = false
 }
 
 variable "product" {
