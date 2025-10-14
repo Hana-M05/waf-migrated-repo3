@@ -1,6 +1,6 @@
 * @@"DefaultReviewers"
 environments/ @@"InformationSecurity"
 @@@DefaultReviewers @"Sam McManus" @"Ahmed Galal" @"Mohamed Abdelrady" @"Mohamed Abou-Haggar" 
-@@@InformationSecurity @"Sam McManus" @"Lindsay Zastrow" @Dan 
+@@@InformationSecurity @"Sam McManus" @"Lindsay Zastrow" @Dan "@Anthony Smaldone" "@Kevin Cai"
 
 AllGroupsCheck(1)
