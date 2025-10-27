@@ -133,7 +133,6 @@ Resources:
               - iam:TagRole
               - iam:UntagRole
             Resource:
-              - !Sub "arn:aws:iam::${AWS::AccountId}:role/*-waf-logging-role"
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/wafv2.amazonaws.com/*"
             Condition:
               StringEquals:
@@ -178,6 +177,37 @@ Resources:
             Action:
               - sts:GetCallerIdentity
             Resource: '*'
+
+          ###########################################
+          #### S3 Replication Permissions ##########
+          ###########################################
+          - Effect: Allow
+            Action:
+              - s3:PutBucketPolicy
+              - s3:GetBucketPolicy
+              - s3:DeleteBucketPolicy
+            Resource: "arn:aws:s3:::bsw-siem-cloudtrail"
+
+          - Effect: Allow
+            Action:
+              - iam:CreateServiceLinkedRole
+              - iam:GetRole
+              - iam:PassRole
+              - iam:CreateRole
+              - iam:DeleteRole
+              - iam:AttachRolePolicy
+              - iam:DetachRolePolicy
+              - iam:PutRolePolicy
+              - iam:DeleteRolePolicy
+              - iam:GetRolePolicy
+              - iam:ListInstanceProfilesForRole
+              - iam:ListRolePolicies
+              - iam:ListAttachedRolePolicies
+              - iam:TagRole
+              - iam:UntagRole
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/waf-log-replication-role-*"
+
       Roles:
         - !Ref WAFProvisionerRole
 

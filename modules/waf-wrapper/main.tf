@@ -1,8 +1,8 @@
 module "s3" {
   source = "../s3"
 
-  environment = var.environment
-  product     = var.product
+  environment             = var.environment
+  log_forward_destination = var.log_forward_destination
 }
 
 module "waf" {

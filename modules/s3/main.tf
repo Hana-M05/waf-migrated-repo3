@@ -5,7 +5,7 @@ resource "random_string" "bucket_suffix" {
 }
 
 resource "aws_s3_bucket" "waf_logs" {
-  bucket = "aws-waf-logs-brightly-${var.product}-${var.environment}-${random_string.bucket_suffix.result}"
+  bucket        = "aws-waf-logs-brightly-${var.environment}-${random_string.bucket_suffix.result}"
   force_destroy = true
 
   tags = {
@@ -18,7 +18,7 @@ resource "aws_s3_bucket" "waf_logs" {
 resource "aws_s3_bucket_versioning" "waf_logs" {
   bucket = aws_s3_bucket.waf_logs.id
   versioning_configuration {
-    status = "Disabled"
+    status = "Enabled"
   }
 }
 
@@ -40,7 +40,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "waf_logs" {
     status = "Enabled"
 
     filter {
-      prefix = ""  # Empty prefix means all objects
+      prefix = "" # Empty prefix means all objects
     }
 
     transition {
