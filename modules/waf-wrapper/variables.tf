@@ -25,6 +25,13 @@ variable "global" {
   default     = false
 }
 
+variable "log_forward_destination" {
+  description = "ARN of the log destination for WAF logs"
+  type        = string
+  default     = ""
+}
+
+
 variable "protection_rules" {
   description = "Security protection rules configuration for the WAF"
   type = object({

@@ -85,3 +85,8 @@ variable "disabled_rules" {
   })
   default = {}
 }
+
+variable "waf_log_destination_arn" {
+  description = "The ARN of the S3 bucket to store WAF logs"
+  type        = string
+}

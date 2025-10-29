@@ -1,10 +1,10 @@
 locals {
-  bitbucket_fingerprint = "22D2AFA3B2AF7292F120ADBFAD56E654A73FB021"
-  bitbucket_repo_uuid = "{1c89321f-9c54-4e6b-9793-ab339ab209f9}"
+  bitbucket_fingerprint    = "22D2AFA3B2AF7292F120ADBFAD56E654A73FB021"
+  bitbucket_repo_uuid      = "{1c89321f-9c54-4e6b-9793-ab339ab209f9}"
   bitbucket_workspace_uuid = "08320bb4-4352-4eb9-ba1b-50a9a3de64cf"
   bitbucket_workspace_name = "DudeSolutions"
-  state_bucket = "s3-ue1-sharedservices-tfstate"
-  state_key = "aws-waf-tf-code.tfstate"
+  state_bucket             = "s3-ue1-sharedservices-tfstate"
+  state_key                = "aws-waf-tf-code.tfstate"
 }
 # OIDC Identity Provider
 resource "aws_iam_openid_connect_provider" "bitbucket" {
@@ -64,15 +64,15 @@ resource "aws_iam_policy" "bitbucket_terraform" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "AssumeWAFProvisionerRole"
-        Effect = "Allow"
-        Action = "sts:AssumeRole"
+        Sid      = "AssumeWAFProvisionerRole"
+        Effect   = "Allow"
+        Action   = "sts:AssumeRole"
         Resource = "arn:aws:iam::*:role/WAF_Provisioner"
       },
       {
-        Sid    = "GetCallerIdentity"
-        Effect = "Allow"
-        Action = "sts:GetCallerIdentity"
+        Sid      = "GetCallerIdentity"
+        Effect   = "Allow"
+        Action   = "sts:GetCallerIdentity"
         Resource = "*"
       },
       {

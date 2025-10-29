@@ -16,6 +16,7 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
+account_id: "533267359674"
 alb_names: [] # Always empty for global config
 api_gateway_ids: [] # Always empty for global config
 cloudfront_distribution_ids: []

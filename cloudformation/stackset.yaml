@@ -1,111 +1,225 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Single account WAF Provisioner role for testing WAF deployment permissions'
+Description: Single account WAF Provisioner role for testing WAF deployment permissions
 
 Resources:
   WAFProvisionerRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: 'WAF_Provisioner'
+      RoleName: WAF_Provisioner
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Principal:
-              AWS: "arn:aws:iam::966185269917:root"
-            Action: 'sts:AssumeRole'
-      Path: '/'
+              AWS: arn:aws:iam::966185269917:root
+            Action: sts:AssumeRole
+      Path: /
       Tags:
-        - Key: 'Purpose'
-          Value: 'WAFManagement'
-        - Key: 'ManagedBy'
-          Value: 'CloudFormation-SingleAccount'
+        - Key: Purpose
+          Value: WAFManagement
+        - Key: ManagedBy
+          Value: CloudFormation-SingleAccount
 
   WAFManagementPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: 'WAFManagementPolicy'
+      PolicyName: WAFManagementPolicy
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
           # WAF v2 permissions
           - Effect: Allow
             Action:
-              - 'wafv2:*'
+              - wafv2:*
             Resource: '*'
-          
+
+          - Effect: Allow
+            Action:
+              - logs:CreateLogDelivery
+              - logs:DeleteLogDelivery
+            Resource: '*'
+
           # Load Balancer permissions for WAF association
           - Effect: Allow
             Action:
-              - 'elasticloadbalancing:DescribeLoadBalancers'
-              - 'elasticloadbalancing:DescribeListeners'
-              - 'elasticloadbalancing:SetWebAcl'
-              - 'elbv2:DescribeLoadBalancers'
-              - 'elbv2:DescribeListeners'
-              - 'elbv2:SetWebAcl'
+              - elasticloadbalancing:DescribeLoadBalancers
+              - elasticloadbalancing:DescribeListeners
+              - elasticloadbalancing:SetWebAcl
+              - elbv2:DescribeLoadBalancers
+              - elbv2:DescribeListeners
+              - elbv2:SetWebAcl
             Resource: '*'
 
-          # CloudWatch Logs permissions for WAF logging
+          # S3 permissions for WAF logging
           - Effect: Allow
             Action:
-              - 'logs:DescribeLogGroups'
-              - 'logs:PutResourcePolicy'
-              - 'logs:DescribeResourcePolicies'
-              - 'logs:DeleteResourcePolicy'
-              - 'logs:CreateLogDelivery'
-              - 'logs:DeleteLogDelivery'
-              - 'logs:DescribeLogDeliveries'
-              - 'logs:GetLogDelivery'
-              - 'logs:ListLogDeliveries'
-              - 'logs:PutLogEvents'
-              - 'logs:CreateLogStream'
-            Resource: '*'
+              - s3:CreateBucket
+              - s3:DeleteBucket
+              - s3:ListBucket
+              - s3:ListBucketVersions
+              - s3:GetBucketLocation
+              - s3:GetBucketAcl
+              - s3:GetBucketPolicy
+              - s3:GetBucketVersioning
+              - s3:GetBucketEncryption
+              - s3:GetBucketLifecycleConfiguration
+              - s3:GetLifecycleConfiguration
+              - s3:GetBucketPublicAccessBlock
+              - s3:GetBucketTagging
+              - s3:GetBucketCORS
+              - s3:GetBucketWebsite
+              - s3:GetAccelerateConfiguration
+              - s3:GetBucketRequestPayment
+              - s3:GetBucketLogging
+              - s3:GetReplicationConfiguration
+              - s3:GetEncryptionConfiguration
+              - s3:GetBucketNotification
+              - s3:GetBucketObjectLockConfiguration
+              - s3:GetBucketOwnershipControls
+              - s3:GetIntelligentTieringConfiguration
+              - s3:GetInventoryConfiguration
+              - s3:GetMetricsConfiguration
+              - s3:GetAnalyticsConfiguration
+              - s3:GetBucketPolicyStatus
+              - s3:GetBucketVersioning
+              - s3:PutBucketAcl
+              - s3:PutBucketPolicy
+              - s3:PutBucketVersioning
+              - s3:PutBucketEncryption
+              - s3:PutBucketLifecycleConfiguration
+              - s3:PutLifecycleConfiguration
+              - s3:PutBucketPublicAccessBlock
+              - s3:PutBucketTagging
+              - s3:PutLoggingConfiguration
+              - s3:PutBucketLogging
+              - s3:PutReplicationConfiguration
+              - s3:PutEncryptionConfiguration
+              - s3:DeleteBucketPolicy
+              - s3:DeleteBucketLifecycleConfiguration
+              - s3:DeleteLifecycleConfiguration
+              - s3:DeleteObjectVersion
+              - s3:DeleteBucketEncryption
+              - s3:DeleteBucketReplication
+              - s3:DeleteBucketTagging
+            Resource:
+              - arn:aws:s3:::aws-waf-logs-brightly-*
+
+          # S3 object permissions for WAF logging bucket
           - Effect: Allow
             Action:
-              - 'logs:*'
-            Resource: 
-              - 'arn:aws:logs:*:*:log-group:aws-waf-logs-client-*'
-              - 'arn:aws:logs:*:*:log-group:aws-waf-logs-client-*:*'
-          
-          # IAM permissions for WAF service-linked roles
+              - s3:GetObject
+              - s3:PutObject
+              - s3:DeleteObject
+              - s3:GetObjectAcl
+              - s3:PutObjectAcl
+            Resource:
+              - arn:aws:s3:::aws-waf-logs-brightly-*/*
+
+          # IAM permissions for WAF service-linked roles and logging roles
           - Effect: Allow
             Action:
-              - 'iam:CreateServiceLinkedRole'
-              - 'iam:GetRole'
-              - 'iam:PassRole'
-            Resource: '*'
+              - iam:CreateServiceLinkedRole
+              - iam:GetRole
+              - iam:PassRole
+              - iam:CreateRole
+              - iam:DeleteRole
+              - iam:AttachRolePolicy
+              - iam:DetachRolePolicy
+              - iam:PutRolePolicy
+              - iam:DeleteRolePolicy
+              - iam:GetRolePolicy
+              - iam:ListRolePolicies
+              - iam:ListAttachedRolePolicies
+              - iam:TagRole
+              - iam:UntagRole
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/wafv2.amazonaws.com/*"
             Condition:
               StringEquals:
-                'iam:AWSServiceName': 
-                  - 'wafv2.amazonaws.com'
-          
+                iam:AWSServiceName:
+                  - wafv2.amazonaws.com
+
+          # Additional IAM permissions for role creation without service condition
+          - Effect: Allow
+            Action:
+              - iam:CreateRole
+              - iam:DeleteRole
+              - iam:GetRole
+              - iam:PutRolePolicy
+              - iam:DeleteRolePolicy
+              - iam:GetRolePolicy
+              - iam:TagRole
+              - iam:UntagRole
+              - iam:ListRolePolicies
+              - iam:ListAttachedRolePolicies
+              - iam:ListInstanceProfilesForRole
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/*-waf-logging-role"
+
           # S3 permissions for Terraform state
           - Effect: Allow
             Action:
-              - 's3:GetObject'
-              - 's3:PutObject'
-              - 's3:DeleteObject'
-              - 's3:ListBucket'
-              - 's3:HeadObject'         
-              - 's3:GetObjectVersion'    
-              - 's3:GetBucketVersioning'
-              - 's3:GetBucketLocation'
-              - 's3:ListBucketVersions'
-            Resource: 
-              - 'arn:aws:s3:::s3-ue1-sharedservices-tfstate'
-              - 'arn:aws:s3:::s3-ue1-sharedservices-tfstate/aws-waf-tf-code.tfstate'
-            
+              - s3:GetObject
+              - s3:PutObject
+              - s3:DeleteObject
+              - s3:ListBucket
+              - s3:HeadObject
+              - s3:GetObjectVersion
+              - s3:GetBucketVersioning
+              - s3:GetBucketLocation
+              - s3:ListBucketVersions
+            Resource:
+              - arn:aws:s3:::s3-ue1-sharedservices-tfstate
+              - arn:aws:s3:::s3-ue1-sharedservices-tfstate/aws-waf-tf-code.tfstate
+
+          # Account information (for bucket policies)
+          - Effect: Allow
+            Action:
+              - sts:GetCallerIdentity
+            Resource: '*'
+
+          ###########################################
+          #### S3 Replication Permissions ##########
+          ###########################################
+          - Effect: Allow
+            Action:
+              - s3:PutBucketPolicy
+              - s3:GetBucketPolicy
+              - s3:DeleteBucketPolicy
+            Resource: "arn:aws:s3:::bsw-siem-cloudtrail"
+
+          - Effect: Allow
+            Action:
+              - iam:CreateServiceLinkedRole
+              - iam:GetRole
+              - iam:PassRole
+              - iam:CreateRole
+              - iam:DeleteRole
+              - iam:AttachRolePolicy
+              - iam:DetachRolePolicy
+              - iam:PutRolePolicy
+              - iam:DeleteRolePolicy
+              - iam:GetRolePolicy
+              - iam:ListInstanceProfilesForRole
+              - iam:ListRolePolicies
+              - iam:ListAttachedRolePolicies
+              - iam:TagRole
+              - iam:UntagRole
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/waf-log-replication-role-*"
+
       Roles:
         - !Ref WAFProvisionerRole
 
 Outputs:
   RoleArn:
-    Description: 'ARN of the WAF Provisioner role'
+    Description: ARN of the WAF Provisioner role
     Value: !GetAtt WAFProvisionerRole.Arn
-  
+
   RoleName:
-    Description: 'Name of the WAF Provisioner role'
+    Description: Name of the WAF Provisioner role
     Value: !Ref WAFProvisionerRole
-  
+
   TestAssumeRoleCommand:
-    Description: 'AWS CLI command to test role assumption'
-    Value: !Sub 'aws sts assume-role --role-arn ${WAFProvisionerRole.Arn} --role-session-name waf-test'
+    Description: AWS CLI command to test role assumption
+    Value: !Sub "aws sts assume-role --role-arn ${WAFProvisionerRole.Arn} --role-session-name waf-test"
