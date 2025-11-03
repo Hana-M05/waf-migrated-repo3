@@ -1,28 +1,17 @@
-resource "aws_s3_bucket_policy" "allow_replication" {
-  bucket = "bsw-siem-cloudtrail"
+###############################################################################
+##### Temp S3 Bucket to allow WAF log replication to Security #####
+###############################################################################
+module "elastic_waf_destination" {
+  source = "./modules/elastic-waf-destination"
 
-  provider = aws.security
+  providers = {
+    aws = aws.security
+  }
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      for env_key, env in local.environments : {
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:iam::${env.account_id}:role/waf-log-replication-role-${env_key}"
-        }
-        Action = [
-          "s3:ReplicateObject",
-          "s3:ReplicateDelete",
-          "s3:ReplicateTags",
-          "s3:PutObject",
-          "s3:PutObjectAcl",
-          "s3:PutObjectTagging"
-        ]
-        Resource = "arn:aws:s3:::bsw-siem-cloudtrail/AWSLogs/${env.account_id}/WAFLogs/*"
-      }
-    ]
-  })
+  replication_roles = [
+    module.waf_wrapper_security_us_east_1.replication_role_arn,
+    module.waf_wrapper_security_global.replication_role_arn,
+  ]
 }
 
 module "waf_wrapper_security_us_east_1" {
@@ -39,7 +28,7 @@ module "waf_wrapper_security_us_east_1" {
   disabled_rules              = local.environments["security-prod-us-east-1"].disabled_rules
   environment                 = "security-prod-us-east-1"
   global                      = local.environments["security-prod-us-east-1"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-cloudtrail"
+  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["security-prod-us-east-1"].protection_rules
 }
 
@@ -57,6 +46,6 @@ module "waf_wrapper_security_global" {
   disabled_rules              = local.environments["security-prod-global"].disabled_rules
   environment                 = "security-prod-global"
   global                      = local.environments["security-prod-global"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-cloudtrail"
+  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["security-prod-global"].protection_rules
 }
