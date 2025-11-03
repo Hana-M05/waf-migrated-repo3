@@ -183,10 +183,65 @@ Resources:
           ###########################################
           - Effect: Allow
             Action:
+              - s3:CreateBucket
+              - s3:PutBucketPublicAccessBlock
+              - s3:DeleteBucketPublicAccessBlock
+              - s3:PutBucketVersioning
+              - s3:GetBucketVersioning
+              - s3:DeleteBucket
+              - s3:DeleteBucketVersioning
+              - s3:ListBucket
+              - s3:ListBucketVersions
+              - s3:GetBucketAcl
               - s3:PutBucketPolicy
+              - s3:GetBucketLocation
+              - s3:GetBucketAcl
               - s3:GetBucketPolicy
+              - s3:GetBucketVersioning
+              - s3:GetBucketEncryption
+              - s3:GetBucketLifecycleConfiguration
+              - s3:GetLifecycleConfiguration
+              - s3:GetBucketPublicAccessBlock
+              - s3:GetBucketTagging
+              - s3:GetBucketCORS
+              - s3:GetBucketWebsite
+              - s3:GetAccelerateConfiguration
+              - s3:GetBucketRequestPayment
+              - s3:GetBucketLogging
+              - s3:GetReplicationConfiguration
+              - s3:GetEncryptionConfiguration
+              - s3:GetBucketNotification
+              - s3:GetBucketObjectLockConfiguration
+              - s3:GetBucketOwnershipControls
+              - s3:GetIntelligentTieringConfiguration
+              - s3:GetInventoryConfiguration
+              - s3:GetMetricsConfiguration
+              - s3:GetAnalyticsConfiguration
+              - s3:GetBucketPolicyStatus
+              - s3:GetBucketVersioning
               - s3:DeleteBucketPolicy
-            Resource: "arn:aws:s3:::bsw-siem-cloudtrail"
+              - s3:PutBucketTagging
+              - s3:DeleteBucketTagging
+              - s3:PutBucketNotificationConfiguration
+              - s3:DeleteBucketNotificationConfiguration
+              - s3:GetBucketNotificationConfiguration
+              - s3:PutBucketNotification
+              - s3:DeleteBucketNotification
+              - s3:GetBucketNotification
+            Resource: "arn:aws:s3:::bsw-siem-waf"
+
+          - Effect: Allow
+            Action:
+              - sqs:CreateQueue
+              - sqs:SetQueueAttributes
+              - sqs:CreateQueue
+              - sqs:DeleteQueue
+              - sqs:GetQueueAttributes
+              - sqs:SetQueueAttributes
+              - sqs:TagQueue
+              - sqs:UntagQueue
+              - sqs:ListQueueTags
+            Resource: "arn:aws:sqs:*:*:waf-logs-queue"
 
           - Effect: Allow
             Action:
