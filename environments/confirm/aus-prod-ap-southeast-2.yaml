@@ -16,11 +16,11 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
-alb_names: [] # Always empty for global config
-api_gateway_ids: [] # Always empty for global config
-cloudfront_distribution_ids: []
-global: true
-region: "us-east-1" # Always us-east-1 for global config
+alb_names: ["liveEnvironment2-Confirm-Elb", "OnDemand-ConfirmElb", "liveEnvironment1-Confirm-Elb"]
+api_gateway_ids: []
+cloudfront_distribution_ids: [] # Always empty for regional config
+global: false
+region: "ap-southeast-2"
 #################################################################
 # SECURITY PROTECTION RULES
 # 
@@ -35,25 +35,9 @@ protection_rules:
   # Add IP addresses in CIDR format (use /32 for single IPs).
   #################################################################
   ip_blocking:
-    enabled: true
-    action: "block"
-    ips:
-      - "185.177.72.3/32"
-      - "146.148.91.67/32"
-      - "44.218.174.94/32"
-      - "178.18.252.24/32"
-      - "123.20.29.193/32"
-      - "150.129.80.32/32"
-      - "209.58.168.85/32"
-      - "107.175.244.0/24"
-      - "184.168.104.171/32"
-      - "66.19.230.146/32"
-      - "52.114.128.147/32"
-      - "115.132.182.208/32"
-      - "107.175.199.0/24"
-      - "34.41.10.143/32"
-      - "34.28.197.214/32"
-      - "134.29.246.229/32"
+    enabled: false
+    action: "count"
+    ips: []
   #################################################################
   # CUSTOM PATH BLOCKING
   # 
@@ -61,10 +45,9 @@ protection_rules:
   # areas, internal APIs, or sensitive endpoints.
   #################################################################
   path_blocking:
-    enabled: true
-    action: "block"
-    paths:
-      - "/StrongholdDM/api/login"
+    enabled: false
+    action: "count"
+    paths: []
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -73,19 +56,24 @@ protection_rules:
   # protect against common attacks and threats.
   #################################################################
   basic_protection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   malicious_requests:
-    enabled: false
-
+    enabled: true
+    action: "count"
+    
   sql_injection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   windows_protection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   linux_protection:
     enabled: false
+    action: "count"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES

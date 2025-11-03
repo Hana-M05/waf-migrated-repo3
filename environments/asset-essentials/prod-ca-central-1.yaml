@@ -16,11 +16,11 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
-alb_names: [] # Always empty for global config
-api_gateway_ids: [] # Always empty for global config
-cloudfront_distribution_ids: []
-global: true
-region: "us-east-1" # Always us-east-1 for global config
+alb_names: ["ALB-ca1-production-01"]
+api_gateway_ids: []
+cloudfront_distribution_ids: [] # Always empty for regional config
+global: false
+region: "ca-central-1"
 #################################################################
 # SECURITY PROTECTION RULES
 # 
@@ -73,19 +73,24 @@ protection_rules:
   # protect against common attacks and threats.
   #################################################################
   basic_protection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   malicious_requests:
-    enabled: false
-
+    enabled: true
+    action: "count"
+    
   sql_injection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   windows_protection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   linux_protection:
     enabled: false
+    action: "count"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
