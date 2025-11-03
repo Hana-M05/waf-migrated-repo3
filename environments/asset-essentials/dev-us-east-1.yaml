@@ -16,7 +16,7 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
-alb_names: ["zionweb-apple-alb", "zionweb-integration2-alb", "alb-d-Appli-1XBOEM88JVH9V", "zionweb-integration7-alb", "zionweb-performance-alb", "zionweb-integration8-alb", "zionweb-integration6-alb", "zionweb-integration4-alb", "zionweb-integration5-alb", "zionweb-integration1-alb", "zionweb-integration3-alb", "dtalb-ue1-master-primary", "apalb-ue1-master-primary", "acapialb-ue1-master-primary", "zionweb-master-alb"]
+alb_names: ["apalb-ue1-master-primary", "acapialb-ue1-master-primary", "dtalb-ue1-master-primary"]
 # alb_names: []
 api_gateway_ids: []
 cloudfront_distribution_ids: [] # Always empty for regional config
