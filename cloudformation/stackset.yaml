@@ -45,9 +45,13 @@ Resources:
               - elasticloadbalancing:DescribeLoadBalancers
               - elasticloadbalancing:DescribeListeners
               - elasticloadbalancing:SetWebAcl
+              - elasticloadbalancing:DescribeLoadBalancerAttributes
+              - elasticloadbalancing:DescribeTags
               - elbv2:DescribeLoadBalancers
               - elbv2:DescribeListeners
+              - elbv2:DescribeTags
               - elbv2:SetWebAcl
+              - elbv2:DescribeLoadBalancerAttributes
             Resource: '*'
 
           # S3 permissions for WAF logging
