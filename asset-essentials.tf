@@ -1,3 +1,6 @@
+##########################################################################
+##################### Asset Essentials Dev Providers #####################
+##########################################################################
 provider "aws" {
   alias = "asset_essentials_dev_us_east_1"
   region = "us-east-1"
@@ -6,6 +9,9 @@ provider "aws" {
   }
 }
 
+###########################################################################
+##################### Asset Essentials Prod Providers #####################
+###########################################################################
 provider "aws" {
   alias = "asset_essentials_prod_us_east_1"
   region = "us-east-1"
@@ -30,6 +36,9 @@ provider "aws" {
   }
 }
 
+########################################################################
+##################### Asset Essentials Dev Modules #####################
+########################################################################
 module "waf_wrapper_asset_essentials_dev_us_east_1" {
   source = "./modules/waf-wrapper"
 
@@ -48,6 +57,9 @@ module "waf_wrapper_asset_essentials_dev_us_east_1" {
   protection_rules            = local.environments["asset-essentials-dev-us-east-1"].protection_rules
 }
 
+#########################################################################
+##################### Asset Essentials Prod Modules #####################
+#########################################################################
 module "waf_wrapper_asset_essentials_prod_us_east_1" {
   source = "./modules/waf-wrapper"
 
