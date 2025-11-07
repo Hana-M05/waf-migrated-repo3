@@ -25,6 +25,9 @@ provider "aws" {
   }
 }
 
+################################################################
+############### Confirm Prod Regional Providers ################
+################################################################
 provider "aws" {
   alias = "confirm_aus_prod_ap_southeast_2"
   region = "ap-southeast-2"
@@ -107,6 +110,9 @@ module "waf_wrapper_confirm_dev_eu_west_2" {
   protection_rules            = local.environments["confirm-dev-eu-west-2"].protection_rules
 }
 
+################################################################
+##################### Confirm Prod Modules #####################
+################################################################
 module "waf_wrapper_confirm_aus_prod_ap_southeast_2" {
   source = "./modules/waf-wrapper"
 
