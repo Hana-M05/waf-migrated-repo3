@@ -108,7 +108,7 @@ module "waf_wrapper_asset_essentials_prod_ca_central_1" {
   api_gateway_ids             = local.environments["asset-essentials-prod-ca-central-1"].api_gateway_ids
   cloudfront_distribution_ids = local.environments["asset-essentials-prod-ca-central-1"].cloudfront_distribution_ids
   disabled_rules              = local.environments["asset-essentials-prod-ca-central-1"].disabled_rules
-  environment                 = "asset-essentials-prod-ca-central-1"
+  environment                 = "asset-essentials-prod-ca-1"
   global                      = local.environments["asset-essentials-prod-ca-central-1"].global
   log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["asset-essentials-prod-ca-central-1"].protection_rules
