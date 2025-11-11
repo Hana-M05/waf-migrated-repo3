@@ -51,6 +51,7 @@ resource "aws_iam_role_policy" "s3_replication_policy" {
       "Effect": "Allow",
       "Action": [
         "s3:GetObjectVersion",
+        "s3:GetObjectVersionForReplication",
         "s3:GetObjectVersionAcl",
         "s3:GetObjectVersionTagging",
         "s3:ReplicateObject",
@@ -68,7 +69,10 @@ resource "aws_iam_role_policy" "s3_replication_policy" {
       "Action": [
         "s3:PutObject",
         "s3:PutObjectAcl",
-        "s3:PutObjectTagging"
+        "s3:PutObjectTagging",
+        "s3:ReplicateObject",
+        "s3:ReplicateDelete",
+        "s3:ReplicateTags"
       ],
       "Resource": [
         "${var.log_forward_destination}/*"

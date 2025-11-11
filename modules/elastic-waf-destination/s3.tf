@@ -44,7 +44,7 @@ resource "aws_s3_bucket_policy" "allow_replication" {
             "s3:PutObjectAcl",
             "s3:PutObjectTagging"
           ]
-          Resource = "${aws_s3_bucket.waf-bucket.arn}/AWSLogs/*"
+          Resource = "${aws_s3_bucket.waf-bucket.arn}/*"
         }
       ],
       [
