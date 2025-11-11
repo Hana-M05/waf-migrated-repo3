@@ -18,7 +18,7 @@ module "elastic_waf_destination" {
     module.waf_wrapper_confirm_uk_prod_eu_west_2.replication_role_arn,
     module.waf_wrapper_confirm_uk_prod_us_east_2.replication_role_arn,
     module.waf_wrapper_asset_essentials_dev_us_east_1.replication_role_arn,
-    module.waf_wrapper_evm_legacy_cloudfront.replication_role_arn,,
+    module.waf_wrapper_evm_legacy_cloudfront.replication_role_arn,
     module.waf_wrapper_asset_essentials_prod_us_east_1.replication_role_arn,
     module.waf_wrapper_asset_essentials_prod_eu_west_2.replication_role_arn,
     module.waf_wrapper_asset_essentials_prod_ca_central_1.replication_role_arn
