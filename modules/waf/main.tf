@@ -153,7 +153,192 @@ resource "aws_wafv2_web_acl" "waf_acl" {
     }
   }
 
-  # AWS Managed Rulesets (Priority 3+)
+  # Rate Limiting Rules (Priority 100+)
+  # Create a separate rule for each rate limiting configuration
+  dynamic "rule" {
+    for_each = var.protection_rules.rate_limiting.enabled && length(var.protection_rules.rate_limiting.rules) > 0 ? var.protection_rules.rate_limiting.rules : []
+    iterator = rate_rule
+    content {
+      name     = rate_rule.value.name
+      priority = local.rule_priorities.rate_limiting_base + rate_rule.key
+
+      action {
+        dynamic "block" {
+          for_each = rate_rule.value.action == "block" ? [1] : []
+          content {
+            custom_response {
+              response_code = 429
+            }
+          }
+        }
+
+        dynamic "count" {
+          for_each = rate_rule.value.action == "count" ? [1] : []
+          content {}
+        }
+      }
+
+      statement {
+        rate_based_statement {
+          limit                 = rate_rule.value.limit
+          aggregate_key_type    = rate_rule.value.aggregate_key_type
+          evaluation_window_sec = rate_rule.value.evaluation_window_sec
+
+          # Scope down statement with AND conditions (if provided)
+          dynamic "scope_down_statement" {
+            for_each = rate_rule.value.uri_path != null || rate_rule.value.method != null || rate_rule.value.header != null ? [1] : []
+            content {
+              and_statement {
+                # URI path match statement
+                dynamic "statement" {
+                  for_each = rate_rule.value.uri_path != null && rate_rule.value.uri_path.search_string != null ? [rate_rule.value.uri_path] : []
+                  content {
+                    byte_match_statement {
+                      search_string         = statement.value.search_string
+                      positional_constraint = statement.value.positional_constraint
+
+                      field_to_match {
+                        uri_path {}
+                      }
+
+                      text_transformation {
+                        priority = 0
+                        type     = "NONE"
+                      }
+                    }
+                  }
+                }
+
+                # HTTP method match statement
+                dynamic "statement" {
+                  for_each = rate_rule.value.method != null ? [rate_rule.value.method] : []
+                  content {
+                    byte_match_statement {
+                      search_string         = statement.value
+                      positional_constraint = "EXACTLY"
+
+                      field_to_match {
+                        method {}
+                      }
+
+                      text_transformation {
+                        priority = 0
+                        type     = "NONE"
+                      }
+                    }
+                  }
+                }
+
+                # Header match statement
+                dynamic "statement" {
+                  for_each = rate_rule.value.header != null && rate_rule.value.header.name != null ? [rate_rule.value.header] : []
+                  content {
+                    byte_match_statement {
+                      search_string         = statement.value.search_string
+                      positional_constraint = statement.value.positional_constraint
+
+                      field_to_match {
+                        single_header {
+                          name = statement.value.name
+                        }
+                      }
+
+                      text_transformation {
+                        priority = 0
+                        type     = "NONE"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "${rate_rule.value.name}-${var.environment}"
+        sampled_requests_enabled   = true
+      }
+    }
+  }
+
+  # CAPTCHA Rules (Priority 150+)
+  # Create a separate rule for each CAPTCHA configuration
+  dynamic "rule" {
+    for_each = var.protection_rules.captcha.enabled && length(var.protection_rules.captcha.rules) > 0 ? var.protection_rules.captcha.rules : []
+    iterator = captcha_rule
+    content {
+      name     = captcha_rule.value.name
+      priority = local.rule_priorities.captcha_base + captcha_rule.key
+
+      action {
+        captcha {
+          custom_request_handling {
+            insert_header {
+              name  = "x-captcha-challenge"
+              value = "true"
+            }
+          }
+        }
+      }
+
+      statement {
+        and_statement {
+          # URI path match statement
+          dynamic "statement" {
+            for_each = captcha_rule.value.uri_path != null && captcha_rule.value.uri_path.search_string != null ? [captcha_rule.value.uri_path] : []
+            content {
+              byte_match_statement {
+                search_string         = statement.value.search_string
+                positional_constraint = statement.value.positional_constraint
+
+                field_to_match {
+                  uri_path {}
+                }
+
+                text_transformation {
+                  priority = 0
+                  type     = "NONE"
+                }
+              }
+            }
+          }
+
+          # Header match statement
+          dynamic "statement" {
+            for_each = captcha_rule.value.header != null && captcha_rule.value.header.name != null ? [captcha_rule.value.header] : []
+            content {
+              byte_match_statement {
+                search_string         = statement.value.search_string
+                positional_constraint = statement.value.positional_constraint
+
+                field_to_match {
+                  single_header {
+                    name = statement.value.name
+                  }
+                }
+
+                text_transformation {
+                  priority = 0
+                  type     = "NONE"
+                }
+              }
+            }
+          }
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "${captcha_rule.value.name}-${var.environment}"
+        sampled_requests_enabled   = true
+      }
+    }
+  }
+
+  # AWS Managed Rulesets (Priority 200+)
   dynamic "rule" {
     for_each = local.enabled_aws_rulesets
     content {

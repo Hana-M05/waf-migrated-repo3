@@ -17,6 +17,8 @@ locals {
     sql_injection      = 5
     windows_protection = 6
     linux_protection   = 7
+    rate_limiting_base = 100
+    captcha_base       = 150
   }
 
   # Build enabled AWS managed rulesets - FIXED VERSION

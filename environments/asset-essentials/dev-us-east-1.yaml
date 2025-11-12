@@ -68,6 +68,26 @@ protection_rules:
       - "/StrongholdDM/api/login"
 
   #################################################################
+  # RATE LIMITING
+  # 
+  # Limit the number of requests from a single IP to prevent
+  # abuse or DDoS attacks. Customize rules as needed.
+  #################################################################
+  rate_limiting:
+    enabled: false
+    rules: []
+
+  #################################################################
+  # RATE LIMITING
+  # 
+  # Limit the number of requests from a single IP to prevent
+  # abuse or DDoS attacks. Customize rules as needed.
+  #################################################################
+  captcha:
+    enabled: false
+    rules: []
+
+  #################################################################
   # AWS MANAGED SECURITY RULES
   # 
   # These are pre-built security rules provided by AWS that
