@@ -46,10 +46,10 @@ variable "protection_rules" {
       enabled = bool
       rules = list(object({
         name                  = string
-        action                = optional(string, "count") # block or count
-        limit                 = optional(number, 1000)
-        aggregate_key_type    = optional(string, "IP") # IP, FORWARDED_IP, or AUTHENTICATED_USER
-        evaluation_window_sec = optional(number, 300)
+        action                = string 
+        limit                 = number
+        aggregate_key_type    = string # IP, FORWARDED_IP, or AUTHENTICATED_USER
+        evaluation_window_sec = number
         uri_path = optional(object({
           positional_constraint = string
           search_string         = string
