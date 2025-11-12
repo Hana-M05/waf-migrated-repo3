@@ -103,8 +103,15 @@ protection_rules:
 # IP or path blocking rules.
 #################################################################
 disabled_rules:
-  basic_protection: []
+  basic_protection: 
+    - "SizeRestrictions_BODY"
+    - "NoUserAgent_HEADER"
+    - "CrossSiteScripting_BODY"
+    - "SizeRestrictions_QUERYSTRING"
   malicious_requests: []
-  sql_injection: []
-  windows_protection: []
+  sql_injection: 
+    - "SQLi_BODY"
+    - "SQLi_QUERYARGUMENTS"
+  windows_protection: 
+    - "WindowsShellCommands_BODY"
   linux_protection: [] 
