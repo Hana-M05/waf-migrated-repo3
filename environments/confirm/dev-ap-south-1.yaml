@@ -87,8 +87,13 @@ protection_rules:
 # IP or path blocking rules.
 #################################################################
 disabled_rules:
-  basic_protection: []
+  basic_protection: 
+    - "NoUserAgent_HEADER" # Triggered during API requests, possibly due to our web server config
+    - "CrossSiteScripting_BODY" # Triggered during confirmconnector.asmx queries and centralEnquiries"
+    - "SizeRestrictions_BODY" # Triggered in genuine usage across a variety of endpoints
   malicious_requests: []
-  sql_injection: []
-  windows_protection: []
+  sql_injection: 
+    - "SQLi_QUERYARGUMENTS" # Triggered during GraphQL queries
+  windows_protection: 
+    - "WindowsShellCommands_BODY" # Triggered during GraphQL queries and API queries
   linux_protection: [] 
