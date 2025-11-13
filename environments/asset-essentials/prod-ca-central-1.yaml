@@ -123,8 +123,14 @@ protection_rules:
 # IP or path blocking rules.
 #################################################################
 disabled_rules:
-  basic_protection: []
+  basic_protection: 
+    - "SizeRestrictions_BODY" # Triggered in genuine usage across a variety of endpoints
+    - "NoUserAgent_HEADER" # Triggered during API requests, possibly due to our web server config
+    - "CrossSiteScripting_BODY" # Triggered during `/wotaskbulk` usage, because customers can specify CSS
   malicious_requests: []
-  sql_injection: []
-  windows_protection: []
+  sql_injection: 
+    - "SQLi_BODY" # Triggered when customers ty to upload files
+    - "SQLi_QUERYARGUMENTS" # Triggered when trying to filter work orders and users through the API
+  windows_protection: 
+    - "WindowsShellCommands_BODY" # Genuine cusotmer activity across a variety of tenants and endpoints
   linux_protection: [] 
