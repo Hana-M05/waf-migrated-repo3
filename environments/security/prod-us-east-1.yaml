@@ -67,6 +67,73 @@ protection_rules:
       - "/StrongholdDM/api/login"
 
   #################################################################
+  # RATE LIMITING
+  # 
+  # Limit the number of requests from a single IP to prevent
+  # abuse or DDoS attacks. Customize rules as needed.
+  #################################################################
+  rate_limiting:
+    enabled: true
+    rules: [
+      {
+        name: "citizenportal-rate-limit",
+        action: "block",
+        limit: 10, # Minimum 10 requests
+        aggregate_key_type: "IP",
+        evaluation_window_sec: 60,
+        uri_path: {
+          positional_constraint: "ENDS_WITH",
+          search_string: "/workrequest"
+        },
+        method: "POST",
+        header: {
+          name: "host",
+          positional_constraint: "STARTS_WITH",
+          search_string: "citizenportal"
+        }
+      },
+      {
+        name: 'test-junk',
+        action: "count",
+        limit: 20,
+        aggregate_key_type: "IP",
+        evaluation_window_sec: 60,
+        uri_path: {
+          positional_constraint: "STARTS_WITH",
+          search_string: "junk"
+        },
+        header: {
+          name: "host",
+          positional_constraint: "CONTAINS",
+          search_string: "citizenportal"
+        }
+      },
+    ]
+
+  #################################################################
+  # CAPTCHA PROTECTION
+  # 
+  # Challenge suspicious requests with a CAPTCHA to verify
+  # they are from humans. Customize rules as needed.
+  #################################################################
+  captcha: 
+    enabled: true
+    rules: [
+      {
+        name: "citizenportal-captcha",
+        uri_path: {
+          positional_constraint: "ENDS_WITH",
+          search_string: "/home"
+        },
+        header: {
+          name: "host",
+          positional_constraint: "STARTS_WITH",
+          search_string: "citizenportal"
+        }
+      }
+    ]
+
+  #################################################################
   # AWS MANAGED SECURITY RULES
   # 
   # These are pre-built security rules provided by AWS that

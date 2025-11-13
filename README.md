@@ -21,6 +21,8 @@ The WAF includes the following optional protection layers
 ### Custom Rules
 - IP Blocking Rule - Block specific IP addresses or CIDR ranges
 - URL/Path Blocking Rule - Block access to specific endpoints or paths
+- Rate Limiting Rule - Allows rate limiting to be set up - particularly useful on unauthenticated API endpoints
+- CAPTCHA Rule - Requires CAPTCHAs on certain pages - particularly useful on unauthenticated webapp pages
 
 ## 🚀 Getting Started
 ### For Developers

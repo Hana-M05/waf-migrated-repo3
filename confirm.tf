@@ -29,7 +29,7 @@ provider "aws" {
 ############### Confirm Prod Regional Providers ################
 ################################################################
 provider "aws" {
-  alias = "confirm_aus_prod_ap_southeast_2"
+  alias  = "confirm_aus_prod_ap_southeast_2"
   region = "ap-southeast-2"
   assume_role {
     role_arn = "arn:aws:iam::847014677591:role/WAF_Provisioner"
@@ -37,7 +37,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias = "confirm_uk_prod_eu_west_2"
+  alias  = "confirm_uk_prod_eu_west_2"
   region = "eu-west-2"
   assume_role {
     role_arn = "arn:aws:iam::425444504751:role/WAF_Provisioner"
@@ -45,7 +45,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias = "confirm_uk_prod_us_east_2"
+  alias  = "confirm_uk_prod_us_east_2"
   region = "us-east-2"
   assume_role {
     role_arn = "arn:aws:iam::425444504751:role/WAF_Provisioner"

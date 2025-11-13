@@ -1,5 +1,5 @@
 provider "aws" {
-  alias = "evm_legacy_us_east_1"
+  alias  = "evm_legacy_us_east_1"
   region = "us-east-1"
   assume_role {
     role_arn = "arn:aws:iam::290431122157:role/WAF_Provisioner"

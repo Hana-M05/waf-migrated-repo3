@@ -28,50 +28,88 @@ variable "protection_rules" {
   description = "Security protection rules configuration for the WAF"
   type = object({
     # Custom IP blocking rule
-    ip_blocking = optional(object({
-      enabled = optional(bool, false)
-      action  = optional(string, "block") # block, count, or allow
+    ip_blocking = object({
+      enabled = bool
+      action  = optional(string, "count") # block, count, or allow
       ips     = optional(list(string), [])
-    }), {})
+    }),
 
     # Custom path/endpoint blocking rule
-    path_blocking = optional(object({
-      enabled = optional(bool, false)
-      action  = optional(string, "block") # block, count, or allow
+    path_blocking = object({
+      enabled = bool
+      action  = optional(string, "count") # block, count, or allow
       paths   = optional(list(string), [])
-    }), {})
+    }),
+
+    # Custom rate limiting rules
+    rate_limiting = object({
+      enabled = bool
+      rules = list(object({
+        name                  = string
+        action                = string 
+        limit                 = number
+        aggregate_key_type    = string # IP, FORWARDED_IP, or AUTHENTICATED_USER
+        evaluation_window_sec = number
+        uri_path = optional(object({
+          positional_constraint = string
+          search_string         = string
+        }))
+        method = optional(string)
+        header = optional(object({
+          name                  = string
+          positional_constraint = string
+          search_string         = string
+        }))
+      }))
+    })
+
+    # Provides a CAPTCHA for public pages
+    captcha = object({
+      enabled = bool
+      rules = list(object({
+        name = string
+        uri_path = optional(object({
+          positional_constraint = string
+          search_string         = string
+        }))
+        header = optional(object({
+          name                  = string
+          positional_constraint = string
+          search_string         = string
+        }))
+      }))
+    })
 
     # Protects against common web attacks
-    basic_protection = optional(object({
-      enabled = optional(bool, true)
-      action  = optional(string, "block") # block, count, or allow
-    }), {})
+    basic_protection = object({
+      enabled = bool
+      action  = optional(string, "count") # block, count, or allow
+    })
 
     # Blocks known malicious requests
-    malicious_requests = optional(object({
-      enabled = optional(bool, true)
-      action  = optional(string, "block") # block, count, or allow
-    }), {})
+    malicious_requests = object({
+      enabled = bool
+      action  = optional(string, "count") # block, count, or allow
+    }),
 
     # Protects against SQL injection attacks
-    sql_injection = optional(object({
-      enabled = optional(bool, true)
-      action  = optional(string, "block") # block, count, or allow
-    }), {})
+    sql_injection = object({
+      enabled = bool
+      action  = optional(string, "count") # block, count, or allow
+    }),
 
     # Windows system specific protection
-    windows_protection = optional(object({
-      enabled = optional(bool, true)
-      action  = optional(string, "block") # block, count, or allow
-    }), {})
+    windows_protection = object({
+      enabled = bool
+      action  = optional(string, "count") # block, count, or allow
+    }),
 
     # Linux system specific protection
-    linux_protection = optional(object({
-      enabled = optional(bool, true)
-      action  = optional(string, "block") # block, count, or allow
-    }), {})
+    linux_protection = object({
+      enabled = bool
+      action  = optional(string, "count") # block, count, or allow
+    }),
   })
-  default = {}
 }
 
 variable "disabled_rules" {

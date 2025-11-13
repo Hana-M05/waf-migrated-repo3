@@ -2,7 +2,7 @@
 ##################### Asset Essentials Dev Providers #####################
 ##########################################################################
 provider "aws" {
-  alias = "asset_essentials_dev_us_east_1"
+  alias  = "asset_essentials_dev_us_east_1"
   region = "us-east-1"
   assume_role {
     role_arn = "arn:aws:iam::750920731536:role/WAF_Provisioner"
@@ -13,7 +13,7 @@ provider "aws" {
 ##################### Asset Essentials Prod Providers #####################
 ###########################################################################
 provider "aws" {
-  alias = "asset_essentials_prod_us_east_1"
+  alias  = "asset_essentials_prod_us_east_1"
   region = "us-east-1"
   assume_role {
     role_arn = "arn:aws:iam::748037917842:role/WAF_Provisioner"
@@ -21,7 +21,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias = "asset_essentials_prod_eu_west_2"
+  alias  = "asset_essentials_prod_eu_west_2"
   region = "eu-west-2"
   assume_role {
     role_arn = "arn:aws:iam::748037917842:role/WAF_Provisioner"
@@ -29,7 +29,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias = "asset_essentials_prod_ca_central_1"
+  alias  = "asset_essentials_prod_ca_central_1"
   region = "ca-central-1"
   assume_role {
     role_arn = "arn:aws:iam::748037917842:role/WAF_Provisioner"
