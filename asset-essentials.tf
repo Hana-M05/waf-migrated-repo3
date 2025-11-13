@@ -49,7 +49,6 @@ module "waf_wrapper_asset_essentials_dev_us_east_1" {
   # Key = environments/<subpath>/<filename>
   alb_names                   = local.environments["asset-essentials-dev-us-east-1"].alb_names
   api_gateway_ids             = local.environments["asset-essentials-dev-us-east-1"].api_gateway_ids
-  cloudfront_distribution_ids = local.environments["asset-essentials-dev-us-east-1"].cloudfront_distribution_ids
   disabled_rules              = local.environments["asset-essentials-dev-us-east-1"].disabled_rules
   environment                 = "asset-essentials-dev-us-east-1"
   global                      = local.environments["asset-essentials-dev-us-east-1"].global
@@ -70,7 +69,6 @@ module "waf_wrapper_asset_essentials_prod_us_east_1" {
   # Key = environments/<subpath>/<filename>
   alb_names                   = local.environments["asset-essentials-prod-us-east-1"].alb_names
   api_gateway_ids             = local.environments["asset-essentials-prod-us-east-1"].api_gateway_ids
-  cloudfront_distribution_ids = local.environments["asset-essentials-prod-us-east-1"].cloudfront_distribution_ids
   disabled_rules              = local.environments["asset-essentials-prod-us-east-1"].disabled_rules
   environment                 = "asset-essentials-prod-us-east-1"
   global                      = local.environments["asset-essentials-prod-us-east-1"].global
@@ -88,7 +86,6 @@ module "waf_wrapper_asset_essentials_prod_eu_west_2" {
   # Key = environments/<subpath>/<filename>
   alb_names                   = local.environments["asset-essentials-prod-eu-west-2"].alb_names
   api_gateway_ids             = local.environments["asset-essentials-prod-eu-west-2"].api_gateway_ids
-  cloudfront_distribution_ids = local.environments["asset-essentials-prod-eu-west-2"].cloudfront_distribution_ids
   disabled_rules              = local.environments["asset-essentials-prod-eu-west-2"].disabled_rules
   environment                 = "asset-essentials-prod-eu-west-2"
   global                      = local.environments["asset-essentials-prod-eu-west-2"].global
@@ -106,7 +103,6 @@ module "waf_wrapper_asset_essentials_prod_ca_central_1" {
   # Key = environments/<subpath>/<filename>
   alb_names                   = local.environments["asset-essentials-prod-ca-central-1"].alb_names
   api_gateway_ids             = local.environments["asset-essentials-prod-ca-central-1"].api_gateway_ids
-  cloudfront_distribution_ids = local.environments["asset-essentials-prod-ca-central-1"].cloudfront_distribution_ids
   disabled_rules              = local.environments["asset-essentials-prod-ca-central-1"].disabled_rules
   environment                 = "asset-essentials-prod-ca-1"
   global                      = local.environments["asset-essentials-prod-ca-central-1"].global

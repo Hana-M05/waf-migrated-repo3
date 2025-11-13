@@ -11,7 +11,6 @@ module "waf" {
 
   alb_names                   = var.alb_names
   api_gateway_ids             = var.api_gateway_ids
-  cloudfront_distribution_ids = var.cloudfront_distribution_ids
   disabled_rules              = var.disabled_rules
   environment                 = var.environment
   global                      = var.global

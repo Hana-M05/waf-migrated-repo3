@@ -19,7 +19,6 @@ module "waf_wrapper_devops_internal_tools_prod_helpsite" {
   # Key = environments/<subpath>/<filename>
   alb_names                   = local.environments["devops-internal-tools-prod-helpsite"].alb_names
   api_gateway_ids             = local.environments["devops-internal-tools-prod-helpsite"].api_gateway_ids
-  cloudfront_distribution_ids = local.environments["devops-internal-tools-prod-helpsite"].cloudfront_distribution_ids
   disabled_rules              = local.environments["devops-internal-tools-prod-helpsite"].disabled_rules
   environment                 = "prod-helpsite"
   global                      = local.environments["devops-internal-tools-prod-helpsite"].global
