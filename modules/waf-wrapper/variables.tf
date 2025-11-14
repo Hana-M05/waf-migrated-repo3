@@ -19,6 +19,16 @@ variable "environment" {
   type        = string
 }
 
+variable "firehose_destination" {
+  description = "ARN of the Firehose delivery stream for WAF logs"
+  type        = string
+}
+
+variable "firehose_role_arn" {
+  description = "ARN of the IAM role used by Firehose"
+  type        = string
+}
+
 variable "global" {
   description = "Boolean indicating if the WAF is for global (CloudFront) or regional resources"
   type        = bool
