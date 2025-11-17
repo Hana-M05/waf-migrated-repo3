@@ -19,7 +19,6 @@
 alb_names: ["Performance-Testing-LB","DevConnect","Engineering-ConfSol-Web-LB","Confirm-SolutionsELB","Non-engineeringELB","StreetWorks-POC","PerfTest-ConfirmElb"]
 # alb_names: []
 api_gateway_ids: []
-cloudfront_distribution_ids: [] # Always empty for regional config
 global: false
 region: "eu-west-2"
 #################################################################
