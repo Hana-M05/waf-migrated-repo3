@@ -8,11 +8,6 @@ variable "api_gateway_ids" {
   type        = list(string)
 }
 
-variable "cloudfront_distribution_ids" {
-  description = "The IDs of the CloudFront distributions to associate the WAF with"
-  type        = list(string)
-}
-
 variable "environment" {
   description = "Environment name (e.g., production, staging, development)"
   type        = string

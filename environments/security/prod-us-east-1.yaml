@@ -18,7 +18,6 @@
 #################################################################
 alb_names: []
 api_gateway_ids: []
-cloudfront_distribution_ids: [] # Always empty for regional config
 global: false
 region: "us-east-1"
 #################################################################
