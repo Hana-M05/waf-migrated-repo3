@@ -111,7 +111,7 @@ disabled_rules:
     - "CrossSiteScripting_BODY" # Triggered during confirmconnector.asmx queries and centralEnquiries"
     - "SizeRestrictions_BODY" # Triggered in genuine usage across a variety of endpoints
     - "SizeRestrictions_QUERYSTRING" # Triggered in genuine usage of GraphQL endpoints
-    - "GenericLFI_BODY" # Truggered by the document upload endpoint
+    - "GenericLFI_BODY" # Triggered by the document upload endpoint
   malicious_requests: []
   sql_injection: 
     - "SQLi_QUERYARGUMENTS" # Triggered during GraphQL queries
