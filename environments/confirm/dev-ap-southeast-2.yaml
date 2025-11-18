@@ -19,7 +19,6 @@
 alb_names: ["NonEngineeringELB"]
 # alb_names: []
 api_gateway_ids: []
-cloudfront_distribution_ids: [] # Always empty for regional config
 global: false
 region: "ap-southeast-2"
 #################################################################
@@ -111,9 +110,12 @@ disabled_rules:
     - "NoUserAgent_HEADER" # Triggered during API requests, possibly due to our web server config
     - "CrossSiteScripting_BODY" # Triggered during confirmconnector.asmx queries and centralEnquiries"
     - "SizeRestrictions_BODY" # Triggered in genuine usage across a variety of endpoints
+    - "SizeRestrictions_QUERYSTRING" # Triggered in genuine usage of GraphQL endpoints
+    - "GenericLFI_BODY" # Triggered by the document upload endpoint
   malicious_requests: []
   sql_injection: 
     - "SQLi_QUERYARGUMENTS" # Triggered during GraphQL queries
+    - "SQLi_BODY" # Triggered during document uploads
   windows_protection: 
     - "WindowsShellCommands_BODY" # Triggered during GraphQL queries and API queries
   linux_protection: [] 

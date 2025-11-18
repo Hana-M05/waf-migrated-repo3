@@ -32,7 +32,6 @@ module "waf_wrapper_security_us_east_1" {
 
   alb_names                   = local.environments["security-prod-us-east-1"].alb_names
   api_gateway_ids             = local.environments["security-prod-us-east-1"].api_gateway_ids
-  cloudfront_distribution_ids = local.environments["security-prod-us-east-1"].cloudfront_distribution_ids
   disabled_rules              = local.environments["security-prod-us-east-1"].disabled_rules
   environment                 = "security-prod-us-east-1"
   firehose_destination        = local.alloy_s3_buckets[local.environments["security-prod-us-east-1"].region]
@@ -52,7 +51,6 @@ module "waf_wrapper_security_global" {
 
   alb_names                   = local.environments["security-prod-global"].alb_names
   api_gateway_ids             = local.environments["security-prod-global"].api_gateway_ids
-  cloudfront_distribution_ids = local.environments["security-prod-global"].cloudfront_distribution_ids
   disabled_rules              = local.environments["security-prod-global"].disabled_rules
   environment                 = "security-prod-global"
   firehose_destination        = local.alloy_s3_buckets[local.environments["security-prod-global"].region]

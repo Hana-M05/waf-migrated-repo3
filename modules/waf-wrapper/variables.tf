@@ -9,11 +9,6 @@ variable "api_gateway_ids" {
   type        = list(string)
 }
 
-variable "cloudfront_distribution_ids" {
-  description = "List of CloudFront distribution IDs to associate with the WAF Web ACL"
-  type        = list(string)
-}
-
 variable "environment" {
   description = "Name of the environment (e.g., prod-us-east-1, prod-global)"
   type        = string

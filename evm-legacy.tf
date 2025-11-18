@@ -35,7 +35,6 @@ module "waf_wrapper_evm_legacy_cloudfront" {
   # Key = environments/<subpath>/<filename>
   alb_names                   = local.environments["evm-legacy-event-manager-surveys"].alb_names
   api_gateway_ids             = local.environments["evm-legacy-event-manager-surveys"].api_gateway_ids
-  cloudfront_distribution_ids = local.environments["evm-legacy-event-manager-surveys"].cloudfront_distribution_ids
   disabled_rules              = local.environments["evm-legacy-event-manager-surveys"].disabled_rules
   environment                 = "evm-legacy-event-manager-surveys"
   firehose_destination        = local.alloy_s3_buckets[local.environments["evm-legacy-event-manager-surveys"].region]
