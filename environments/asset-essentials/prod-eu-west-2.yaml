@@ -126,6 +126,8 @@ disabled_rules:
     - "SizeRestrictions_BODY" # Triggered in genuine usage across a variety of endpoints
     - "NoUserAgent_HEADER" # Triggered during API requests, possibly due to our web server config
     - "CrossSiteScripting_BODY" # Triggered during `/wotaskbulk` usage, because customers can specify CSS
+    - "GenericRFI_BODY" # Triggered when making genuine work order requests
+    - "GenericLFI_BODY" # Triggered during file upload through the API
   malicious_requests: []
   sql_injection: 
     - "SQLi_BODY" # Triggered when customers ty to upload files
