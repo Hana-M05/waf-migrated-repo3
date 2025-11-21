@@ -18,6 +18,25 @@ resource "aws_wafv2_ip_set" "blacklist" {
   }
 }
 
+resource "aws_wafv2_ip_set" "tenable" {
+  count = var.protection_rules.block_unauthorized_scanners.enabled ? 1 : 0
+
+  name               = "tenable-blocklist-${var.environment}"
+  description        = "Tenable IP addresses to block"
+  scope              = var.global ? "CLOUDFRONT" : "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = local.tenable_ip_ranges
+
+  tags = {
+    Name        = "tenable-blocklist-${var.environment}"
+    Environment = var.environment
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_wafv2_web_acl" "waf_acl" {
   name        = "${var.environment}-waf-acl"
   scope       = var.global ? "CLOUDFRONT" : "REGIONAL"
@@ -148,6 +167,40 @@ resource "aws_wafv2_web_acl" "waf_acl" {
       visibility_config {
         cloudwatch_metrics_enabled = true
         metric_name                = "PathBlockingRule-${var.environment}"
+        sampled_requests_enabled   = true
+      }
+    }
+  }
+
+  dynamic "rule" {
+    for_each = var.protection_rules.block_unauthorized_scanners.enabled ? [1] : []
+    content {
+      name     = "TenableBlockRule"
+      priority = local.rule_priorities.block_unauthorized_scanners
+      action {
+         dynamic "block" {
+          for_each = var.protection_rules.block_unauthorized_scanners.action == "block" ? [1] : []
+          content {}
+        }
+
+        dynamic "allow" {
+          for_each = var.protection_rules.path_blocking.action == "allow" ? [1] : []
+          content {}
+        }
+
+        dynamic "count" {
+          for_each = var.protection_rules.path_blocking.action == "count" ? [1] : []
+          content {}
+        }
+      }
+      statement {
+        ip_set_reference_statement {
+          arn = aws_wafv2_ip_set.tenable[0].arn
+        }
+      }
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "TenableBlockRule-${var.environment}"
         sampled_requests_enabled   = true
       }
     }

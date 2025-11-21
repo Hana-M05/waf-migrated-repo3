@@ -106,6 +106,9 @@ protection_rules:
   linux_protection:
     enabled: false
 
+  block_unauthorized_scanners:
+    enabled: false
+
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
 # 
