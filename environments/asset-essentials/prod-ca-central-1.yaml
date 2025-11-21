@@ -128,10 +128,12 @@ disabled_rules:
     - "CrossSiteScripting_BODY" # Triggered during `/wotaskbulk` usage, because customers can specify CSS
     - "GenericRFI_BODY" # Triggered when making genuine work order requests
     - "GenericLFI_BODY" # Triggered during file upload through the API
+    - "SizeRestrictions_QUERYSTRING" # Triggered in genuine API queries
   malicious_requests: []
   sql_injection: 
     - "SQLi_BODY" # Triggered when customers ty to upload files
     - "SQLi_QUERYARGUMENTS" # Triggered when trying to filter work orders and users through the API
+    - "SQLi_COOKIE" # Unclear why this is being triggered, but observed in logs across a variety of customers/IPs
   windows_protection: 
     - "WindowsShellCommands_BODY" # Genuine cusotmer activity across a variety of tenants and endpoints
   linux_protection: [] 
