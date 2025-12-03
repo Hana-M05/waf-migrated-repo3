@@ -95,6 +95,10 @@ protection_rules:
     enabled: false
     action: "count"
 
+  block_unauthorized_scanners:
+    enabled: true
+    action: "count"
+
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
 # 
