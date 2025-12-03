@@ -158,6 +158,10 @@ protection_rules:
     enabled: false
     action: "block"
 
+  block_unauthorized_scanners:
+    enabled: true
+    action: "block"
+
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
 # 
