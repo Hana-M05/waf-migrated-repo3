@@ -178,18 +178,18 @@ resource "aws_wafv2_web_acl" "waf_acl" {
       name     = "TenableBlockRule"
       priority = local.rule_priorities.block_unauthorized_scanners
       action {
-         dynamic "block" {
+        dynamic "block" {
           for_each = var.protection_rules.block_unauthorized_scanners.action == "block" ? [1] : []
           content {}
         }
 
         dynamic "allow" {
-          for_each = var.protection_rules.path_blocking.action == "allow" ? [1] : []
+          for_each = var.protection_rules.block_unauthorized_scanners.action == "allow" ? [1] : []
           content {}
         }
 
         dynamic "count" {
-          for_each = var.protection_rules.path_blocking.action == "count" ? [1] : []
+          for_each = var.protection_rules.block_unauthorized_scanners.action == "count" ? [1] : []
           content {}
         }
       }
