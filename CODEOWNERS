@@ -4,8 +4,7 @@
 @@@Confirm @"Ivan Oakley" @"John Castle"
 
 * @@DefaultReviewers
-environments/ @@InformationSecurity
-environments/asset-essentials/ @@AssetEssentials
-environments/confirm/ @@Confirm
+environments/asset-essentials/ @@AssetEssentials @@InformationSecurity
+environments/confirm/ @@Confirm @@InformationSecurity
 
 AllGroupsCheck(1)
