@@ -1,11 +1,4 @@
-* @@"DefaultReviewers"
-environments/ @@"InformationSecurity"
-environments/asset-essentials/ @@"AssetEssentials"
-environments/confirm/ @@"Confirm"
-
-@@@DefaultReviewers @"Sam McManus" @"Ahmed Galal" @"Mohamed Abdelrady" @"Mohamed Abou-Haggar" 
-@@@InformationSecurity @"Sam McManus" @"Lindsay Zastrow" @Dan "@Anthony Smaldone" "@Kevin Cai"
-@@AssetEssentials @"Tyler Bassett" @"Jonathan McVey" @"Brandon Miller"
-@@Confirm @"Ivan Oakley" @"John Castle"
-
-AllGroupsCheck(1)
+* @SamMcManus @AhmedGalal @MohamedAbdelrady @MohamedAbouHaggar
+environments/ @SamMcManus @LindsayZastrow @Dan @AnthonySmaldone @KevinCai
+environments/asset-essentials/ @TylerBassett @JonathanMcVey @BrandonMiller
+environments/confirm/ @IvanOakley @JohnCastle
