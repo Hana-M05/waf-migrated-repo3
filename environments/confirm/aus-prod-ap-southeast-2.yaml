@@ -115,10 +115,12 @@ disabled_rules:
     - "SizeRestrictions_BODY" # Triggered in genuine usage across a variety of endpoints
     - "SizeRestrictions_QUERYSTRING" # Triggered in genuine usage of GraphQL endpoints
     - "GenericLFI_BODY" # Triggered by the document upload endpoint
+    - "EC2MetaDataSSRF_BODY" # Triggered during a variety of mobile application activities
   malicious_requests: []
   sql_injection: 
     - "SQLi_QUERYARGUMENTS" # Triggered during GraphQL queries
     - "SQLi_BODY" # Triggered during document uploads
   windows_protection: 
     - "WindowsShellCommands_BODY" # Triggered during GraphQL queries and API queries
+    - "WindowsShellCommands_QUERYARGUMENTS" # Triggered during some API queries
   linux_protection: [] 
