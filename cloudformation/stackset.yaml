@@ -180,6 +180,7 @@ Resources:
               - iam:ListInstanceProfilesForRole
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/*-waf-logging-role"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/waf-log-firehose-delivery"
 
           # S3 permissions for Terraform state
           - Effect: Allow
