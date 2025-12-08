@@ -156,6 +156,7 @@ Resources:
               - iam:ListAttachedRolePolicies
               - iam:TagRole
               - iam:UntagRole
+              - wafv2:PutLoggingConfiguration
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/wafv2.amazonaws.com/*"
             Condition:
