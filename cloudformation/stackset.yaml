@@ -214,7 +214,7 @@ Resources:
               - firehose:TagDeliveryStream
               - firehose:UntagDeliveryStream
             Resource:
-              - !Sub "arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/aws-waf-logs-firehose*"
+              - !Sub "arn:aws:firehose:*:${AWS::AccountId}:deliverystream/aws-waf-logs-firehose*"
 
           ###########################################
           #### S3 Replication Permissions ##########
