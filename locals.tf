@@ -13,7 +13,7 @@ locals {
     "us-east-1"       = "arn:aws:s3:::aw-ue1-ob1-alloy-audit-logs"
     "us-east-2"       = "arn:aws:s3:::aw-ue1-ob1-alloy-audit-logs"
     "eu-west-2"       = "arn:aws:s3:::aw-ew2-ob1-alloy-audit-logs"
-    "ap-south-1"      = "arn:aws:s3:::aw-ue1-ob1-alloy-audit-logs"
+    "ap-south-1"      = "arn:aws:s3:::aw-as2-ob1-alloy-audit-logs"
     "ap-southeast-2"  = "arn:aws:s3:::aw-as2-ob1-alloy-audit-logs"
     "ca-central-1"    = "arn:aws:s3:::aw-ue1-ob1-alloy-audit-logs"
   }
