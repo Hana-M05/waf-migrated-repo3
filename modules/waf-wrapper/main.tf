@@ -13,7 +13,7 @@ module "waf" {
   source     = "../waf"
   depends_on = [module.firehose]
 
-  alb_names                   = var.alb_names
+  alb_arns                   = var.alb_arns
   api_gateway_ids             = var.api_gateway_ids
   disabled_rules              = var.disabled_rules
   environment                 = var.environment

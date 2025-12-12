@@ -16,7 +16,11 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
-alb_names: ["liveEnvironment2-Confirm-Elb", "OnDemand-ConfirmElb", "liveEnvironment1-Confirm-Elb"]
+alb_arns: [
+  arn:aws:elasticloadbalancing:ap-southeast-2:847014677591:loadbalancer/app/liveEnvironment2-Confirm-Elb/01340dc97ea053ce,
+  arn:aws:elasticloadbalancing:ap-southeast-2:847014677591:loadbalancer/app/OnDemand-ConfirmElb/115bc2a3c5aded58,
+  arn:aws:elasticloadbalancing:ap-southeast-2:847014677591:loadbalancer/app/liveEnvironment1-Confirm-Elb/9a33d13b30c5b447
+] 
 api_gateway_ids: []
 global: false
 region: "ap-southeast-2"

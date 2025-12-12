@@ -100,7 +100,7 @@ module "waf_wrapper_confirm_dev_ap_south_1" {
   }
 
   # Key = environments/<subpath>/<filename>
-  alb_names                   = local.environments["confirm-dev-ap-south-1"].alb_names
+  alb_arns                   = local.environments["confirm-dev-ap-south-1"].alb_arns
   api_gateway_ids             = local.environments["confirm-dev-ap-south-1"].api_gateway_ids
   disabled_rules              = local.environments["confirm-dev-ap-south-1"].disabled_rules
   environment                 = "confirm-dev-ap-south-1"
@@ -120,7 +120,7 @@ module "waf_wrapper_confirm_dev_ap_southeast_2" {
   }
 
   # Key = environments/<subpath>/<filename>
-  alb_names                   = local.environments["confirm-dev-ap-southeast-2"].alb_names
+  alb_arns                   = local.environments["confirm-dev-ap-southeast-2"].alb_arns
   api_gateway_ids             = local.environments["confirm-dev-ap-southeast-2"].api_gateway_ids
   disabled_rules              = local.environments["confirm-dev-ap-southeast-2"].disabled_rules
   environment                 = "confirm-dev-ap-southeast-2"
@@ -140,7 +140,7 @@ module "waf_wrapper_confirm_dev_eu_west_2" {
   }
 
   # Key = environments/<subpath>/<filename>
-  alb_names                   = local.environments["confirm-dev-eu-west-2"].alb_names
+  alb_arns                   = local.environments["confirm-dev-eu-west-2"].alb_arns
   api_gateway_ids             = local.environments["confirm-dev-eu-west-2"].api_gateway_ids
   disabled_rules              = local.environments["confirm-dev-eu-west-2"].disabled_rules
   environment                 = "confirm-dev-eu-west-2"
@@ -163,7 +163,7 @@ module "waf_wrapper_confirm_aus_prod_ap_southeast_2" {
   }
 
   # Key = environments/<subpath>/<filename>
-  alb_names                   = local.environments["confirm-aus-prod-ap-southeast-2"].alb_names
+  alb_arns                   = local.environments["confirm-aus-prod-ap-southeast-2"].alb_arns
   api_gateway_ids             = local.environments["confirm-aus-prod-ap-southeast-2"].api_gateway_ids
   disabled_rules              = local.environments["confirm-aus-prod-ap-southeast-2"].disabled_rules
   environment                 = "confirm-aus-prod-ap-southeast-2"
@@ -183,7 +183,7 @@ module "waf_wrapper_confirm_uk_prod_eu_west_2" {
   }
 
   # Key = environments/<subpath>/<filename>
-  alb_names                   = local.environments["confirm-uk-prod-eu-west-2"].alb_names
+  alb_arns                   = local.environments["confirm-uk-prod-eu-west-2"].alb_arns
   api_gateway_ids             = local.environments["confirm-uk-prod-eu-west-2"].api_gateway_ids
   disabled_rules              = local.environments["confirm-uk-prod-eu-west-2"].disabled_rules
   environment                 = "confirm-uk-prod-eu-west-2"
@@ -203,7 +203,7 @@ module "waf_wrapper_confirm_uk_prod_us_east_2" {
   }
 
   # Key = environments/<subpath>/<filename>
-  alb_names                   = local.environments["confirm-uk-prod-us-east-2"].alb_names
+  alb_arns                    = local.environments["confirm-uk-prod-us-east-2"].alb_arns
   api_gateway_ids             = local.environments["confirm-uk-prod-us-east-2"].api_gateway_ids
   disabled_rules              = local.environments["confirm-uk-prod-us-east-2"].disabled_rules
   environment                 = "confirm-uk-prod-us-east-2"

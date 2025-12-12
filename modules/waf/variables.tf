@@ -1,4 +1,4 @@
-variable "alb_names" {
+variable "alb_arns" {
   description = "The name of the Application Load Balancer to associate the WAF with"
   type        = list(string)
 }

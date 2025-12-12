@@ -1,14 +1,17 @@
-# Data block to look up ALBs by name
-data "aws_lb" "target_albs" {
-  for_each = toset(var.alb_names)
-  name     = each.value
+locals {
+  # Creates a mapping of ALB names to ARNs for easy lookup
+  alb_arn_map = {
+    for arn in var.alb_arns :
+    # Extract the ALB name from the ARN
+    split("/", arn)[length(split("/", arn)) - 2] => arn
+  }
 }
 
 # Associate WAF with ALBs
 resource "aws_wafv2_web_acl_association" "alb_association" {
-  for_each = data.aws_lb.target_albs
+  for_each = local.alb_arn_map
 
-  resource_arn = each.value.arn
+  resource_arn = each.value
   web_acl_arn  = aws_wafv2_web_acl.waf_acl.arn
 }
 

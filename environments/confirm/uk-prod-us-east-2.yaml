@@ -16,7 +16,7 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
-alb_names: ["PIEam-ConfirmElb"]
+alb_arns: ["arn:aws:elasticloadbalancing:us-east-2:425444504751:loadbalancer/app/PIEam-ConfirmElb/c5d6363774b39044"]
 api_gateway_ids: []
 global: false
 region: "us-east-2"

@@ -1,4 +1,4 @@
-variable "alb_names" {
+variable "alb_arns" {
   description = "List of ALB names to associate with the WAF Web ACL"
   type        = list(string)
   default     = []

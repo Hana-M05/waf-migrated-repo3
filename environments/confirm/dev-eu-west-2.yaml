@@ -16,8 +16,15 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
-alb_names: ["Performance-Testing-LB","DevConnect","Engineering-ConfSol-Web-LB","Confirm-SolutionsELB","Non-engineeringELB","StreetWorks-POC","PerfTest-ConfirmElb"]
-# alb_names: []
+alb_arns: [
+  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Performance-Testing-LB/5e7a87b995bc55b7",
+  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/DevConnect/74862762cc081f86",
+  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Engineering-ConfSol-Web-LB/f1a48d9be93a725c",
+  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Confirm-SolutionsELB/90eb66f22d3aff30",
+  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Non-engineeringELB/6e1027cc1a0d6286",
+  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/StreetWorks-POC/d019d7eb329ca284",
+  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/PerfTest-ConfirmElb/0af502a255e4ee55"
+]
 api_gateway_ids: []
 global: false
 region: "eu-west-2"

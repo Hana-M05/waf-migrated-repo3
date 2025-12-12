@@ -30,7 +30,7 @@ module "waf_wrapper_security_us_east_1" {
     aws = aws.security
   }
 
-  alb_names                   = local.environments["security-prod-us-east-1"].alb_names
+  alb_arns                    = local.environments["security-prod-us-east-1"].alb_arns
   api_gateway_ids             = local.environments["security-prod-us-east-1"].api_gateway_ids
   disabled_rules              = local.environments["security-prod-us-east-1"].disabled_rules
   environment                 = "security-prod-us-east-1"
@@ -49,7 +49,7 @@ module "waf_wrapper_security_global" {
     aws = aws.security
   }
 
-  alb_names                   = local.environments["security-prod-global"].alb_names
+  alb_arns                   = local.environments["security-prod-global"].alb_arns
   api_gateway_ids             = local.environments["security-prod-global"].api_gateway_ids
   disabled_rules              = local.environments["security-prod-global"].disabled_rules
   environment                 = "security-prod-global"
