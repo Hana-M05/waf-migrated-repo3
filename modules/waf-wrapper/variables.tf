@@ -1,4 +1,4 @@
-variable "alb_names" {
+variable "alb_arns" {
   description = "List of ALB names to associate with the WAF Web ACL"
   type        = list(string)
   default     = []
@@ -11,6 +11,16 @@ variable "api_gateway_ids" {
 
 variable "environment" {
   description = "Name of the environment (e.g., prod-us-east-1, prod-global)"
+  type        = string
+}
+
+variable "firehose_destination" {
+  description = "ARN of the Firehose delivery stream for WAF logs"
+  type        = string
+}
+
+variable "firehose_role_arn" {
+  description = "ARN of the IAM role used by Firehose"
   type        = string
 }
 

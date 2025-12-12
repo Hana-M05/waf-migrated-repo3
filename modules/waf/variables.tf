@@ -1,4 +1,4 @@
-variable "alb_names" {
+variable "alb_arns" {
   description = "The name of the Application Load Balancer to associate the WAF with"
   type        = list(string)
 }
@@ -126,6 +126,6 @@ variable "disabled_rules" {
 }
 
 variable "waf_log_destination_arn" {
-  description = "The ARN of the S3 bucket to store WAF logs"
+  description = "The ARN of the firehose delivery stream to store WAF logs"
   type        = string
 }

@@ -35,9 +35,29 @@ Resources:
 
           - Effect: Allow
             Action:
+              - logs:DescribeLogGroups
+            Resource: '*'
+
+          - Effect: Allow
+            Action:
               - logs:CreateLogDelivery
               - logs:DeleteLogDelivery
-            Resource: '*'
+              - logs:CreateLogGroup
+              - logs:DeleteLogGroup
+              - logs:CreateLogStream
+              - logs:DeleteLogStream
+              - logs:DescribeLogStreams
+              - logs:PutRetentionPolicy
+              - logs:DeleteRetentionPolicy
+              - logs:ListTagsLogGroup
+              - logs:TagLogGroup
+              - logs:UntagLogGroup
+              - logs:ListTagsForResource
+              - logs:TagResource
+              - logs:UntagResource
+            Resource:
+              - !Sub 'arn:aws:logs:*:${AWS::AccountId}:log-group:/aws/kinesisfirehose/aws-waf-logs-*'
+              - !Sub 'arn:aws:logs:*:${AWS::AccountId}:log-group:/aws/kinesisfirehose/aws-waf-logs-*:*'
 
           # Load Balancer permissions for WAF association
           - Effect: Allow
@@ -136,6 +156,7 @@ Resources:
               - iam:ListAttachedRolePolicies
               - iam:TagRole
               - iam:UntagRole
+              - wafv2:PutLoggingConfiguration
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/wafv2.amazonaws.com/*"
             Condition:
@@ -159,6 +180,7 @@ Resources:
               - iam:ListInstanceProfilesForRole
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/*-waf-logging-role"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/waf-log-firehose-delivery"
 
           # S3 permissions for Terraform state
           - Effect: Allow
@@ -181,6 +203,18 @@ Resources:
             Action:
               - sts:GetCallerIdentity
             Resource: '*'
+
+          - Effect: Allow
+            Action:
+              - firehose:CreateDeliveryStream
+              - firehose:DeleteDeliveryStream
+              - firehose:DescribeDeliveryStream
+              - firehose:ListDeliveryStreams
+              - firehose:ListTagsForDeliveryStream
+              - firehose:TagDeliveryStream
+              - firehose:UntagDeliveryStream
+            Resource:
+              - !Sub "arn:aws:firehose:*:${AWS::AccountId}:deliverystream/aws-waf-logs-firehose*"
 
           ###########################################
           #### S3 Replication Permissions ##########
@@ -246,6 +280,26 @@ Resources:
               - sqs:UntagQueue
               - sqs:ListQueueTags
             Resource: "arn:aws:sqs:*:*:waf-logs-queue"
+
+          - Effect: Allow
+            Action:
+              - iam:CreateServiceLinkedRole
+              - iam:GetRole
+              - iam:PassRole
+              - iam:CreateRole
+              - iam:DeleteRole
+              - iam:AttachRolePolicy
+              - iam:DetachRolePolicy
+              - iam:PutRolePolicy
+              - iam:DeleteRolePolicy
+              - iam:GetRolePolicy
+              - iam:ListInstanceProfilesForRole
+              - iam:ListRolePolicies
+              - iam:ListAttachedRolePolicies
+              - iam:TagRole
+              - iam:UntagRole
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/waf-log-firehose-delivery"
 
           - Effect: Allow
             Action:
