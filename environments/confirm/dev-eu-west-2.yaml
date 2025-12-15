@@ -124,6 +124,7 @@ disabled_rules:
     - "SizeRestrictions_QUERYSTRING" # Triggered in genuine usage of GraphQL endpoints
     - "EC2MetaDataSSRF_BODY" # Triggered by the mobile app
     - "GenericLFI_BODY" # Triggered by the document upload endpoint
+    - "RestrictedExtensions_URIPATH" # Triggered on SVN requests
   malicious_requests: []
   sql_injection: 
     - "SQLi_QUERYARGUMENTS" # Triggered during GraphQL queries
