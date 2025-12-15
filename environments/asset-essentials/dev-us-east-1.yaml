@@ -137,7 +137,8 @@ disabled_rules:
     - "GenericRFI_BODY" # Triggered when making genuine work order requests
     - "GenericLFI_BODY" # Triggered during file upload through the API
     - "SizeRestrictions_QUERYSTRING" # Triggered in genuine API queries
-  malicious_requests: []
+  malicious_requests: 
+    - "JavaDeserializationRCE_BODY" # Triggered during some API calls. Very infrequent, but we don't use Java anyways.
   sql_injection: 
     - "SQLi_BODY" # Triggered when customers ty to upload files
     - "SQLi_QUERYARGUMENTS" # Triggered when trying to filter work orders and users through the API
