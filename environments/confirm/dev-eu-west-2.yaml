@@ -125,6 +125,7 @@ disabled_rules:
     - "EC2MetaDataSSRF_BODY" # Triggered by the mobile app
     - "GenericLFI_BODY" # Triggered by the document upload endpoint
     - "RestrictedExtensions_URIPATH" # Triggered on SVN requests
+    - "SizeRestrictions_URIPATH" # Triggered through Confirm Connect endpoint
   malicious_requests: []
   sql_injection: 
     - "SQLi_QUERYARGUMENTS" # Triggered during GraphQL queries
