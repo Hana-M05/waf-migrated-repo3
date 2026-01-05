@@ -17,9 +17,7 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-training-01/1358a15ff35fb369", 
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-production-01/34f59dc6cd34f9ba", 
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-demo-01/e3a9263f6299ba75", 
+  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/pentest-staging-alb/659a13ad8553de12"
 ]
 api_gateway_ids: []
 global: false
@@ -97,24 +95,24 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     
   sql_injection:
     enabled: true
-    action: "count"
+    action: "block"
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   linux_protection:
     enabled: false
-    action: "count"
-
+    action: "block"
+    
   block_unauthorized_scanners:
     enabled: true
     action: "count"
