@@ -35,7 +35,6 @@ protection_rules:
   #################################################################
   ip_blocking:
     enabled: false
-    action: "count"
     ips: []
   #################################################################
   # CUSTOM PATH BLOCKING
@@ -45,7 +44,6 @@ protection_rules:
   #################################################################
   path_blocking:
     enabled: false
-    action: "count"
     paths: []
 
   #################################################################
@@ -76,23 +74,23 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     
   sql_injection:
     enabled: true
-    action: "count"
+    action: "block"
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   linux_protection:
     enabled: false
-    action: "count"
+    action: "block"
 
   block_unauthorized_scanners:
     enabled: true
