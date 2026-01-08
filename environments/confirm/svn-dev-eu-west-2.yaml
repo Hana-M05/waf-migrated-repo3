@@ -119,11 +119,13 @@ disabled_rules:
     - "RestrictedExtensions_URIPATH" # Triggered on SVN requests
     - "SizeRestrictions_URIPATH" # Triggered through Confirm Connect endpoint
     - "ReactJSRCE_BODY" # Triggered through SVN requests
-  malicious_requests: []
+  malicious_requests: 
+    - "PROPFIND_METHOD" # Triggered on SVN requests
   sql_injection: 
     - "SQLi_QUERYARGUMENTS" # Triggered during GraphQL queries
     - "SQLi_BODY" # Triggered during document uploads
   windows_protection: 
     - "WindowsShellCommands_BODY" # Triggered during GraphQL queries and API queries
     - "WindowsShellCommands_QUERYARGUMENTS" # Triggered by some confirm api endpoints
+    - "PowerShellCommands_BODY" # Triggered during SVN requests
   linux_protection: [] 
