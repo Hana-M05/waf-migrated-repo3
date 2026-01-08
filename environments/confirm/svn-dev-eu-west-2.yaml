@@ -17,12 +17,7 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Performance-Testing-LB/5e7a87b995bc55b7",
-  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/DevConnect/74862762cc081f86",
-  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Engineering-ConfSol-Web-LB/f1a48d9be93a725c",
-  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Non-engineeringELB/6e1027cc1a0d6286",
-  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/StreetWorks-POC/d019d7eb329ca284",
-  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/PerfTest-ConfirmElb/0af502a255e4ee55"
+  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Confirm-SolutionsELB/90eb66f22d3aff30",
 ]
 api_gateway_ids: []
 global: false
@@ -121,12 +116,16 @@ disabled_rules:
     - "SizeRestrictions_QUERYSTRING" # Triggered in genuine usage of GraphQL endpoints
     - "EC2MetaDataSSRF_BODY" # Triggered by the mobile app
     - "GenericLFI_BODY" # Triggered by the document upload endpoint
+    - "RestrictedExtensions_URIPATH" # Triggered on SVN requests
     - "SizeRestrictions_URIPATH" # Triggered through Confirm Connect endpoint
-  malicious_requests: []
+    - "ReactJSRCE_BODY" # Triggered through SVN requests
+  malicious_requests: 
+    - "PROPFIND_METHOD" # Triggered on SVN requests
   sql_injection: 
     - "SQLi_QUERYARGUMENTS" # Triggered during GraphQL queries
     - "SQLi_BODY" # Triggered during document uploads
   windows_protection: 
     - "WindowsShellCommands_BODY" # Triggered during GraphQL queries and API queries
     - "WindowsShellCommands_QUERYARGUMENTS" # Triggered by some confirm api endpoints
+    - "PowerShellCommands_BODY" # Triggered during SVN requests
   linux_protection: [] 
