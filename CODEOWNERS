@@ -3,11 +3,11 @@
 @@@AssetEssentials @"Tyler Bassett" @"Brandon Miller"
 @@@Confirm @"Ivan Oakley" @"John Castle"
 @@@Classic @"@Chun Siong Tan"
-@@@
 
 * @@"DefaultReviewers"
 environments/ @@"InformationSecurity"
 environments/asset-essentials/ @@"AssetEssentials"
 environments/confirm/ @@"Confirm"
+environments/classic/ @@"Classic"
 
 AllGroupsCheck(1)
