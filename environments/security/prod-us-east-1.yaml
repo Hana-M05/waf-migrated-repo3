@@ -53,6 +53,41 @@ protection_rules:
       - "34.41.10.143/32"
       - "34.28.197.214/32"
       - "134.29.246.229/32"
+
+  #################################################################
+  # GEOLOCATION BLOCKING
+  #
+  # In block mode, creates a blacklist of countries
+  # In allow mode, creates a whitelist of countries
+  #################################################################
+  geolocation_blocking:
+    enabled: true
+    action: "allow"
+    countries: 
+      - "AS"
+      - "AU"
+      - "BD"
+      - "BM"
+      - "BN"
+      - "CA"
+      - "CN"
+      - "CU"
+      - "CZ"
+      - "DO"
+      - "EG"
+      - "FR"
+      - "DE"
+      - "GR"
+      - "GU"
+      - "IN"
+      - "IT"
+      - "JP"
+      - "JO"
+      - "MY"
+      - "MX"
+      - "NZ"
+      - "PA"
+
   #################################################################
   # CUSTOM PATH BLOCKING
   # 

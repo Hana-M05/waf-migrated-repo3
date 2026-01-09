@@ -172,6 +172,7 @@ resource "aws_wafv2_web_acl" "waf_acl" {
     }
   }
 
+  # Block Unauthorized Scanners Rule (Priority 3)
   dynamic "rule" {
     for_each = var.protection_rules.block_unauthorized_scanners.enabled ? [1] : []
     content {
@@ -201,6 +202,46 @@ resource "aws_wafv2_web_acl" "waf_acl" {
       visibility_config {
         cloudwatch_metrics_enabled = true
         metric_name                = "TenableBlockRule-${var.environment}"
+        sampled_requests_enabled   = true
+      }
+    }
+  }
+
+  # Geolocation Blocking Rule (Priority 4)
+  dynamic "rule" {
+    for_each = var.protection_rules.geolocation_blocking.enabled && length(var.protection_rules.geolocation_blocking.countries) > 0 ? [1] : []
+    content {
+      name     = "GeolocationBlockingRule"
+      priority = local.rule_priorities.geolocation_blocking
+
+      action {
+        block {}
+      }
+
+      statement {
+        # If action="block": block traffic FROM the specified countries
+        # If action="allow": block traffic NOT FROM the specified countries (allowlist behavior)
+        dynamic "geo_match_statement" {
+          for_each = var.protection_rules.geolocation_blocking.action == "block" ? [1] : []
+          content {
+            country_codes = var.protection_rules.geolocation_blocking.countries
+          }
+        }
+
+        dynamic "not_statement" {
+          for_each = var.protection_rules.geolocation_blocking.action == "allow" ? [1] : []
+          content {
+            statement {
+              geo_match_statement {
+                country_codes = var.protection_rules.geolocation_blocking.countries
+              }
+            }
+          }
+        }
+      }
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "GeolocationBlockingRule-${var.environment}"
         sampled_requests_enabled   = true
       }
     }
@@ -317,7 +358,51 @@ resource "aws_wafv2_web_acl" "waf_acl" {
     }
   }
 
-  # CAPTCHA Rules (Priority 150+)
+  # AWS Managed Rulesets (Priority 200+)
+  dynamic "rule" {
+    for_each = local.enabled_aws_rulesets
+    content {
+      name     = "AWS-${rule.value.aws_name}"
+      priority = rule.value.priority
+
+      override_action {
+        dynamic "none" {
+          for_each = rule.value.action == "block" ? [1] : []
+          content {}
+        }
+
+        dynamic "count" {
+          for_each = rule.value.action == "count" ? [1] : []
+          content {}
+        }
+      }
+
+      statement {
+        managed_rule_group_statement {
+          name        = rule.value.aws_name
+          vendor_name = "AWS"
+
+          dynamic "rule_action_override" {
+            for_each = rule.value.overrides
+            content {
+              name = rule_action_override.value
+              action_to_use {
+                count {}
+              }
+            }
+          }
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "AWS-${rule.value.aws_name}-${var.environment}"
+        sampled_requests_enabled   = true
+      }
+    }
+  }
+
+  # CAPTCHA Rules (Priority 300+)
   # Create a separate rule for each CAPTCHA configuration
   dynamic "rule" {
     for_each = var.protection_rules.captcha.enabled && length(var.protection_rules.captcha.rules) > 0 ? var.protection_rules.captcha.rules : []
@@ -386,50 +471,6 @@ resource "aws_wafv2_web_acl" "waf_acl" {
       visibility_config {
         cloudwatch_metrics_enabled = true
         metric_name                = "${captcha_rule.value.name}-${var.environment}"
-        sampled_requests_enabled   = true
-      }
-    }
-  }
-
-  # AWS Managed Rulesets (Priority 200+)
-  dynamic "rule" {
-    for_each = local.enabled_aws_rulesets
-    content {
-      name     = "AWS-${rule.value.aws_name}"
-      priority = rule.value.priority
-
-      override_action {
-        dynamic "none" {
-          for_each = rule.value.action == "block" ? [1] : []
-          content {}
-        }
-
-        dynamic "count" {
-          for_each = rule.value.action == "count" ? [1] : []
-          content {}
-        }
-      }
-
-      statement {
-        managed_rule_group_statement {
-          name        = rule.value.aws_name
-          vendor_name = "AWS"
-
-          dynamic "rule_action_override" {
-            for_each = rule.value.overrides
-            content {
-              name = rule_action_override.value
-              action_to_use {
-                count {}
-              }
-            }
-          }
-        }
-      }
-
-      visibility_config {
-        cloudwatch_metrics_enabled = true
-        metric_name                = "AWS-${rule.value.aws_name}-${var.environment}"
         sampled_requests_enabled   = true
       }
     }

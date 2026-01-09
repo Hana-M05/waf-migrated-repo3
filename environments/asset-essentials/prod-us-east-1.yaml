@@ -71,6 +71,17 @@ protection_rules:
       - "/StrongholdDM/api/login"
 
   #################################################################
+  # GEOLOCATION BLOCKING
+  #
+  # In block mode, creates a blacklist of countries
+  # In allow mode, creates a whitelist of countries
+  #################################################################
+  geolocation_blocking:
+    enabled: false
+    action: "block"
+    countries: []
+
+  #################################################################
   # RATE LIMITING
   # 
   # Limit the number of requests from a single IP to prevent

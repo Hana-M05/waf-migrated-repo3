@@ -52,16 +52,17 @@ locals {
 
   # Define rule priorities to ensure consistent ordering
   rule_priorities = {
-    ip_blocking        = 1
-    path_blocking      = 2
-    basic_protection   = 3
-    malicious_requests = 4
-    sql_injection      = 5
-    windows_protection = 6
-    linux_protection   = 7
-    block_unauthorized_scanners      = 8
-    rate_limiting_base = 100
-    captcha_base       = 150
+    ip_blocking                 = 1
+    path_blocking               = 2
+    block_unauthorized_scanners = 3
+    geolocation_blocking        = 4
+    rate_limiting_base          = 100 # Potentially enables multiple rate limiting rules, so needs multiple priority rule space
+    basic_protection            = 200
+    malicious_requests          = 201
+    sql_injection               = 202
+    windows_protection          = 203
+    linux_protection            = 205
+    captcha_base                = 300 # Needs to be at the end so all block rules are evaluated
   }
 
   # Build enabled AWS managed rulesets - FIXED VERSION
