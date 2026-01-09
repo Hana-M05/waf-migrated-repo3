@@ -20,7 +20,6 @@ alb_arns: [
   "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Performance-Testing-LB/5e7a87b995bc55b7",
   "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/DevConnect/74862762cc081f86",
   "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Engineering-ConfSol-Web-LB/f1a48d9be93a725c",
-  "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Confirm-SolutionsELB/90eb66f22d3aff30",
   "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/Non-engineeringELB/6e1027cc1a0d6286",
   "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/StreetWorks-POC/d019d7eb329ca284",
   "arn:aws:elasticloadbalancing:eu-west-2:870519644306:loadbalancer/app/PerfTest-ConfirmElb/0af502a255e4ee55"
@@ -53,6 +52,17 @@ protection_rules:
   path_blocking:
     enabled: false
     paths: []
+
+  #################################################################
+  # GEOLOCATION BLOCKING
+  #
+  # In block mode, creates a blacklist of countries
+  # In allow mode, creates a whitelist of countries
+  #################################################################
+  geolocation_blocking:
+    enabled: false
+    action: "block"
+    countries: []
 
   #################################################################
   # RATE LIMITING
@@ -122,7 +132,6 @@ disabled_rules:
     - "SizeRestrictions_QUERYSTRING" # Triggered in genuine usage of GraphQL endpoints
     - "EC2MetaDataSSRF_BODY" # Triggered by the mobile app
     - "GenericLFI_BODY" # Triggered by the document upload endpoint
-    - "RestrictedExtensions_URIPATH" # Triggered on SVN requests
     - "SizeRestrictions_URIPATH" # Triggered through Confirm Connect endpoint
   malicious_requests: []
   sql_injection: 
