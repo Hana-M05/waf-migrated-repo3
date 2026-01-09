@@ -17,7 +17,8 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/pentest-staging-alb/659a13ad8553de12"
+  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/pentest-staging-alb/659a13ad8553de12",
+  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-staging-01/863c838178d2ae58"
 ]
 api_gateway_ids: []
 global: false
@@ -66,6 +67,17 @@ protection_rules:
     action: "block"
     paths:
       - "/StrongholdDM/api/login"
+
+  #################################################################
+  # GEOLOCATION BLOCKING
+  #
+  # In block mode, creates a blacklist of countries
+  # In allow mode, creates a whitelist of countries
+  #################################################################
+  geolocation_blocking:
+    enabled: false
+    action: "block"
+    countries: []
 
   #################################################################
   # RATE LIMITING
