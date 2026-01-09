@@ -1,0 +1,188 @@
+#################################################################
+# WAF Security Configuration
+# 
+# This file controls what gets blocked and what security 
+# protections are enabled for your website/application.
+#
+# ACTIONS EXPLAINED:
+# - "block": Completely blocks the request (recommended for production)
+# - "count": Logs the request but allows it through (good for testing)
+# - "allow": Explicitly allows the request (rarely used)
+#################################################################
+
+#################################################################
+# General Configurations
+# 
+# A set of general configurations for the WAF, including
+# the ALB name, environment, and region.
+#################################################################
+alb_arns: []
+# alb_arns: [
+#   "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-fd-alb/7aff579e7158d7b1", 
+#   "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-sd-alb/ecf788bcfbdf9649", 
+#   "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-fd-master-external-alb/9d0e8234b274034a",
+#   "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-sd-master-external-alb/35861b192e72b6f0"
+# ]
+api_gateway_ids: []
+global: false
+region: "us-east-2"
+#################################################################
+# SECURITY PROTECTION RULES
+# 
+# Configure different types of automated security protections.
+# Each rule can be enabled/disabled and set to block, count, or allow.
+#################################################################
+protection_rules:
+  #################################################################
+  # IP BLOCKING
+  # 
+  # Block specific IP addresses from accessing your website.
+  # Add IP addresses in CIDR format (use /32 for single IPs).
+  #################################################################
+  ip_blocking:
+    enabled: true
+    action: "block"
+    ipv4s:
+      - "184.168.104.171/32"
+      - "52.114.128.147/32"
+      - "123.20.29.193/32"
+      - "150.129.80.32/32"
+      - "209.58.168.85/32"
+      - "52.27.98.123/32"
+      - "52.10.54.112/32"
+      - "54.191.229.196/32"
+
+  #################################################################
+  # CUSTOM PATH BLOCKING
+  # 
+  # Block access to specific parts of your website like admin
+  # areas, internal APIs, or sensitive endpoints.
+  #################################################################
+  path_blocking:
+    enabled: false
+    action: "count"
+    paths: []
+
+  #################################################################
+  # GEOLOCATION BLOCKING
+  #
+  # In block mode, creates a blacklist of countries
+  # In allow mode, creates a whitelist of countries
+  #################################################################
+  geolocation_blocking:
+    enabled: false
+    action: "allow"
+    countries: 
+      - "AS"
+      - "AU"
+      - "BD"
+      - "BM"
+      - "BN"
+      - "CA"
+      - "CN"
+      - "CU"
+      - "CZ"
+      - "DO"
+      - "EG"
+      - "FR"
+      - "DE"
+      - "GR"
+      - "GU"
+      - "IN"
+      - "IT"
+      - "JP"
+      - "JO"
+      - "MY"
+      - "MX"
+      - "NZ"
+      - "PA"
+      - "PT"
+      - "PR"
+      - "RO"
+      - "ES"
+      - "TN"
+      - "AE"
+      - "US"
+      - "VE"
+      - "VI"
+      - "GB"
+
+  #################################################################
+  # RATE LIMITING
+  # 
+  # Limit the number of requests from a single IP to prevent
+  # abuse or DDoS attacks. Customize rules as needed.
+  #################################################################
+  rate_limiting:
+    enabled: false
+    rules: []
+
+  #################################################################
+  # RATE LIMITING
+  # 
+  # Limit the number of requests from a single IP to prevent
+  # abuse or DDoS attacks. Customize rules as needed.
+  #################################################################
+  captcha:
+    enabled: false
+    rules: []
+
+  #################################################################
+  # AWS MANAGED SECURITY RULES
+  # 
+  # These are pre-built security rules provided by AWS that
+  # protect against common attacks and threats.
+  #################################################################
+  basic_protection:
+    enabled: true
+    action: "block"
+
+  malicious_requests:
+    enabled: true
+    action: "count"
+    
+  sql_injection:
+    enabled: true
+    action: "block" 
+
+  windows_protection:
+    enabled: true
+    action: "block"
+
+  linux_protection:
+    enabled: false
+    action: "count"
+    
+  block_unauthorized_scanners:
+    enabled: true
+    action: "count"
+
+#################################################################
+# DISABLE SPECIFIC SECURITY RULES
+# 
+# If legitimate traffic is being blocked by AWS managed rules,
+# you can disable specific rules here. Only do this if you 
+# understand the security implications.
+# 
+# Note: This only applies to AWS managed rules, not custom
+# IP or path blocking rules.
+#################################################################
+disabled_rules:
+  basic_protection: 
+    - "NoUserAgent_HEADER" # Legacy override
+    - "SizeRestrictions_QUERYSTRING" # Legacy override
+    - "SizeRestrictions_Cookie_HEADER" # Legacy override
+    - "SizeRestrictions_BODY" # Legacy override
+    - "GenericLFI_QUERYARGUMENTS" # Legacy override
+    - "GenericLFI_BODY" # Legacy override
+    - "CrossSiteScripting_QUERYARGUMENTS" # Legacy override
+    - "CrossSiteScripting_BODY" # Legacy override
+  malicious_requests: []
+  sql_injection: 
+    - "SQLiExtendedPatterns_QUERYARGUMENTS" # Legacy override
+    - "SQLi_QUERYARGUMENTS" # Legacy override
+    - "SQLi_BODY" # Legacy override
+    - "SQLi_COOKIE" # Legacy override
+    - "SQLi_URIPATH" # Legacy override
+  windows_protection: []
+  linux_protection: [] 
