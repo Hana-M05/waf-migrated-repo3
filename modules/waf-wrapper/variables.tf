@@ -54,6 +54,13 @@ variable "protection_rules" {
       paths   = optional(list(string), [])
     }),
 
+    # Geolocation blocking rule
+    geolocation_blocking = object({
+      enabled = bool
+      action  = optional(string, "count") # block, count, or allow
+      countries = optional(list(string), [])
+    }),
+
     # Custom rate limiting rules
     rate_limiting = object({
       enabled = bool
@@ -74,7 +81,7 @@ variable "protection_rules" {
           search_string         = string
         }))
       }))
-    })
+    }),
 
     # Provides a CAPTCHA for public pages
     captcha = object({
@@ -91,13 +98,13 @@ variable "protection_rules" {
           search_string         = string
         }))
       }))
-    })
+    }),
 
     # Protects against common web attacks
     basic_protection = object({
       enabled = bool
       action  = optional(string, "count") # block, count, or allow
-    })
+    }),
 
     # Blocks known malicious requests
     malicious_requests = object({

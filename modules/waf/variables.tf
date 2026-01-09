@@ -36,12 +36,19 @@ variable "protection_rules" {
       paths   = optional(list(string), [])
     }),
 
+    # Geolocation blocking rule
+    geolocation_blocking = object({
+      enabled = bool
+      action  = optional(string, "count") # block, count, or allow
+      countries = optional(list(string), [])
+    }),
+
     # Custom rate limiting rules
     rate_limiting = object({
       enabled = bool
       rules = list(object({
         name                  = string
-        action                = string 
+        action                = string
         limit                 = number
         aggregate_key_type    = string # IP, FORWARDED_IP, or AUTHENTICATED_USER
         evaluation_window_sec = number
