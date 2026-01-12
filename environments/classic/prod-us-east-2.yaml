@@ -42,7 +42,7 @@ protection_rules:
   ip_blocking:
     enabled: true
     action: "block"
-    ipv4s:
+    ips:
       - "184.168.104.171/32"
       - "52.114.128.147/32"
       - "123.20.29.193/32"
@@ -70,7 +70,7 @@ protection_rules:
   # In allow mode, creates a whitelist of countries
   #################################################################
   geolocation_blocking:
-    enabled: false
+    enabled: true
     action: "allow"
     countries: 
       - "AS"
@@ -147,7 +147,7 @@ protection_rules:
 
   windows_protection:
     enabled: true
-    action: "block"
+    action: "count"
 
   linux_protection:
     enabled: false
