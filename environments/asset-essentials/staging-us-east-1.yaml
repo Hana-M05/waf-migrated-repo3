@@ -18,7 +18,7 @@
 #################################################################
 alb_arns: [
   "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/pentest-staging-alb/659a13ad8553de12",
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-staging-01/863c838178d2ae58"
+  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/zionweb-staging-alb/3e937e36f25e2e32"
 ]
 api_gateway_ids: []
 global: false
