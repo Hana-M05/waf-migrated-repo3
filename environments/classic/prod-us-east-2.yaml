@@ -18,10 +18,10 @@
 #################################################################
 alb_arns: []
 # alb_arns: [
-#   "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-fd-alb/7aff579e7158d7b1", 
-#   "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-sd-alb/ecf788bcfbdf9649", 
-#   "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-fd-master-external-alb/9d0e8234b274034a",
-#   "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-sd-master-external-alb/35861b192e72b6f0"
+#   "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-fd-external-alb-staging/d67d6cb1207b381d", 
+#   "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-sd-external-alb-staging/9a55bfba9af3f4b3", 
+#   "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-fd-prod-external-alb/74dfeb28d98b9b6f",
+#   "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-sd-prod-external-alb/b2d576d6a8e4c838"
 # ]
 api_gateway_ids: []
 global: false
