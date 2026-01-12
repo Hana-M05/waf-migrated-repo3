@@ -6,5 +6,4 @@
 environments/ @@"InformationSecurity"
 environments/asset-essentials/ @@"AssetEssentials"
 environments/confirm/ @@"Confirm"
-environments/classic/ @@"Classic"
 AllGroupsCheck(1)
