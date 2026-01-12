@@ -193,6 +193,10 @@ protection_rules:
     enabled: false
     action: "block"
 
+  ip_reputation:
+    enabled: true
+    action: "block"
+
   block_unauthorized_scanners:
     enabled: true
     action: "block"
@@ -218,4 +222,5 @@ disabled_rules:
     - "SQLi_BODY"
   windows_protection:
     - "WindowsShellCommands_BODY"
+  ip_reputation: []
   linux_protection: [] 

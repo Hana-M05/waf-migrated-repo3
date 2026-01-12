@@ -112,6 +112,11 @@ variable "protection_rules" {
       action  = optional(string, "count") # block, count, or allow
     }),
 
+    ip_reputation = object({
+      enabled = bool
+      action  = optional(string, "count") # block, count, or allow
+    }),
+
     # Block Tenable scanner IPs
     block_unauthorized_scanners = object({
       enabled = bool
@@ -128,6 +133,7 @@ variable "disabled_rules" {
     sql_injection      = optional(list(string), [])
     windows_protection = optional(list(string), [])
     linux_protection   = optional(list(string), [])
+    ip_reputation      = optional(list(string), [])
   })
   default = {}
 }
