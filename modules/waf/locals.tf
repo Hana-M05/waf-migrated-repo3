@@ -6,7 +6,7 @@ locals {
     sql_injection      = "AWSManagedRulesSQLiRuleSet"
     windows_protection = "AWSManagedRulesWindowsRuleSet"
     linux_protection   = "AWSManagedRulesLinuxRuleSet"
-    ip_reputation      = "AWSManagedRulesIPReputationList"
+    ip_reputation      = "AWSManagedRulesAmazonIpReputationList"
   }
 
   tenable_ip_ranges = [

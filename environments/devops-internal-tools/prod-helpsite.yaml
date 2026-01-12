@@ -80,6 +80,16 @@ protection_rules:
     rules: []
 
   #################################################################
+  # BLOCK UNAUTHORIZED SCANNERS
+  # 
+  # Blocks requests from known vulnerability scanners that are
+  # not used by Brightly.
+  # Currently the only scanners identified are Tenable's.
+  #################################################################
+  block_unauthorized_scanners:
+    enabled: false
+
+  #################################################################
   # AWS MANAGED SECURITY RULES
   # 
   # These are pre-built security rules provided by AWS that
@@ -100,7 +110,7 @@ protection_rules:
   linux_protection:
     enabled: false
 
-  block_unauthorized_scanners:
+  ip_reputation:
     enabled: false
 
 #################################################################

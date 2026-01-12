@@ -112,6 +112,7 @@ variable "protection_rules" {
       action  = optional(string, "count") # block, count, or allow
     }),
 
+    # IP reputation based protection
     ip_reputation = object({
       enabled = bool
       action  = optional(string, "count") # block, count, or allow

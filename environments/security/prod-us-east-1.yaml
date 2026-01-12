@@ -107,7 +107,7 @@ protection_rules:
   # abuse or DDoS attacks. Customize rules as needed.
   #################################################################
   rate_limiting:
-    enabled: true
+    enabled: false
     rules: [
       {
         name: "citizenportal-rate-limit",
@@ -168,6 +168,17 @@ protection_rules:
     ]
 
   #################################################################
+  # BLOCK UNAUTHORIZED SCANNERS
+  # 
+  # Blocks requests from known vulnerability scanners that are
+  # not used by Brightly.
+  # Currently the only scanners identified are Tenable's.
+  #################################################################
+  block_unauthorized_scanners:
+    enabled: true
+    action: "block"
+
+  #################################################################
   # AWS MANAGED SECURITY RULES
   # 
   # These are pre-built security rules provided by AWS that
@@ -194,10 +205,6 @@ protection_rules:
     action: "block"
 
   ip_reputation:
-    enabled: true
-    action: "block"
-
-  block_unauthorized_scanners:
     enabled: true
     action: "block"
 
