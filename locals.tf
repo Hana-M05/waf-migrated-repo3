@@ -9,6 +9,8 @@ locals {
     replace(replace(config_file, "/", "-"), ".yaml", "") => yamldecode(file("${path.module}/environments/${config_file}"))
   }
 
+  devsecops_monitor_emails = ["security@brightlysoftware.com", "productops@brightlysoftware.com"]
+
   alloy_s3_buckets = {
     "us-east-1"      = "arn:aws:s3:::aw-ue1-ob1-alloy-audit-logs"
     "us-east-2"      = "arn:aws:s3:::aw-ue1-ob1-alloy-audit-logs"
