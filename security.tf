@@ -22,14 +22,14 @@ module "firehose_role_policy_security" {
 # #########################################################################
 # ################### WAF Notifications SNS Topic #########################
 # #########################################################################
-# resource "aws_sns_topic_subscription" "security_waf_update_notifications" {
-#   for_each = toset(local.devsecops_monitor_emails)
+resource "aws_sns_topic_subscription" "security_waf_update_notifications" {
+  for_each = toset(local.waf_update_monitors)
 
-#   provider  = aws.security
-#   topic_arn = "arn:aws:sns:us-east-1:849524154584:AWS-WAFV2-Managed-Rule-Set-Updates"
-#   protocol  = "email"
-#   endpoint  = each.value
-# }
+  provider  = aws.security
+  topic_arn = "arn:aws:sns:us-east-1:849524154584:AWS-WAFV2-Managed-Rule-Set-Updates"
+  protocol  = "email"
+  endpoint  = each.value
+}
 
 #########################################################################
 ######################### Security Prod Modules #########################

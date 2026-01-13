@@ -9,7 +9,7 @@ locals {
     replace(replace(config_file, "/", "-"), ".yaml", "") => yamldecode(file("${path.module}/environments/${config_file}"))
   }
 
-  devsecops_monitor_emails = [
+  waf_update_monitors = [
     "security@brightlysoftware.com", 
     "productops@brightlysoftware.com",
     "amritpal.singh@brightlysoftware.com",
