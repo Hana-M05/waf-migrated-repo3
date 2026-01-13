@@ -20,6 +20,10 @@ alb_arns: ["arn:aws:elasticloadbalancing:ap-southeast-2:870519644306:loadbalance
 api_gateway_ids: []
 global: false
 region: "ap-southeast-2"
+waf_error_subscribers:
+  - "sam.mcmanus@siemens.com"
+  - "amanda.reams@brightlysoftware.com"
+  - "security@brightlysoftware.com"
 #################################################################
 # SECURITY PROTECTION RULES
 # 

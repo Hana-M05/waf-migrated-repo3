@@ -22,6 +22,11 @@ alb_arns: [
 api_gateway_ids: []
 global: false
 region: "ca-central-1"
+waf_error_subscribers:
+  - "sam.mcmanus@siemens.com"
+  - "amanda.reams@brightlysoftware.com"
+  - "productops@brightlysoftware.com"
+  - "security@brightlysoftware.com"
 #################################################################
 # SECURITY PROTECTION RULES
 # 
