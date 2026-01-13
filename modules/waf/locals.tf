@@ -6,6 +6,7 @@ locals {
     sql_injection      = "AWSManagedRulesSQLiRuleSet"
     windows_protection = "AWSManagedRulesWindowsRuleSet"
     linux_protection   = "AWSManagedRulesLinuxRuleSet"
+    ip_reputation      = "AWSManagedRulesAmazonIpReputationList"
   }
 
   tenable_ip_ranges = [
@@ -62,6 +63,7 @@ locals {
     sql_injection               = 202
     windows_protection          = 203
     linux_protection            = 205
+    ip_reputation               = 206
     captcha_base                = 300 # Needs to be at the end so all block rules are evaluated
   }
 
