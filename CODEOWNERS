@@ -1,9 +1,11 @@
 @@@InformationSecurity @"Sam McManus" @"Lindsay Zastrow" @Dan @"Anthony Smaldone" @"Kevin Cai"
 @@@AssetEssentials @"Tyler Bassett" @"Brandon Miller"
 @@@Confirm @"Ivan Oakley" @"John Castle"
+@@@@TheWorxHub @"Dimitrios Baourdos" @"Ken Barnett"
 * @@"DefaultReviewers"
 
 environments/ @@"InformationSecurity"
 environments/asset-essentials/ @@"AssetEssentials"
 environments/confirm/ @@"Confirm"
+environments/theworxhub/ @@"TheWorxHub"
 AllGroupsCheck(1)

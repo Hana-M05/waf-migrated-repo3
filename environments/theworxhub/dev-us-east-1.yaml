@@ -17,7 +17,15 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-
+  # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-orange-Public/0d35f0f5ddb1d724",
+  # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/api-orange-alb/d15bf95d0edceb7d",
+  # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-healthcare-orange-alb/a1ec655e71c24d1e",
+  # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-seniorliving-orange-alb/c6839b6b65e056da",
+  # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-slc-orange-alb/74b06862385b52ad",
+  # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-pvm-orange-alb/83f3c8062121bebf",
+  # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mothership-orange-alb/53b009ef59dd742d",
+  # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-cl-orange-alb/e77218dda400e198",
+  ""
 ] 
 api_gateway_ids: []
 global: false
