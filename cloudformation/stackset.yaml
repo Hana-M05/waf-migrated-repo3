@@ -337,7 +337,7 @@ Resources:
               - sns:DeleteTopic
             Resource:
               - !Sub "arn:aws:sns:*:${AWS::AccountId}:*-waf-alarms"
-              - !Sub "arn:aws:sns:*:${AWS::AccountId}:aws-managed-waf-rule-notifications"
+              - !Sub "arn:aws:sns:us-east-1:248400274283:aws-managed-waf-rule-notifications"
 
           # Supports creation of metric rules for Cloudwatch alarms
           - Effect: Allow
