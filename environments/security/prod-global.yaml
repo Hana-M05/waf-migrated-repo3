@@ -23,7 +23,7 @@ region: "us-east-1" # Always us-east-1 for global config
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
   - "amanda.reams@brightlysoftware.com"
-  - "security@brightlysoftware.com"
+
 #################################################################
 # SECURITY PROTECTION RULES
 # 
