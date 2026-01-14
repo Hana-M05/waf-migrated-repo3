@@ -25,7 +25,6 @@ alb_arns: [
   # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-pvm-orange-alb/83f3c8062121bebf",
   # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mothership-orange-alb/53b009ef59dd742d",
   # "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-cl-orange-alb/e77218dda400e198",
-  ""
 ] 
 api_gateway_ids: []
 global: false
