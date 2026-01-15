@@ -19,7 +19,8 @@
 alb_arns: [
   "arn:aws:elasticloadbalancing:us-east-1:750920731536:loadbalancer/app/apalb-ue1-master-primary/35510aa8b975e987", 
   "arn:aws:elasticloadbalancing:us-east-1:750920731536:loadbalancer/app/acapialb-ue1-master-primary/f64ee08fd697ffbc", 
-  "arn:aws:elasticloadbalancing:us-east-1:750920731536:loadbalancer/app/dtalb-ue1-master-primary/9e85bb14e0f985d8"
+  "arn:aws:elasticloadbalancing:us-east-1:750920731536:loadbalancer/app/dtalb-ue1-master-primary/9e85bb14e0f985d8",
+  "arn:aws:elasticloadbalancing:us-east-1:750920731536:loadbalancer/app/zionweb-master-alb/2d9351eb3e29e977"
 ]
 api_gateway_ids: []
 global: false
