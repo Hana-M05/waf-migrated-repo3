@@ -9,6 +9,16 @@ locals {
     replace(replace(config_file, "/", "-"), ".yaml", "") => yamldecode(file("${path.module}/environments/${config_file}"))
   }
 
+  waf_update_monitors = [
+    "productops@brightlysoftware.com",
+    "amritpal.singh@brightlysoftware.com",
+    "deepak.nagvanshi@brightlysoftware.com",
+    "tyler.bassett@brightlysoftware.com",
+    "benjamin.issa@siemens.com",
+    "amanda.reams@brightlysoftware.com",
+    "sam.mcmanus@siemens.com"
+  ]
+
   alloy_s3_buckets = {
     "us-east-1"      = "arn:aws:s3:::aw-ue1-ob1-alloy-audit-logs"
     "us-east-2"      = "arn:aws:s3:::aw-ue1-ob1-alloy-audit-logs"
