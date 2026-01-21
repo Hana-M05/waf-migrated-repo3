@@ -26,6 +26,9 @@ alb_arns: []
 api_gateway_ids: []
 global: false
 region: "us-east-2"
+waf_error_subscribers:
+  - "sam.mcmanus@siemens.com"
+  
 #################################################################
 # SECURITY PROTECTION RULES
 # 

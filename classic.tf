@@ -65,6 +65,7 @@ module "waf_wrapper_classic_dev_us_east_2" {
   global                      = local.environments["classic-dev-us-east-2"].global
   log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["classic-dev-us-east-2"].protection_rules
+  waf_error_subscribers       = local.environments["classic-dev-us-east-2"].waf_error_subscribers
 }
 
 #########################################################################
@@ -88,4 +89,5 @@ module "waf_wrapper_classic_prod_us_east_2" {
   global                      = local.environments["classic-prod-us-east-2"].global
   log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["classic-prod-us-east-2"].protection_rules
+  waf_error_subscribers       = local.environments["classic-prod-us-east-2"].waf_error_subscribers
 }
