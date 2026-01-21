@@ -16,13 +16,19 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
-alb_arns: [] # Always empty for global config
-api_gateway_ids: [] # Always empty for global config
-global: true
-region: "us-east-1" # Always us-east-1 for global config
+alb_arns: [
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-01/8d79ce461ba8e542",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-02/cb8c2e85e93df502",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-03/677aa780441f5e19",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-04/4cb70fa8f5201030",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-05/25f45e20bd78afe9"
+]
+api_gateway_ids: []
+global: false
+region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
-
+  
 #################################################################
 # SECURITY PROTECTION RULES
 # 
@@ -38,7 +44,6 @@ protection_rules:
   #################################################################
   ip_blocking:
     enabled: false
-    action: "count"
     ips: []
   #################################################################
   # CUSTOM PATH BLOCKING
@@ -48,7 +53,6 @@ protection_rules:
   #################################################################
   path_blocking:
     enabled: false
-    action: "count"
     paths: []
 
   #################################################################
@@ -59,7 +63,7 @@ protection_rules:
   #################################################################
   geolocation_blocking:
     enabled: false
-    action: "block"
+    action: "count"
     countries: []
 
   #################################################################
@@ -90,7 +94,8 @@ protection_rules:
   # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
-    enabled: false
+    enabled: true
+    action: "count"
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -99,22 +104,28 @@ protection_rules:
   # protect against common attacks and threats.
   #################################################################
   basic_protection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   malicious_requests:
-    enabled: false
-
+    enabled: true
+    action: "count"
+    
   sql_injection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   windows_protection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   linux_protection:
     enabled: false
-
+    action: "count"
+  
   ip_reputation:
-    enabled: false
+    enabled: true
+    action: "count"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
@@ -132,3 +143,4 @@ disabled_rules:
   sql_injection: []
   windows_protection: []
   linux_protection: [] 
+  ip_reputation: []

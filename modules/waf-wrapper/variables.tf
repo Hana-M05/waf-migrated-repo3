@@ -56,8 +56,8 @@ variable "protection_rules" {
 
     # Geolocation blocking rule
     geolocation_blocking = object({
-      enabled = bool
-      action  = optional(string, "count") # block, count, or allow
+      enabled   = bool
+      action    = optional(string, "count") # block, count, or allow
       countries = optional(list(string), [])
     }),
 
@@ -66,7 +66,7 @@ variable "protection_rules" {
       enabled = bool
       rules = list(object({
         name                  = string
-        action                = string 
+        action                = string
         limit                 = number
         aggregate_key_type    = string # IP, FORWARDED_IP, or AUTHENTICATED_USER
         evaluation_window_sec = number
@@ -161,4 +161,10 @@ variable "region" {
   description = "AWS region"
   type        = string
   default     = "us-east-1"
+}
+
+variable "waf_error_subscribers" {
+  description = "List of email addresses to subscribe to WAF error notifications"
+  type        = list(string)
+  default     = []
 }

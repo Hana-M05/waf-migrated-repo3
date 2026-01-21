@@ -2,10 +2,12 @@
 @@@AssetEssentials @"Tyler Bassett" @"Brandon Miller"
 @@@Confirm @"Ivan Oakley" @"John Castle"
 @@@@TheWorxHub @"Dimitrios Baourdos" @"Ken Barnett"
+@@@EventManager @chandra.sharma @"Aditya Raj"
 * @@"DefaultReviewers"
 
 environments/ @@"InformationSecurity"
 environments/asset-essentials/ @@"AssetEssentials"
 environments/confirm/ @@"Confirm"
 environments/theworxhub/ @@"TheWorxHub"
+environments/classic/ @@"Classic"
 AllGroupsCheck(1)

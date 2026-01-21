@@ -43,4 +43,5 @@ module "waf_wrapper_devops_internal_tools_prod_helpsite" {
   global                  = local.environments["devops-internal-tools-prod-helpsite"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["devops-internal-tools-prod-helpsite"].protection_rules
+  waf_error_subscribers   = local.environments["devops-internal-tools-prod-helpsite"].waf_error_subscribers
 }
