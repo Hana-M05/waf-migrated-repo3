@@ -17,11 +17,11 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  # "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-01/8d79ce461ba8e542",
-  # "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-02/cb8c2e85e93df502",
-  # "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-03/677aa780441f5e19",
-  # "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-04/4cb70fa8f5201030",
-  # "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-05/25f45e20bd78afe9"
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-01/8d79ce461ba8e542",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-02/cb8c2e85e93df502",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-03/677aa780441f5e19",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-04/4cb70fa8f5201030",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-05/25f45e20bd78afe9"
 ]
 api_gateway_ids: []
 global: false
