@@ -9,5 +9,5 @@ environments/ @@"InformationSecurity"
 environments/asset-essentials/ @@"AssetEssentials"
 environments/confirm/ @@"Confirm"
 environments/theworxhub/ @@"TheWorxHub"
-environments/classic/ @@"Classic"
+environments/event-manager/ @@"EventManager"
 AllGroupsCheck(1)
