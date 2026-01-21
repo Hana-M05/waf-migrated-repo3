@@ -16,13 +16,29 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
-alb_arns: [] # Always empty for global config
-api_gateway_ids: [] # Always empty for global config
-global: true
-region: "us-east-1" # Always us-east-1 for global config
+alb_arns: [
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ui-staging-alb/7c7bc9831047d29b",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/api-staging-alb/1ccf813b7b9cde8f",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/api2-staging-alb/522c5811eb2fc073",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/surveysweb-staging-alb/ace453ea55c85861",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/pentestui-staging-alb2/572ca3b0071bd24f",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-01/b6879aab6f85cf27",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-02/9bad2634b914cc71",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-03/b3bd8db08da5cd5a",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-04/d42a55cfe1ce91dd",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-05/66c2bb3cc5f3b73e",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-01/a78b1b051a9eb117",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-02/99d1afc50ffe3be4",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-03/c51fb6988895912e",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-04/447690893acd31d1",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-05/42c08f63d8745b9b"
+]
+api_gateway_ids: []
+global: false
+region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
-
+  
 #################################################################
 # SECURITY PROTECTION RULES
 # 
@@ -38,7 +54,6 @@ protection_rules:
   #################################################################
   ip_blocking:
     enabled: false
-    action: "count"
     ips: []
   #################################################################
   # CUSTOM PATH BLOCKING
@@ -48,7 +63,6 @@ protection_rules:
   #################################################################
   path_blocking:
     enabled: false
-    action: "count"
     paths: []
 
   #################################################################
@@ -59,7 +73,7 @@ protection_rules:
   #################################################################
   geolocation_blocking:
     enabled: false
-    action: "block"
+    action: "count"
     countries: []
 
   #################################################################
@@ -90,7 +104,9 @@ protection_rules:
   # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
-    enabled: false
+    enabled: true
+    action: "count"
+
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -99,22 +115,28 @@ protection_rules:
   # protect against common attacks and threats.
   #################################################################
   basic_protection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   malicious_requests:
-    enabled: false
-
+    enabled: true
+    action: "count"
+    
   sql_injection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   windows_protection:
-    enabled: false
+    enabled: true
+    action: "count"
 
   linux_protection:
     enabled: false
+    action: "count"
 
   ip_reputation:
-    enabled: false
+    enabled: true
+    action: "count"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
@@ -132,3 +154,4 @@ disabled_rules:
   sql_injection: []
   windows_protection: []
   linux_protection: [] 
+  ip_reputation: []

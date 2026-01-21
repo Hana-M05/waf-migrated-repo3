@@ -38,8 +38,8 @@ variable "protection_rules" {
 
     # Geolocation blocking rule
     geolocation_blocking = object({
-      enabled = bool
-      action  = optional(string, "count") # block, count, or allow
+      enabled   = bool
+      action    = optional(string, "count") # block, count, or allow
       countries = optional(list(string), [])
     }),
 
@@ -137,6 +137,12 @@ variable "disabled_rules" {
     ip_reputation      = optional(list(string), [])
   })
   default = {}
+}
+
+variable "waf_error_subscribers" {
+  description = "List of email addresses to subscribe to WAF error notifications"
+  type        = list(string)
+  default     = []
 }
 
 variable "waf_log_destination_arn" {
