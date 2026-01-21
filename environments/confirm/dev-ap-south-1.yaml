@@ -26,7 +26,6 @@ global: false
 region: "ap-south-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
-  - "amanda.reams@brightlysoftware.com"
 
 #################################################################
 # SECURITY PROTECTION RULES
