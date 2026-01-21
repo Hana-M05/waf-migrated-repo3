@@ -19,6 +19,18 @@ module "firehose_role_policy_security" {
   s3_bucket_arns = values(local.alloy_s3_buckets)
 }
 
+# #########################################################################
+# ################### WAF Notifications SNS Topic #########################
+# #########################################################################
+resource "aws_sns_topic_subscription" "security_waf_update_notifications" {
+  for_each = toset(local.waf_update_monitors)
+
+  provider  = aws.security
+  topic_arn = "arn:aws:sns:us-east-1:248400274283:aws-managed-waf-rule-notifications"
+  protocol  = "email"
+  endpoint  = each.value
+}
+
 #########################################################################
 ######################### Security Prod Modules #########################
 #########################################################################
