@@ -1,0 +1,89 @@
+{
+    "Name": "schooldude-maintenance-page",
+    "Action": {
+        "Block": {
+            "CustomResponse": {
+                "ResponseCode": 200,
+                "CustomResponseBodyKey": "facility_dude_maintenance"
+            }
+        }
+    },
+    "Priority": 17,
+    "VisibilityConfig": {
+        "SampledRequestsEnabled": true,
+        "CloudWatchMetricsEnabled": true,
+        "MetricName": "schooldude-maintenance-page"
+    },
+    "Statement": {
+        "AndStatement": {
+            "Statements": [
+                {
+                    "OrStatement": {
+                        "Statements": [
+                            {
+                                "ByteMatchStatement": {
+                                    "FieldToMatch": {
+                                        "SingleHeader": {
+                                            "Name": "host"
+                                        }
+                                    },
+                                    "PositionalConstraint": "CONTAINS",
+                                    "SearchString": "schooldude",
+                                    "TextTransformations": [
+                                        {
+                                            "Priority": 0,
+                                            "Type": "LOWERCASE"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "ByteMatchStatement": {
+                                    "FieldToMatch": {
+                                        "SingleHeader": {
+                                            "Name": "host"
+                                        }
+                                    },
+                                    "PositionalConstraint": "CONTAINS",
+                                    "SearchString": "communityuse",
+                                    "TextTransformations": [
+                                        {
+                                            "Priority": 0,
+                                            "Type": "LOWERCASE"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "ByteMatchStatement": {
+                                    "FieldToMatch": {
+                                        "SingleHeader": {
+                                            "Name": "host"
+                                        }
+                                    },
+                                    "PositionalConstraint": "CONTAINS",
+                                    "SearchString": "myschoolbuilding",
+                                    "TextTransformations": [
+                                        {
+                                            "Priority": 0,
+                                            "Type": "LOWERCASE"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "NotStatement": {
+                        "Statement": {
+                            "IPSetReferenceStatement": {
+                                "ARN": "arn:aws:wafv2:us-east-2:989263075007:regional/ipset/Cisco_VPN/2488a259-c504-46b4-9433-33838c9e1fb3"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
