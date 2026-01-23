@@ -17,18 +17,18 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-01/8d79ce461ba8e542",
-  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-02/cb8c2e85e93df502",
-  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-03/677aa780441f5e19",
-  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-04/4cb70fa8f5201030",
-  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ALB-ue1-orange-05/25f45e20bd78afe9"
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/management-orange-alb/63e64edaf482845c",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/api-orange-alb/c1ece0d701b1ab42",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/api2-orange-alb/01b17825d6b8599b",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ui-orange-alb/c1ae26430ee2b6dc",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/surveysweb-orange-alb/1db3b59900eb8ac6"
 ]
 api_gateway_ids: []
 global: false
 region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
-  
+
 #################################################################
 # SECURITY PROTECTION RULES
 # 
