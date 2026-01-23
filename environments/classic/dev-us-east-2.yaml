@@ -17,25 +17,14 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ui-staging-alb/7c7bc9831047d29b",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/api-staging-alb/1ccf813b7b9cde8f",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/api2-staging-alb/522c5811eb2fc073",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/surveysweb-staging-alb/ace453ea55c85861",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/pentestui-staging-alb2/572ca3b0071bd24f",
-  # "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-01/b6879aab6f85cf27",
-  # "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-02/9bad2634b914cc71",
-  # "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-03/b3bd8db08da5cd5a",
-  # "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-04/d42a55cfe1ce91dd",
-  # "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-05/66c2bb3cc5f3b73e",
-  # "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-01/a78b1b051a9eb117",
-  # "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-02/99d1afc50ffe3be4",
-  # "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-03/c51fb6988895912e",
-  # "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-04/447690893acd31d1",
-  # "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-05/42c08f63d8745b9b"
+  "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-fd-alb/7aff579e7158d7b1", 
+  "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-sd-alb/ecf788bcfbdf9649", 
+  "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-fd-master-external-alb/9d0e8234b274034a",
+  "arn:aws:elasticloadbalancing:us-east-2:881226391216:loadbalancer/app/classic-sd-master-external-alb/35861b192e72b6f0"
 ]
 api_gateway_ids: []
 global: false
-region: "us-east-1"
+region: "us-east-2"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
 
@@ -53,8 +42,18 @@ protection_rules:
   # Add IP addresses in CIDR format (use /32 for single IPs).
   #################################################################
   ip_blocking:
-    enabled: false
-    ips: []
+    enabled: true
+    action: "block"
+    ips:
+      - "184.168.104.171/32"
+      - "52.114.128.147/32"
+      - "123.20.29.193/32"
+      - "150.129.80.32/32"
+      - "209.58.168.85/32"
+      - "52.27.98.123/32"
+      - "52.10.54.112/32"
+      - "54.191.229.196/32"
+
   #################################################################
   # CUSTOM PATH BLOCKING
   # 
@@ -63,6 +62,7 @@ protection_rules:
   #################################################################
   path_blocking:
     enabled: false
+    action: "count"
     paths: []
 
   #################################################################
@@ -72,9 +72,42 @@ protection_rules:
   # In allow mode, creates a whitelist of countries
   #################################################################
   geolocation_blocking:
-    enabled: false
-    action: "count"
-    countries: []
+    enabled: true
+    action: "allow"
+    countries: 
+      - "AS"
+      - "AU"
+      - "BD"
+      - "BM"
+      - "BN"
+      - "CA"
+      - "CN"
+      - "CU"
+      - "CZ"
+      - "DO"
+      - "EG"
+      - "FR"
+      - "DE"
+      - "GR"
+      - "GU"
+      - "IN"
+      - "IT"
+      - "JP"
+      - "JO"
+      - "MY"
+      - "MX"
+      - "NZ"
+      - "PA"
+      - "PT"
+      - "PR"
+      - "RO"
+      - "ES"
+      - "TN"
+      - "AE"
+      - "US"
+      - "VE"
+      - "VI"
+      - "GB"
 
   #################################################################
   # RATE LIMITING
@@ -107,7 +140,6 @@ protection_rules:
     enabled: true
     action: "count"
 
-
   #################################################################
   # AWS MANAGED SECURITY RULES
   # 
@@ -116,7 +148,7 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   malicious_requests:
     enabled: true
@@ -124,7 +156,7 @@ protection_rules:
     
   sql_injection:
     enabled: true
-    action: "count"
+    action: "block" 
 
   windows_protection:
     enabled: true
@@ -149,9 +181,22 @@ protection_rules:
 # IP or path blocking rules.
 #################################################################
 disabled_rules:
-  basic_protection: []
+  basic_protection: 
+    - "NoUserAgent_HEADER" # Legacy override
+    - "SizeRestrictions_QUERYSTRING" # Legacy override
+    - "SizeRestrictions_Cookie_HEADER" # Legacy override
+    - "SizeRestrictions_BODY" # Legacy override
+    - "GenericLFI_QUERYARGUMENTS" # Legacy override
+    - "GenericLFI_BODY" # Legacy override
+    - "CrossSiteScripting_QUERYARGUMENTS" # Legacy override
+    - "CrossSiteScripting_BODY" # Legacy override
   malicious_requests: []
-  sql_injection: []
+  sql_injection: 
+    - "SQLiExtendedPatterns_QUERYARGUMENTS" # Legacy override
+    - "SQLi_QUERYARGUMENTS" # Legacy override
+    - "SQLi_BODY" # Legacy override
+    - "SQLi_COOKIE" # Legacy override
+    - "SQLi_URIPATH" # Legacy override
   windows_protection: []
   linux_protection: [] 
   ip_reputation: []
