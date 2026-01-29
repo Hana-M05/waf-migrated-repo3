@@ -80,7 +80,8 @@ protection_rules:
   # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
-    enabled: false
+    enabled: true
+    action: "count"
 
   #################################################################
   # RATE LIMITING
@@ -100,23 +101,23 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "block"
+    action: "count"
 
   malicious_requests:
     enabled: true
-    action: "block"
+    action: "count"
     
   sql_injection:
     enabled: true
-    action: "block"
+    action: "count"
 
   windows_protection:
     enabled: true
-    action: "block"
+    action: "count"
 
   linux_protection:
     enabled: false
-    action: "block"
+    action: "count"
 
   ip_reputation:
     enabled: false
