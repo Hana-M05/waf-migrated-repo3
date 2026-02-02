@@ -88,26 +88,6 @@ module "waf_wrapper_asset_essentials_dev_us_east_1" {
 ##################### Asset Essentials Prod Modules #####################
 #########################################################################
 
-module "waf_wrapper_asset_essentials_staging_us_east_1" {
-  depends_on = [module.firehose_role_policy_asset_essentials_prod]
-  source     = "./modules/waf-wrapper"
-
-  providers = {
-    aws = aws.asset_essentials_prod_us_east_1
-  }
-
-  # Key = environments/<subpath>/<filename>
-  alb_arns                = local.environments["asset-essentials-staging-us-east-1"].alb_arns
-  api_gateway_ids         = local.environments["asset-essentials-staging-us-east-1"].api_gateway_ids
-  disabled_rules          = local.environments["asset-essentials-staging-us-east-1"].disabled_rules
-  environment             = "asset-essentials-staging-us-east-1"
-  firehose_destination    = local.alloy_s3_buckets[local.environments["asset-essentials-staging-us-east-1"].region]
-  firehose_role_arn       = module.firehose_role_policy_asset_essentials_prod.firehose_role_arn
-  global                  = local.environments["asset-essentials-staging-us-east-1"].global
-  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
-  protection_rules        = local.environments["asset-essentials-staging-us-east-1"].protection_rules
-  waf_error_subscribers   = local.environments["asset-essentials-staging-us-east-1"].waf_error_subscribers
-}
 module "waf_wrapper_asset_essentials_prod_us_east_1" {
   depends_on = [module.firehose_role_policy_asset_essentials_prod]
   source     = "./modules/waf-wrapper"
