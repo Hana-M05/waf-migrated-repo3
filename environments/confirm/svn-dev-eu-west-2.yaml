@@ -142,9 +142,9 @@ disabled_rules:
     - "GenericLFI_BODY" # Triggered by the document upload endpoint
     - "RestrictedExtensions_URIPATH" # Triggered on SVN requests
     - "SizeRestrictions_URIPATH" # Triggered through Confirm Connect endpoint
-    - "ReactJSRCE_BODY" # Triggered through SVN requests
   malicious_requests: 
     - "PROPFIND_METHOD" # Triggered on SVN requests
+    - "ReactJSRCE_BODY" # Triggered through SVN requests
   sql_injection: 
     - "SQLi_QUERYARGUMENTS" # Triggered during GraphQL queries
     - "SQLi_BODY" # Triggered during document uploads

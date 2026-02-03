@@ -17,15 +17,14 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-training-01/1358a15ff35fb369", 
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-production-01/34f59dc6cd34f9ba", 
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-demo-01/e3a9263f6299ba75", 
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/pentest-staging-alb/659a13ad8553de12",
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/zionweb-staging-alb/3e937e36f25e2e32"
+  "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-fd-external-alb-staging/d67d6cb1207b381d", 
+  "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-sd-external-alb-staging/9a55bfba9af3f4b3", 
+  # "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-fd-prod-external-alb/74dfeb28d98b9b6f",
+  # "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-sd-prod-external-alb/b2d576d6a8e4c838"
 ]
 api_gateway_ids: []
 global: false
-region: "us-east-1"
+region: "us-east-2"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
 
@@ -46,23 +45,15 @@ protection_rules:
     enabled: true
     action: "block"
     ips:
-      - "185.177.72.3/32"
-      - "146.148.91.67/32"
-      - "44.218.174.94/32"
-      - "178.18.252.24/32"
+      - "184.168.104.171/32"
+      - "52.114.128.147/32"
       - "123.20.29.193/32"
       - "150.129.80.32/32"
       - "209.58.168.85/32"
-      - "107.175.244.0/24"
-      - "184.168.104.171/32"
-      - "66.19.230.146/32"
-      - "52.114.128.147/32"
-      - "115.132.182.208/32"
-      - "107.175.199.0/24"
-      - "34.41.10.143/32"
-      - "34.28.197.214/32"
-      - "134.29.246.229/32"
-  
+      - "52.27.98.123/32"
+      - "52.10.54.112/32"
+      - "54.191.229.196/32"
+
   #################################################################
   # CUSTOM PATH BLOCKING
   # 
@@ -70,10 +61,9 @@ protection_rules:
   # areas, internal APIs, or sensitive endpoints.
   #################################################################
   path_blocking:
-    enabled: true
-    action: "block"
-    paths:
-      - "/StrongholdDM/api/login"
+    enabled: false
+    action: "count"
+    paths: []
 
   #################################################################
   # GEOLOCATION BLOCKING
@@ -82,9 +72,42 @@ protection_rules:
   # In allow mode, creates a whitelist of countries
   #################################################################
   geolocation_blocking:
-    enabled: false
-    action: "block"
-    countries: []
+    enabled: true
+    action: "allow"
+    countries: 
+      - "AS"
+      - "AU"
+      - "BD"
+      - "BM"
+      - "BN"
+      - "CA"
+      - "CN"
+      - "CU"
+      - "CZ"
+      - "DO"
+      - "EG"
+      - "FR"
+      - "DE"
+      - "GR"
+      - "GU"
+      - "IN"
+      - "IT"
+      - "JP"
+      - "JO"
+      - "MY"
+      - "MX"
+      - "NZ"
+      - "PA"
+      - "PT"
+      - "PR"
+      - "RO"
+      - "ES"
+      - "TN"
+      - "AE"
+      - "US"
+      - "VE"
+      - "VI"
+      - "GB"
 
   #################################################################
   # RATE LIMITING
@@ -114,7 +137,8 @@ protection_rules:
   # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
-    enabled: false
+    enabled: true
+    action: "count"
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -128,22 +152,23 @@ protection_rules:
 
   malicious_requests:
     enabled: true
-    action: "block"
+    action: "count"
     
   sql_injection:
     enabled: true
-    action: "block"
+    action: "block" 
 
   windows_protection:
     enabled: true
-    action: "block"
+    action: "count"
 
   linux_protection:
     enabled: false
-    action: "block"
+    action: "count"
 
   ip_reputation:
-    enabled: false
+    enabled: true
+    action: "count"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
@@ -157,18 +182,21 @@ protection_rules:
 #################################################################
 disabled_rules:
   basic_protection: 
-    - "SizeRestrictions_BODY" # Triggered in genuine usage across a variety of endpoints
-    - "NoUserAgent_HEADER" # Triggered during API requests, possibly due to our web server config
-    - "CrossSiteScripting_BODY" # Triggered during `/wotaskbulk` usage, because customers can specify CSS
-    - "GenericRFI_BODY" # Triggered when making genuine work order requests
-    - "GenericLFI_BODY" # Triggered during file upload through the API
-    - "SizeRestrictions_QUERYSTRING" # Triggered in genuine API queries
-  malicious_requests: 
-    - "JavaDeserializationRCE_BODY" # Triggered during some API calls. Very infrequent, but we don't use Java anyways.
+    - "NoUserAgent_HEADER" # Legacy override
+    - "SizeRestrictions_QUERYSTRING" # Legacy override
+    - "SizeRestrictions_Cookie_HEADER" # Legacy override
+    - "SizeRestrictions_BODY" # Legacy override
+    - "GenericLFI_QUERYARGUMENTS" # Legacy override
+    - "GenericLFI_BODY" # Legacy override
+    - "CrossSiteScripting_QUERYARGUMENTS" # Legacy override
+    - "CrossSiteScripting_BODY" # Legacy override
+  malicious_requests: []
   sql_injection: 
-    - "SQLi_BODY" # Triggered when customers ty to upload files
-    - "SQLi_QUERYARGUMENTS" # Triggered when trying to filter work orders and users through the API
-    - "SQLi_COOKIE" # Unclear why this is being triggered, but observed in logs across a variety of customers/IPs
-  windows_protection: 
-    - "WindowsShellCommands_BODY" # Genuine cusotmer activity across a variety of tenants and endpoints
+    - "SQLiExtendedPatterns_QUERYARGUMENTS" # Legacy override
+    - "SQLi_QUERYARGUMENTS" # Legacy override
+    - "SQLi_BODY" # Legacy override
+    - "SQLi_COOKIE" # Legacy override
+    - "SQLi_URIPATH" # Legacy override
+  windows_protection: []
   linux_protection: [] 
+  ip_reputation: []
