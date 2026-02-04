@@ -35,6 +35,8 @@ alb_arns: [
 ]
 api_gateway_ids: []
 global: false
+redacted_headers: 
+  - "eventstoken"
 region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"

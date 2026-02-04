@@ -60,6 +60,7 @@ module "waf_wrapper_event_manager_dev_us_east_1" {
   global                      = local.environments["event-manager-dev-us-east-1"].global
   log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["event-manager-dev-us-east-1"].protection_rules
+  redacted_headers            = local.environments["event-manager-dev-us-east-1"].redacted_headers
   waf_error_subscribers       = local.environments["event-manager-dev-us-east-1"].waf_error_subscribers
 }
 
@@ -85,5 +86,6 @@ module "waf_wrapper_event_manager_prod_us_east_1" {
   global                      = local.environments["event-manager-prod-us-east-1"].global
   log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["event-manager-prod-us-east-1"].protection_rules
+  redacted_headers            = local.environments["event-manager-prod-us-east-1"].redacted_headers
   waf_error_subscribers       = local.environments["event-manager-prod-us-east-1"].waf_error_subscribers
 }

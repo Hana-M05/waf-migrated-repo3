@@ -81,6 +81,7 @@ module "waf_wrapper_asset_essentials_dev_us_east_1" {
   global                  = local.environments["asset-essentials-dev-us-east-1"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["asset-essentials-dev-us-east-1"].protection_rules
+  redacted_headers        = local.environments["asset-essentials-dev-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["asset-essentials-dev-us-east-1"].waf_error_subscribers
 }
 
@@ -106,6 +107,7 @@ module "waf_wrapper_asset_essentials_prod_us_east_1" {
   global                  = local.environments["asset-essentials-prod-us-east-1"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["asset-essentials-prod-us-east-1"].protection_rules
+  redacted_headers        = local.environments["asset-essentials-prod-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["asset-essentials-prod-us-east-1"].waf_error_subscribers
 }
 
@@ -127,6 +129,7 @@ module "waf_wrapper_asset_essentials_prod_eu_west_2" {
   global                  = local.environments["asset-essentials-prod-eu-west-2"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["asset-essentials-prod-eu-west-2"].protection_rules
+  redacted_headers        = local.environments["asset-essentials-prod-eu-west-2"].redacted_headers
   waf_error_subscribers   = local.environments["asset-essentials-prod-eu-west-2"].waf_error_subscribers
 }
 
@@ -148,5 +151,6 @@ module "waf_wrapper_asset_essentials_prod_ca_central_1" {
   global                  = local.environments["asset-essentials-prod-ca-central-1"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["asset-essentials-prod-ca-central-1"].protection_rules
+  redacted_headers        = local.environments["asset-essentials-prod-ca-central-1"].redacted_headers
   waf_error_subscribers   = local.environments["asset-essentials-prod-ca-central-1"].waf_error_subscribers
 }

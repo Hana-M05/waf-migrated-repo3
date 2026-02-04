@@ -19,6 +19,7 @@
 alb_arns: ["arn:aws:elasticloadbalancing:us-east-2:425444504751:loadbalancer/app/PIEam-ConfirmElb/c5d6363774b39044"]
 api_gateway_ids: []
 global: false
+redacted_headers: []
 region: "us-east-2"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
