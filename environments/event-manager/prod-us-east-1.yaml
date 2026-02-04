@@ -38,7 +38,7 @@ global: false
 region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
-  
+
 #################################################################
 # SECURITY PROTECTION RULES
 # 
