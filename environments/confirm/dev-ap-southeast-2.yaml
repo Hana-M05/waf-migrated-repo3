@@ -88,8 +88,7 @@ protection_rules:
   # not used by Brightly.
   #################################################################
   block_unauthorized_scanners:
-    enabled: true
-    action: "count"
+    enabled: false
 
   #################################################################
   # AWS MANAGED SECURITY RULES
