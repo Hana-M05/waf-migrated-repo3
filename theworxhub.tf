@@ -65,6 +65,7 @@ module "waf_wrapper_theworxhub_dev_us_east_1" {
   global                  = local.environments["theworxhub-dev-us-east-1"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["theworxhub-dev-us-east-1"].protection_rules
+  redacted_headers        = local.environments["theworxhub-dev-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["theworxhub-dev-us-east-1"].waf_error_subscribers
 }
 
@@ -89,5 +90,6 @@ module "waf_wrapper_theworxhub_prod_us_east_1" {
   global                  = local.environments["theworxhub-prod-us-east-1"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["theworxhub-prod-us-east-1"].protection_rules
+  redacted_headers        = local.environments["theworxhub-prod-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["theworxhub-prod-us-east-1"].waf_error_subscribers
 }

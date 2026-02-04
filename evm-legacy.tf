@@ -42,5 +42,6 @@ module "waf_wrapper_evm_legacy_cloudfront" {
   global                  = local.environments["evm-legacy-event-manager-surveys"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["evm-legacy-event-manager-surveys"].protection_rules
+  redacted_headers        = local.environments["evm-legacy-event-manager-surveys"].redacted_headers
   waf_error_subscribers   = local.environments["evm-legacy-event-manager-surveys"].waf_error_subscribers
 }

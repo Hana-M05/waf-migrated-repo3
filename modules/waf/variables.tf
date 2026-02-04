@@ -139,6 +139,12 @@ variable "disabled_rules" {
   default = {}
 }
 
+variable "redacted_headers" {
+  description = "List of HTTP header names to redact from WAF logs"
+  type        = list(string)
+  default     = []
+}
+
 variable "waf_error_subscribers" {
   description = "List of email addresses to subscribe to WAF error notifications"
   type        = list(string)

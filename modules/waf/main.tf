@@ -494,4 +494,13 @@ resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
       name = "cookie"
     }
   }
+
+  dynamic "redacted_fields" {
+    for_each = var.redacted_headers
+    content {
+      single_header {
+        name = lower(redacted_fields.value)
+      }
+    }
+  }
 }
