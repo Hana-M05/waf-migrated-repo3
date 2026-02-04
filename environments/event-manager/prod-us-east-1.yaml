@@ -149,9 +149,17 @@ protection_rules:
 # IP or path blocking rules.
 #################################################################
 disabled_rules:
-  basic_protection: []
+  basic_protection: 
+    - "NoUserAgent_HEADER" # Triggered by a variety of API requests
+    - "SizeRestrictions_BODY" # Triggered in large API requests 
+    - "CrossSiteScripting_BODY" # Triggered by /api/package/invoice/apply
+    - "SizeRestrictions_QUERYSTRING" # Triggered on reCAPTCHA
   malicious_requests: []
   sql_injection: []
-  windows_protection: []
+    # - "SQLi_QUERYARGUMENTS" # Triggered on query.ashx
+    # - "SQLi_BODY" # Triggered on `/api/products/template/search`
+  windows_protection: 
+    - # "WindowsShellCommands_COOKIE" # Our cookies often get flagged as containing shell commands
+    - # "WindowsShellCommands_BODY" # Triggered on a particular event path
   linux_protection: [] 
   ip_reputation: []
