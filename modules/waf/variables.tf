@@ -118,7 +118,7 @@ variable "protection_rules" {
       action  = optional(string, "count") # block, count, or allow
     }),
 
-    # Block Tenable scanner IPs
+    # Block unauthorized scanners
     block_unauthorized_scanners = object({
       enabled = bool
       action  = optional(string, "count") # block, count, or allow
