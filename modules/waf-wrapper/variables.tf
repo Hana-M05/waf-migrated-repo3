@@ -157,6 +157,12 @@ variable "disabled_rules" {
   default = {}
 }
 
+variable "redacted_headers" {
+  description = "List of HTTP header names to redact from WAF logs"
+  type        = list(string)
+  default     = []
+}
+
 variable "region" {
   description = "AWS region"
   type        = string

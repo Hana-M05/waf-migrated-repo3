@@ -109,6 +109,7 @@ module "waf_wrapper_confirm_dev_ap_south_1" {
   global                  = local.environments["confirm-dev-ap-south-1"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["confirm-dev-ap-south-1"].protection_rules
+  redacted_headers        = local.environments["confirm-dev-ap-south-1"].redacted_headers
   waf_error_subscribers   = local.environments["confirm-dev-ap-south-1"].waf_error_subscribers
 }
 
@@ -130,6 +131,7 @@ module "waf_wrapper_confirm_dev_ap_southeast_2" {
   global                  = local.environments["confirm-dev-ap-southeast-2"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["confirm-dev-ap-southeast-2"].protection_rules
+  redacted_headers        = local.environments["confirm-dev-ap-southeast-2"].redacted_headers
   waf_error_subscribers   = local.environments["confirm-dev-ap-southeast-2"].waf_error_subscribers
 }
 
@@ -151,6 +153,7 @@ module "waf_wrapper_confirm_dev_eu_west_2" {
   global                  = local.environments["confirm-dev-eu-west-2"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["confirm-dev-eu-west-2"].protection_rules
+  redacted_headers        = local.environments["confirm-dev-eu-west-2"].redacted_headers
   waf_error_subscribers   = local.environments["confirm-dev-eu-west-2"].waf_error_subscribers
 }
 
@@ -172,6 +175,7 @@ module "waf_wrapper_confirm_svn_dev_eu_west_2" {
   global                  = local.environments["confirm-svn-dev-eu-west-2"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["confirm-svn-dev-eu-west-2"].protection_rules
+  redacted_headers        = local.environments["confirm-svn-dev-eu-west-2"].redacted_headers
   waf_error_subscribers   = local.environments["confirm-svn-dev-eu-west-2"].waf_error_subscribers
 }
 
@@ -196,6 +200,7 @@ module "waf_wrapper_confirm_aus_prod_ap_southeast_2" {
   global                  = local.environments["confirm-aus-prod-ap-southeast-2"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["confirm-aus-prod-ap-southeast-2"].protection_rules
+  redacted_headers        = local.environments["confirm-aus-prod-ap-southeast-2"].redacted_headers
   waf_error_subscribers   = local.environments["confirm-aus-prod-ap-southeast-2"].waf_error_subscribers
 }
 
@@ -217,6 +222,7 @@ module "waf_wrapper_confirm_uk_prod_eu_west_2" {
   global                  = local.environments["confirm-uk-prod-eu-west-2"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["confirm-uk-prod-eu-west-2"].protection_rules
+  redacted_headers        = local.environments["confirm-uk-prod-eu-west-2"].redacted_headers
   waf_error_subscribers   = local.environments["confirm-uk-prod-eu-west-2"].waf_error_subscribers
 }
 
@@ -238,5 +244,6 @@ module "waf_wrapper_confirm_uk_prod_us_east_2" {
   global                  = local.environments["confirm-uk-prod-us-east-2"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["confirm-uk-prod-us-east-2"].protection_rules
+  redacted_headers        = local.environments["confirm-uk-prod-us-east-2"].redacted_headers
   waf_error_subscribers   = local.environments["confirm-uk-prod-us-east-2"].waf_error_subscribers
 }
