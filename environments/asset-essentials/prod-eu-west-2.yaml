@@ -19,6 +19,7 @@
 alb_arns: ["arn:aws:elasticloadbalancing:eu-west-2:748037917842:loadbalancer/app/zionweb-production-alb/cbcccf38b605295b"]
 api_gateway_ids: []
 global: false
+redacted_headers: []
 region: "eu-west-2"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
@@ -104,7 +105,6 @@ protection_rules:
   # 
   # Blocks requests from known vulnerability scanners that are
   # not used by Brightly.
-  # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
     enabled: false

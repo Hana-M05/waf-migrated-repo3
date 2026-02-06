@@ -19,6 +19,7 @@
 alb_arns: ["arn:aws:elasticloadbalancing:ap-southeast-2:870519644306:loadbalancer/app/NonEngineeringELB/a188815d474f8ce0"]
 api_gateway_ids: []
 global: false
+redacted_headers: []
 region: "ap-southeast-2"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
@@ -85,11 +86,9 @@ protection_rules:
   # 
   # Blocks requests from known vulnerability scanners that are
   # not used by Brightly.
-  # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
-    enabled: true
-    action: "count"
+    enabled: false
 
   #################################################################
   # AWS MANAGED SECURITY RULES
