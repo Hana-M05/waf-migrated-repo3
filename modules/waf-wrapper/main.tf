@@ -19,6 +19,7 @@ module "waf" {
   environment             = var.environment
   global                  = var.global
   protection_rules        = var.protection_rules
+  redacted_headers        = var.redacted_headers
   waf_error_subscribers   = var.waf_error_subscribers
   waf_log_destination_arn = module.firehose.firehose_arn
 }

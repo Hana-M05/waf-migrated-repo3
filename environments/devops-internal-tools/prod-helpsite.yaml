@@ -19,6 +19,7 @@
 alb_arns: [] # Always empty for global config
 api_gateway_ids: [] # Always empty for global config
 global: true
+redacted_headers: []
 region: "us-east-1" # Always us-east-1 for global config
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
@@ -87,7 +88,6 @@ protection_rules:
   # 
   # Blocks requests from known vulnerability scanners that are
   # not used by Brightly.
-  # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
     enabled: false

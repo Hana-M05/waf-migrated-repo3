@@ -1,9 +1,8 @@
 @@@InformationSecurity @"Sam McManus" @"Lindsay Zastrow" @Dan @"Anthony Smaldone" @"Kevin Cai"
-@@@AssetEssentials @"Tyler Bassett" @"Brandon Miller"
+@@@AssetEssentials @"Tyler Bassett" @"Brandon Miller" @"Anuj Tandon" @"Tejas Desai" @"jayscott999" @"Pradeep Bisht"
 @@@Confirm @"Ivan Oakley" @"John Castle"
-@@@@TheWorxHub @"Dimitrios Baourdos" @"Ken Barnett"
+@@@TheWorxHub @"Dimitrios Baourdos" @"Ken Barnett"
 @@@Classic @"Chun Siong Tan"
-
 @@@EventManager @chandra.sharma @"Aditya Raj"
 * @@"DefaultReviewers"
 
@@ -12,6 +11,5 @@ environments/asset-essentials/ @@"AssetEssentials"
 environments/confirm/ @@"Confirm"
 environments/theworxhub/ @@"TheWorxHub"
 environments/classic/ @@"Classic"
-
 environments/event-manager/ @@"EventManager"
 AllGroupsCheck(1)

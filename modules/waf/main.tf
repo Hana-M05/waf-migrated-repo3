@@ -18,17 +18,17 @@ resource "aws_wafv2_ip_set" "blacklist" {
   }
 }
 
-resource "aws_wafv2_ip_set" "tenable" {
+resource "aws_wafv2_ip_set" "unauthorized_scanner_ip_ranges" {
   count = var.protection_rules.block_unauthorized_scanners.enabled ? 1 : 0
 
-  name               = "tenable-blocklist-${var.environment}"
-  description        = "Tenable IP addresses to block"
+  name               = "unauthorized-scanner-blocklist-${var.environment}"
+  description        = "Unauthorized scanner IP addresses to block"
   scope              = var.global ? "CLOUDFRONT" : "REGIONAL"
   ip_address_version = "IPV4"
-  addresses          = local.tenable_ip_ranges
+  addresses          = local.unauthorized_scanner_ip_ranges
 
   tags = {
-    Name        = "tenable-blocklist-${var.environment}"
+    Name        = "unauthorized-scanner-blocklist-${var.environment}"
     Environment = var.environment
   }
 
@@ -172,42 +172,7 @@ resource "aws_wafv2_web_acl" "waf_acl" {
     }
   }
 
-  # Block Unauthorized Scanners Rule (Priority 3)
-  dynamic "rule" {
-    for_each = var.protection_rules.block_unauthorized_scanners.enabled ? [1] : []
-    content {
-      name     = "TenableBlockRule"
-      priority = local.rule_priorities.block_unauthorized_scanners
-      action {
-        dynamic "block" {
-          for_each = var.protection_rules.block_unauthorized_scanners.action == "block" ? [1] : []
-          content {}
-        }
-
-        dynamic "allow" {
-          for_each = var.protection_rules.block_unauthorized_scanners.action == "allow" ? [1] : []
-          content {}
-        }
-
-        dynamic "count" {
-          for_each = var.protection_rules.block_unauthorized_scanners.action == "count" ? [1] : []
-          content {}
-        }
-      }
-      statement {
-        ip_set_reference_statement {
-          arn = aws_wafv2_ip_set.tenable[0].arn
-        }
-      }
-      visibility_config {
-        cloudwatch_metrics_enabled = true
-        metric_name                = "TenableBlockRule-${var.environment}"
-        sampled_requests_enabled   = true
-      }
-    }
-  }
-
-  # Geolocation Blocking Rule (Priority 4)
+  # Geolocation Blocking Rule (Priority 3)
   dynamic "rule" {
     for_each = var.protection_rules.geolocation_blocking.enabled && length(var.protection_rules.geolocation_blocking.countries) > 0 ? [1] : []
     content {
@@ -242,6 +207,122 @@ resource "aws_wafv2_web_acl" "waf_acl" {
       visibility_config {
         cloudwatch_metrics_enabled = true
         metric_name                = "GeolocationBlockingRule-${var.environment}"
+        sampled_requests_enabled   = true
+      }
+    }
+  }
+
+  # Block Unauthorized Scanners by IP Rule (Priority 4)
+  dynamic "rule" {
+    for_each = var.protection_rules.block_unauthorized_scanners.enabled ? [1] : []
+    content {
+      name     = "UnauthorizedScannerIPBlockRule"
+      priority = local.rule_priorities.block_unauthorized_scanners
+      action {
+        dynamic "block" {
+          for_each = var.protection_rules.block_unauthorized_scanners.action == "block" ? [1] : []
+          content {}
+        }
+
+        dynamic "allow" {
+          for_each = var.protection_rules.block_unauthorized_scanners.action == "allow" ? [1] : []
+          content {}
+        }
+
+        dynamic "count" {
+          for_each = var.protection_rules.block_unauthorized_scanners.action == "count" ? [1] : []
+          content {}
+        }
+      }
+      statement {
+        ip_set_reference_statement {
+          arn = aws_wafv2_ip_set.unauthorized_scanner_ip_ranges[0].arn
+        }
+      }
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "UnauthorizedScannerIPBlockRule-${var.environment}"
+        sampled_requests_enabled   = true
+      }
+    }
+  }
+
+  # Block Unauthorized Scanners by User-Agent Rule (Priority 5)
+  dynamic "rule" {
+    for_each = var.protection_rules.block_unauthorized_scanners.enabled && length(local.unauthorized_scanner_user_agents) > 0 ? [1] : []
+    content {
+      name     = "UnauthorizedScannerUserAgentBlockRule"
+      priority = local.rule_priorities.block_unauthorized_scanners + 1
+
+      action {
+        dynamic "block" {
+          for_each = var.protection_rules.block_unauthorized_scanners.action == "block" ? [1] : []
+          content {}
+        }
+
+        dynamic "allow" {
+          for_each = var.protection_rules.block_unauthorized_scanners.action == "allow" ? [1] : []
+          content {}
+        }
+
+        dynamic "count" {
+          for_each = var.protection_rules.block_unauthorized_scanners.action == "count" ? [1] : []
+          content {}
+        }
+      }
+
+      statement {
+        # Use OR statement if there are multiple user agents, otherwise use single statement
+        dynamic "or_statement" {
+          for_each = length(local.unauthorized_scanner_user_agents) > 1 ? [1] : []
+          content {
+            dynamic "statement" {
+              for_each = local.unauthorized_scanner_user_agents
+              content {
+                byte_match_statement {
+                  search_string         = statement.value
+                  positional_constraint = "CONTAINS"
+
+                  field_to_match {
+                    single_header {
+                      name = "user-agent"
+                    }
+                  }
+
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        # Use single byte_match_statement if there's only one user agent
+        dynamic "byte_match_statement" {
+          for_each = length(local.unauthorized_scanner_user_agents) == 1 ? [local.unauthorized_scanner_user_agents[0]] : []
+          content {
+            search_string         = byte_match_statement.value
+            positional_constraint = "CONTAINS"
+
+            field_to_match {
+              single_header {
+                name = "user-agent"
+              }
+            }
+
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+          }
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "UnauthorizedScannerUserAgentBlockRule-${var.environment}"
         sampled_requests_enabled   = true
       }
     }
@@ -492,6 +573,15 @@ resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
   redacted_fields {
     single_header {
       name = "cookie"
+    }
+  }
+
+  dynamic "redacted_fields" {
+    for_each = var.redacted_headers
+    content {
+      single_header {
+        name = lower(redacted_fields.value)
+      }
     }
   }
 }

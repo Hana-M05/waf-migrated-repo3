@@ -51,6 +51,7 @@ module "waf_wrapper_security_us_east_1" {
   global                  = local.environments["security-prod-us-east-1"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["security-prod-us-east-1"].protection_rules
+  redacted_headers        = local.environments["security-prod-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["security-prod-us-east-1"].waf_error_subscribers
 }
 
@@ -71,5 +72,6 @@ module "waf_wrapper_security_global" {
   global                  = local.environments["security-prod-global"].global
   log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["security-prod-global"].protection_rules
+  redacted_headers        = local.environments["security-prod-global"].redacted_headers
   waf_error_subscribers   = local.environments["security-prod-global"].waf_error_subscribers
 }
