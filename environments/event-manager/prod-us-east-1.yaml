@@ -156,10 +156,10 @@ disabled_rules:
     - "SizeRestrictions_QUERYSTRING" # Triggered on reCAPTCHA
   malicious_requests: []
   sql_injection: []
-    # - "SQLi_QUERYARGUMENTS" # Triggered on query.ashx
-    # - "SQLi_BODY" # Triggered on `/api/products/template/search`
+    - "SQLi_QUERYARGUMENTS" # Triggered on query.ashx and /page/ical
+    - "SQLi_BODY" # Triggered on `/api/products/template/search`
   windows_protection: 
-    - # "WindowsShellCommands_COOKIE" # Our cookies often get flagged as containing shell commands
+    - "WindowsShellCommands_QUERYARGUMENTS" # Some of our calendar event download paths trigger this
     - # "WindowsShellCommands_BODY" # Triggered on a particular event path
   linux_protection: [] 
   ip_reputation: []
