@@ -19,6 +19,9 @@
 alb_arns: []
 api_gateway_ids: []
 global: false
+redacted_headers: 
+  - "test-junk"
+  - "test-junk2"
 region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
@@ -175,7 +178,6 @@ protection_rules:
   # 
   # Blocks requests from known vulnerability scanners that are
   # not used by Brightly.
-  # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
     enabled: true

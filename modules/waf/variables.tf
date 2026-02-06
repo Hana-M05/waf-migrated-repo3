@@ -118,7 +118,7 @@ variable "protection_rules" {
       action  = optional(string, "count") # block, count, or allow
     }),
 
-    # Block Tenable scanner IPs
+    # Block unauthorized scanners
     block_unauthorized_scanners = object({
       enabled = bool
       action  = optional(string, "count") # block, count, or allow
@@ -137,6 +137,12 @@ variable "disabled_rules" {
     ip_reputation      = optional(list(string), [])
   })
   default = {}
+}
+
+variable "redacted_headers" {
+  description = "List of HTTP header names to redact from WAF logs"
+  type        = list(string)
+  default     = []
 }
 
 variable "waf_error_subscribers" {
