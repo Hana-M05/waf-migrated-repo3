@@ -80,8 +80,7 @@ protection_rules:
   # not used by Brightly.
   #################################################################
   block_unauthorized_scanners:
-    enabled: true
-    action: "count"
+    enabled: false
 
   #################################################################
   # RATE LIMITING
@@ -101,23 +100,23 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     
   sql_injection:
     enabled: true
-    action: "count"
+    action: "block"
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   linux_protection:
     enabled: false
-    action: "count"
+    action: "block"
 
   ip_reputation:
     enabled: false
