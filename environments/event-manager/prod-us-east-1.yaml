@@ -161,5 +161,6 @@ disabled_rules:
     - "SQLi_BODY" # Triggered on `/api/products/template/search`
   windows_protection: 
     - "WindowsShellCommands_QUERYARGUMENTS" # Some of our calendar event download paths trigger this
+    - "PowerShellCommands_QUERYARGUMENTS" # Occasionally triggers on query.ashx for some events
   linux_protection: [] 
   ip_reputation: []
