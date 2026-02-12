@@ -159,6 +159,7 @@ disabled_rules:
   sql_injection: []
     - "SQLi_QUERYARGUMENTS" # Triggered on query.ashx and /page/ical
     - "SQLi_BODY" # Triggered on `/api/products/template/search`
+    # - "SQLi_COOKIE" # Triggered once by what appeared to be an apple bot?
   windows_protection: 
     - "WindowsShellCommands_QUERYARGUMENTS" # Some of our calendar event download paths trigger this
     # - "WindowsShellCommands_COOKIE" # Triggered once by a stonybrook customer
