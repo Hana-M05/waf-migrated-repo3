@@ -156,7 +156,7 @@ disabled_rules:
     - "CrossSiteScripting_BODY" # Triggered by /api/package/invoice/apply
     - "SizeRestrictions_QUERYSTRING" # Triggered on reCAPTCHA
   malicious_requests: []
-  sql_injection: []
+  sql_injection: 
     - "SQLi_QUERYARGUMENTS" # Triggered on query.ashx and /page/ical
     - "SQLi_BODY" # Triggered on `/api/products/template/search`
     # - "SQLi_COOKIE" # Triggered once by what appeared to be an apple bot?
