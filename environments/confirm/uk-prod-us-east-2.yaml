@@ -23,6 +23,7 @@ redacted_headers: []
 region: "us-east-2"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
+  - "productops@brightlysoftware.com"
 
 #################################################################
 # SECURITY PROTECTION RULES
