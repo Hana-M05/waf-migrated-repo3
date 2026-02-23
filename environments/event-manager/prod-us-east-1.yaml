@@ -150,9 +150,19 @@ protection_rules:
 # IP or path blocking rules.
 #################################################################
 disabled_rules:
-  basic_protection: []
+  basic_protection: 
+    - "NoUserAgent_HEADER" # Triggered by a variety of API requests
+    - "SizeRestrictions_BODY" # Triggered in large API requests 
+    - "CrossSiteScripting_BODY" # Triggered by /api/package/invoice/apply
+    - "SizeRestrictions_QUERYSTRING" # Triggered on reCAPTCHA
   malicious_requests: []
-  sql_injection: []
-  windows_protection: []
+  sql_injection: 
+    - "SQLi_QUERYARGUMENTS" # Triggered on query.ashx and /page/ical
+    - "SQLi_BODY" # Triggered on `/api/products/template/search`
+    # - "SQLi_COOKIE" # Triggered once by what appeared to be an apple bot?
+  windows_protection: 
+    - "WindowsShellCommands_QUERYARGUMENTS" # Some of our calendar event download paths trigger this
+    # - "WindowsShellCommands_COOKIE" # Triggered once by a stonybrook customer
+    - "PowerShellCommands_QUERYARGUMENTS" # Occasionally triggers on query.ashx for some events
   linux_protection: [] 
   ip_reputation: []
