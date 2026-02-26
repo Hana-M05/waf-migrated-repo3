@@ -110,11 +110,9 @@ protection_rules:
   # 
   # Blocks requests from known vulnerability scanners that are
   # not used by Brightly.
-  # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
-    enabled: true
-    action: "count"
+    enabled: false
 
   #################################################################
   # AWS MANAGED SECURITY RULES

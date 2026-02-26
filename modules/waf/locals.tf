@@ -9,7 +9,8 @@ locals {
     ip_reputation      = "AWSManagedRulesAmazonIpReputationList"
   }
 
-  tenable_ip_ranges = [
+  unauthorized_scanner_ip_ranges = [
+    # Tenable Scanner
     "13.115.104.128/25",
     "35.73.219.128/25",
     "13.213.79.0/24",
@@ -48,15 +49,33 @@ locals {
     "162.159.129.83/32",
     "162.159.130.83/32",
     "162.159.140.26/32",
-    "172.66.0.26/32"
+    "172.66.0.26/32",
+    # Veracode Scanner
+    "34.195.146.191/32",
+    "35.156.203.105/32",
+    "3.32.105.199/32",
+    "44.219.184.144/28",
+    "34.195.146.191/32",
+    "3.79.58.176/28",
+    "35.156.203.105/32",
+    "18.210.137.174/32",
+    "144.121.23.147/32",
+    "3.93.86.183/32",
+    "34.226.252.43/32",
+    "52.205.76.209/32"
+  ]
+
+  unauthorized_scanner_user_agents = [
+    "UT-Dorkbot/1.2",
+    "libredtail-http"
   ]
 
   # Define rule priorities to ensure consistent ordering
   rule_priorities = {
     ip_blocking                 = 1
     path_blocking               = 2
-    block_unauthorized_scanners = 3
-    geolocation_blocking        = 4
+    geolocation_blocking        = 3
+    block_unauthorized_scanners = 4
     rate_limiting_base          = 100 # Potentially enables multiple rate limiting rules, so needs multiple priority rule space
     basic_protection            = 200
     malicious_requests          = 201

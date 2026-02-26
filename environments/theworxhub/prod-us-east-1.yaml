@@ -27,20 +27,20 @@ alb_arns: [
   "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-seniorliving-staging-alb/8af60120784cca25",
   "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-slc-staging-alb/4f1f58245efd5a44",
   "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mothership-staging-alb/e058382eef2a6102",
-  # # Prod ALBs
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-01/0a05134a928df689",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-02/e02abe388aa7e8df",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-03/7ef8db59c77a1893",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-04/e9f2256b6bdf7c34",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-05/a0d9e07fd0cda21c",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-06/a003c32278b8d8aa",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-07/a1cd4a67dc5440e0",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-08/2fb619953d90fd7f",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-09/02ba728364f8c102",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-10/165ae9775e7f876b",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-Prod-reports/53cc2a57fab8ec70",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-cl-production-alb/5ca3c438b6f7839b",
-  # "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-pvm-production-alb/ddad3c62b440e1ac",
+  # Prod ALBs
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-01/0a05134a928df689", # No running instances in target group
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-02/e02abe388aa7e8df", # SL
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-03/7ef8db59c77a1893", # API
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-04/e9f2256b6bdf7c34", # SLC
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-05/a0d9e07fd0cda21c", # MainApp SL
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-06/a003c32278b8d8aa", # DemoSL
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-07/a1cd4a67dc5440e0", # HC
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-08/2fb619953d90fd7f", # No running instances in target group
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-09/02ba728364f8c102", # DemoHC
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-10/165ae9775e7f876b", # No running instances in target group
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-Prod-reports/53cc2a57fab8ec70", # Reports
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-cl-production-alb/5ca3c438b6f7839b", # MainApp CL
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-pvm-production-alb/ddad3c62b440e1ac", # MainApp PVM
 ] 
 api_gateway_ids: []
 global: false
@@ -48,6 +48,7 @@ redacted_headers: []
 region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
+  - "productops@brightlysoftware.com"
 
 #################################################################
 # SECURITY PROTECTION RULES
@@ -125,7 +126,6 @@ protection_rules:
   # 
   # Blocks requests from known vulnerability scanners that are
   # not used by Brightly.
-  # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
     enabled: true

@@ -23,6 +23,7 @@ redacted_headers: []
 region: "eu-west-2"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
+  - "productops@brightlysoftware.com"
 
 #################################################################
 # SECURITY PROTECTION RULES
@@ -78,11 +79,9 @@ protection_rules:
   # 
   # Blocks requests from known vulnerability scanners that are
   # not used by Brightly.
-  # Currently the only scanners identified are Tenable's.
   #################################################################
   block_unauthorized_scanners:
-    enabled: true
-    action: "count"
+    enabled: false
 
   #################################################################
   # RATE LIMITING
@@ -102,23 +101,23 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     
   sql_injection:
     enabled: true
-    action: "count"
+    action: "block"
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   linux_protection:
     enabled: false
-    action: "count"
+    action: "block"
 
   ip_reputation:
     enabled: false
