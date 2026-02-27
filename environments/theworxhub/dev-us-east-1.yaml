@@ -141,8 +141,19 @@ protection_rules:
 # IP or path blocking rules.
 #################################################################
 disabled_rules:
-  basic_protection: []
+  basic_protection: 
+    - "SizeRestrictions_BODY" # Triggered in large API requests  
+    - "SizeRestrictions_QUERYSTRING" # Triggered by some of our calendar event download paths
+    - "NoUserAgent_HEADER" # Some of our API requests don't include a user agent
+    - "CrossSiteScripting_BODY" # Triggered in file uploads and mobile database updates
+    - "GenericRFI_BODY" # Triggered on a few different pages - seems associated with uploading images
   malicious_requests: []
-  sql_injection: []
-  windows_protection: []
+  sql_injection: 
+    - "SQLi_COOKIE" # Triggered by mobile devices
+    - "SQLi_BODY" # Triggered on a variety of POST requests by genuine validated customers
+    - "SQLi_QUERYARGUMENTS" # Triggered primarily on encrypted query arguents
+  windows_protection: 
+    - "WindowsShellCommands_BODY" # Triggered on a variety of POST requests
+    - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on /Dashboard/Requestor/NotifyOthersByUnit when encrypted args are used
+    # - "PowerShellCommands_BODY" # Triggered on database update
   linux_protection: [] 
