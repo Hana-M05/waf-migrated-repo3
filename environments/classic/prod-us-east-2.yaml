@@ -200,5 +200,6 @@ disabled_rules:
     - "SQLi_URIPATH" # Legacy override
   windows_protection: 
     - "WindowsShellCommands_BODY" # Triggered on work order db updates and work order updates
+    - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on work order updates and FDMarketing searches
   linux_protection: [] 
   ip_reputation: []
