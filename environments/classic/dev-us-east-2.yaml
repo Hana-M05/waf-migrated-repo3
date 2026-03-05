@@ -182,21 +182,23 @@ protection_rules:
 #################################################################
 disabled_rules:
   basic_protection: 
-    - "NoUserAgent_HEADER" # Legacy override
-    - "SizeRestrictions_QUERYSTRING" # Legacy override
-    - "SizeRestrictions_Cookie_HEADER" # Legacy override
-    - "SizeRestrictions_BODY" # Legacy override
-    - "GenericLFI_QUERYARGUMENTS" # Legacy override
-    - "GenericLFI_BODY" # Legacy override
-    - "CrossSiteScripting_QUERYARGUMENTS" # Legacy override
-    - "CrossSiteScripting_BODY" # Legacy override
+    - "NoUserAgent_HEADER" # Triggered frequently
+    - "SizeRestrictions_QUERYSTRING" # Triggered on work order updates and MyScheduleNew endpoints
+    - "SizeRestrictions_Cookie_HEADER" # Triggered when large cookies are generated
+    - "SizeRestrictions_BODY" # Triggered during file uploads
+    - "GenericLFI_QUERYARGUMENTS" # Legacy override - All events blatantly malicious
+    - "GenericLFI_BODY" # Triggered during work order updates
+    - "CrossSiteScripting_QUERYARGUMENTS" # Triggered by the alert function
+    - "CrossSiteScripting_BODY" # Triggered on .svc endpoints
   malicious_requests: []
   sql_injection: 
-    - "SQLiExtendedPatterns_QUERYARGUMENTS" # Legacy override
-    - "SQLi_QUERYARGUMENTS" # Legacy override
-    - "SQLi_BODY" # Legacy override
-    - "SQLi_COOKIE" # Legacy override
-    - "SQLi_URIPATH" # Legacy override
-  windows_protection: []
+    - "SQLiExtendedPatterns_QUERYARGUMENTS" # Legacy override - No events in last 7 days
+    - "SQLi_QUERYARGUMENTS" # Triggered on work order updates, entries, and mygateway
+    - "SQLi_BODY" # Triggered on a variety of endpoints 
+    - "SQLi_COOKIE" # Triggered by genuine customer requests on some pages
+    - "SQLi_URIPATH" # Legacy override - All events blatantly malicious
+  windows_protection: 
+    - "WindowsShellCommands_BODY" # Triggered on work order db updates and work order updates
+    - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on work order updates and FDMarketing searches
   linux_protection: [] 
   ip_reputation: []
