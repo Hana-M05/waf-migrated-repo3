@@ -152,6 +152,7 @@ disabled_rules:
     - "SQLi_COOKIE" # Triggers very rarely from genuine customers
   windows_protection: 
     - "WindowsShellCommands_QUERYARGUMENTS" # Some of our calendar event download paths trigger this
+    - "WindowsShellCommands_BODY" # Triggered on /api/package/invoice/apply
     # - "WindowsShellCommands_COOKIE" # Triggered once by a stonybrook customer
     - "PowerShellCommands_QUERYARGUMENTS" # Occasionally triggers on query.ashx for some events
   linux_protection: [] 
