@@ -247,11 +247,11 @@ resource "aws_wafv2_web_acl" "waf_acl" {
     }
   }
 
-  # Block Unauthorized Scanners by User-Agent Rule (Priority 5)
+  # Block Unauthorized Scanners by Header Rule (Priority 5)
   dynamic "rule" {
-    for_each = var.protection_rules.block_unauthorized_scanners.enabled && length(local.unauthorized_scanner_user_agents) > 0 ? [1] : []
+    for_each = var.protection_rules.block_unauthorized_scanners.enabled && length(local.unauthorized_scanner_header_checks) > 0 ? [1] : []
     content {
-      name     = "UnauthorizedScannerUserAgentBlockRule"
+      name     = "UnauthorizedScannerHeaderBlockRule"
       priority = local.rule_priorities.block_unauthorized_scanners + 1
 
       action {
@@ -272,20 +272,20 @@ resource "aws_wafv2_web_acl" "waf_acl" {
       }
 
       statement {
-        # Use OR statement if there are multiple user agents, otherwise use single statement
+        # Use OR statement if there are multiple header checks, otherwise use single statement
         dynamic "or_statement" {
-          for_each = length(local.unauthorized_scanner_user_agents) > 1 ? [1] : []
+          for_each = length(local.unauthorized_scanner_header_checks) > 1 ? [1] : []
           content {
             dynamic "statement" {
-              for_each = local.unauthorized_scanner_user_agents
+              for_each = local.unauthorized_scanner_header_checks
               content {
                 byte_match_statement {
-                  search_string         = statement.value
+                  search_string         = statement.value.value
                   positional_constraint = "CONTAINS"
 
                   field_to_match {
                     single_header {
-                      name = "user-agent"
+                      name = statement.value.header
                     }
                   }
 
@@ -299,16 +299,16 @@ resource "aws_wafv2_web_acl" "waf_acl" {
           }
         }
 
-        # Use single byte_match_statement if there's only one user agent
+        # Use single byte_match_statement if there's only one header check
         dynamic "byte_match_statement" {
-          for_each = length(local.unauthorized_scanner_user_agents) == 1 ? [local.unauthorized_scanner_user_agents[0]] : []
+          for_each = length(local.unauthorized_scanner_header_checks) == 1 ? [local.unauthorized_scanner_header_checks[0]] : []
           content {
-            search_string         = byte_match_statement.value
+            search_string         = byte_match_statement.value.value
             positional_constraint = "CONTAINS"
 
             field_to_match {
               single_header {
-                name = "user-agent"
+                name = byte_match_statement.value.header
               }
             }
 
@@ -322,7 +322,7 @@ resource "aws_wafv2_web_acl" "waf_acl" {
 
       visibility_config {
         cloudwatch_metrics_enabled = true
-        metric_name                = "UnauthorizedScannerUserAgentBlockRule-${var.environment}"
+        metric_name                = "UnauthorizedScannerHeaderBlockRule-${var.environment}"
         sampled_requests_enabled   = true
       }
     }
