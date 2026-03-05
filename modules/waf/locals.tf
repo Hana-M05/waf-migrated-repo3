@@ -70,6 +70,7 @@ locals {
     { header = "user-agent", value = "UT-Dorkbot/1.2" },
     { header = "user-agent", value = "libredtail-http" },
     { header = "user-agent", value = "RecordedFuture" },
+    { header = "user-agent", value = "RootEvidence" },
     { header = "x-scanned-by", value = "RecordedFuture" }
   ]
   
