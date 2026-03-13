@@ -100,18 +100,23 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: false
+    version: "Default"
 
   malicious_requests:
     enabled: false
+    version: "Default"
 
   sql_injection:
     enabled: false
+    version: "Default"
 
   windows_protection:
     enabled: false
+    version: "Default"
 
   linux_protection:
     enabled: false
+    version: "Default"
 
   ip_reputation:
     enabled: false
