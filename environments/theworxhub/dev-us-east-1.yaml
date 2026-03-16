@@ -151,7 +151,8 @@ disabled_rules:
     - "SizeRestrictions_QUERYSTRING" # Triggered by some of our calendar event download paths
     - "NoUserAgent_HEADER" # Some of our API requests don't include a user agent
     - "CrossSiteScripting_BODY" # Triggered in file uploads and mobile database updates
-    - "GenericRFI_BODY" # Triggered on a few different pages - seems associated with uploading images
+    - "GenericRFI_BODY" # Triggered on /UnitFile/WorkOrders/WorkOrderDetails and /UnitFile/WorkOrders/IsResidentAway
+    - "GenericLFI_BODY" # Triggered on /UnitFile/WorkOrders/WorkOrderDetails and /UnitFile/WorkOrders/IsResidentAway
   malicious_requests: []
   sql_injection: 
     - "SQLi_COOKIE" # Triggered by mobile devices
@@ -160,5 +161,5 @@ disabled_rules:
   windows_protection: 
     - "WindowsShellCommands_BODY" # Triggered on a variety of POST requests
     - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on /Dashboard/Requestor/NotifyOthersByUnit when encrypted args are used
-    # - "PowerShellCommands_BODY" # Triggered on database update
+    - "PowerShellCommands_BODY" # Triggered very rarely on database update
   linux_protection: [] 
