@@ -462,7 +462,7 @@ resource "aws_wafv2_web_acl" "waf_acl" {
         managed_rule_group_statement {
           name        = rule.value.aws_name
           vendor_name = "AWS"
-          version     = contains(["default", "latest", ""], lower(trimspace(rule.value.version))) ? null : trimspace(rule.value.version)
+          version     = contains(["default", ""], lower(trimspace(rule.value.version))) ? null : trimspace(rule.value.version)
 
           dynamic "rule_action_override" {
             for_each = rule.value.overrides
