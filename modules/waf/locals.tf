@@ -65,11 +65,15 @@ locals {
     "52.205.76.209/32"
   ]
 
-  unauthorized_scanner_user_agents = [
-    "UT-Dorkbot/1.2",
-    "libredtail-http"
-  ]
 
+  unauthorized_scanner_header_checks = [
+    { header = "user-agent", value = "UT-Dorkbot/1.2" },
+    { header = "user-agent", value = "libredtail-http" },
+    { header = "user-agent", value = "RecordedFuture" },
+    { header = "user-agent", value = "RootEvidence" },
+    { header = "x-scanned-by", value = "RecordedFuture" }
+  ]
+  
   # Define rule priorities to ensure consistent ordering
   rule_priorities = {
     ip_blocking                 = 1
