@@ -62,16 +62,36 @@ locals {
     "144.121.23.147/32",
     "3.93.86.183/32",
     "34.226.252.43/32",
-    "52.205.76.209/32"
+    "52.205.76.209/32",
+    # Qualys Scanner
+    "139.87.112.0/23",
+    "64.39.96.0/20",
+    # NetSPI
+    "192.64.25.0/24",
+    "76.76.14.0/24",
+    "74.115.3.0/24",
+    "66.235.114.0/24",
+    "50.173.242.120/29",
+    "14.143.56.184/29",
+    "152.52.143.184/29",
+    "50.231.107.24/29",
+    "3.129.126.91/32",
+    "8.29.231.100/32",
+    "8.29.228.234/32",
+    "104.30.133.141/32",
+    "104.30.135.178/32",
+    "104.30.135.179/32",
+    "104.30.135.180/32"
   ]
 
 
   unauthorized_scanner_header_checks = [
-    { header = "user-agent", value = "UT-Dorkbot/1.2" },
+    { header = "user-agent", value = "UT-Dorkbot" },
     { header = "user-agent", value = "libredtail-http" },
     { header = "user-agent", value = "RecordedFuture" },
     { header = "user-agent", value = "RootEvidence" },
-    { header = "x-scanned-by", value = "RecordedFuture" }
+    { header = "x-scanned-by", value = "RecordedFuture" },
+    { header = "user-agent", value = "UT-Gastronaut" },
   ]
 
   # Define rule priorities to ensure consistent ordering
