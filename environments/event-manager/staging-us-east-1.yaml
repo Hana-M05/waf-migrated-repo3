@@ -17,16 +17,11 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-01/b6879aab6f85cf27",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-02/9bad2634b914cc71",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-03/b3bd8db08da5cd5a",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-04/d42a55cfe1ce91dd",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-05/66c2bb3cc5f3b73e",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-01/a78b1b051a9eb117",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-02/99d1afc50ffe3be4",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-03/c51fb6988895912e",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-04/447690893acd31d1",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-05/42c08f63d8745b9b"
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ui-staging-alb/7c7bc9831047d29b",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/api-staging-alb/1ccf813b7b9cde8f",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/api2-staging-alb/522c5811eb2fc073",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/surveysweb-staging-alb/ace453ea55c85861",
+  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/pentestui-staging-alb2/572ca3b0071bd24f",
 ]
 api_gateway_ids: []
 global: false
@@ -71,7 +66,7 @@ protection_rules:
   #################################################################
   geolocation_blocking:
     enabled: false
-    action: "count"
+    action: "block"
     countries: []
 
   #################################################################
@@ -102,7 +97,7 @@ protection_rules:
   #################################################################
   block_unauthorized_scanners:
     enabled: true
-    action: "count"
+    action: "block"
 
 
   #################################################################
@@ -113,27 +108,27 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     
   sql_injection:
     enabled: true
-    action: "count"
+    action: "block"
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   linux_protection:
     enabled: false
-    action: "count"
+    action: "block"
 
   ip_reputation:
     enabled: true
-    action: "count"
+    action: "block"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
