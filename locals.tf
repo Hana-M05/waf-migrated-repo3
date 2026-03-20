@@ -12,9 +12,7 @@ locals {
   waf_update_monitors = [
     "productops@brightlysoftware.com",
     "amritpal.singh@brightlysoftware.com",
-    "deepak.nagvanshi@brightlysoftware.com",
     "tyler.bassett@brightlysoftware.com",
-    "benjamin.issa@siemens.com",
     "amanda.reams@brightlysoftware.com",
     "sam.mcmanus@siemens.com"
   ]
