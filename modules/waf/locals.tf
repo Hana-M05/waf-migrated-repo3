@@ -92,6 +92,7 @@ locals {
     { header = "user-agent", value = "RootEvidence" },
     { header = "x-scanned-by", value = "RecordedFuture" },
     { header = "user-agent", value = "UT-Gastronaut" },
+    { header = "user-agent", value = "Amazonbot"}
   ]
   
   # Define rule priorities to ensure consistent ordering
