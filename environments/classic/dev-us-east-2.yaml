@@ -63,7 +63,7 @@ protection_rules:
   #################################################################
   path_blocking:
     enabled: false
-    action: "count"
+    action: "block"
     paths: []
 
   #################################################################
@@ -138,7 +138,7 @@ protection_rules:
   #################################################################
   block_unauthorized_scanners:
     enabled: true
-    action: "count"
+    action: "block"
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -152,7 +152,7 @@ protection_rules:
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     
   sql_injection:
     enabled: true
@@ -160,15 +160,15 @@ protection_rules:
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   linux_protection:
     enabled: false
-    action: "count"
+    action: "block"
 
   ip_reputation:
     enabled: true
-    action: "count"
+    action: "block"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
@@ -186,17 +186,14 @@ disabled_rules:
     - "SizeRestrictions_QUERYSTRING" # Triggered on work order updates and MyScheduleNew endpoints
     - "SizeRestrictions_Cookie_HEADER" # Triggered when large cookies are generated
     - "SizeRestrictions_BODY" # Triggered during file uploads
-    - "GenericLFI_QUERYARGUMENTS" # Legacy override - All events blatantly malicious
     - "GenericLFI_BODY" # Triggered during work order updates
     - "CrossSiteScripting_QUERYARGUMENTS" # Triggered by the alert function
     - "CrossSiteScripting_BODY" # Triggered on .svc endpoints
   malicious_requests: []
   sql_injection: 
-    - "SQLiExtendedPatterns_QUERYARGUMENTS" # Legacy override - No events in last 7 days
     - "SQLi_QUERYARGUMENTS" # Triggered on work order updates, entries, and mygateway
     - "SQLi_BODY" # Triggered on a variety of endpoints 
     - "SQLi_COOKIE" # Triggered by genuine customer requests on some pages
-    - "SQLi_URIPATH" # Legacy override - All events blatantly malicious
   windows_protection: 
     - "WindowsShellCommands_BODY" # Triggered on work order db updates and work order updates
     - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on work order updates and FDMarketing searches
