@@ -4,6 +4,7 @@
 @@@TheWorxHub @"Dimitrios Baourdos" @"Ken Barnett"
 @@@Classic @"Chun Siong Tan"
 @@@EventManager @chandra.sharma @"Aditya Raj"
+@@@EnergyManager @chandra.sharma @"Karim Magdy" @"Hagar Negm"
 * @@"DefaultReviewers"
 
 environments/ @@"InformationSecurity"
@@ -12,4 +13,5 @@ environments/confirm/ @@"Confirm"
 environments/theworxhub/ @@"TheWorxHub"
 environments/classic/ @@"Classic"
 environments/event-manager/ @@"EventManager"
+environments/energy-manager/ @@"EnergyManager"
 AllGroupsCheck(1)
