@@ -114,11 +114,11 @@ module "waf_wrapper_event_manager_prod_us_east_1" {
 }
 
 module "waf_wrapper_event_manager_staging_us_east_1" {
-  depends_on = [ module.firehose_role_policy_event_manager_dev ]
+  depends_on = [ module.firehose_role_policy_event_manager_prod ]
   source = "./modules/waf-wrapper"
 
   providers = {
-    aws = aws.event_manager_dev_us_east_1
+    aws = aws.event_manager_prod_us_east_1
   }
 
   # Key = environments/<subpath>/<filename>
@@ -127,7 +127,7 @@ module "waf_wrapper_event_manager_staging_us_east_1" {
   disabled_rules              = local.environments["event-manager-staging-us-east-1"].disabled_rules
   environment                 = "event-manager-staging-us-east-1"
   firehose_destination        = local.alloy_s3_buckets[local.environments["event-manager-staging-us-east-1"].region]
-  firehose_role_arn           = module.firehose_role_policy_event_manager_dev.firehose_role_arn
+  firehose_role_arn           = module.firehose_role_policy_event_manager_prod.firehose_role_arn
   global                      = local.environments["event-manager-staging-us-east-1"].global
   log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["event-manager-staging-us-east-1"].protection_rules
