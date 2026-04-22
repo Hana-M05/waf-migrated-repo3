@@ -69,6 +69,7 @@ module "waf_wrapper_theworxhub_dev_us_east_1" {
   waf_error_subscribers   = local.environments["theworxhub-dev-us-east-1"].waf_error_subscribers
 }
 
+
 ###########################################################################
 ######################### TheWorxHub Prod Modules #########################
 ###########################################################################

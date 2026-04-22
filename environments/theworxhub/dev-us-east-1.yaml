@@ -17,13 +17,30 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
+  # Sandbox
   "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/api-sandbox-alb/2b8ea45b0a004656",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mothership-sandbox-alb/fbe9af65eb741748",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-pvm-sandbox-alb/9be03a7993da3b9a",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-slc-sandbox-alb/3160c6466ebabc66",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-seniorliving-sandbox-alb/d603b56b51795fb7",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-healthcare-sandbox-alb/332b472a7dbf46c1",
   "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-cl-sandbox-alb/ad77ea2822f4c494",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-healthcare-sandbox-alb/332b472a7dbf46c1",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-pvm-sandbox-alb/9be03a7993da3b9a",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-seniorliving-sandbox-alb/d603b56b51795fb7",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-slc-sandbox-alb/3160c6466ebabc66",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mothership-sandbox-alb/fbe9af65eb741748",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-01/3403b20dc76f121e",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-02/4a9c82c3fcdd0b5a",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-03/f29619f2d506bb3b",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-04/2eabc1df87454242",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-05/153a2458ba8d5c26",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-06/34ed65c350c3d55d",
+  # Orange
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/api-orange-alb/d15bf95d0edceb7d",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-healthcare-orange-alb/a1ec655e71c24d1e",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-seniorliving-orange-alb/c6839b6b65e056da",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-slc-orange-alb/74b06862385b52ad",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-pvm-orange-alb/83f3c8062121bebf",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mothership-orange-alb/53b009ef59dd742d",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-cl-orange-alb/e77218dda400e198",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-orange-02/0508a1cc62193794",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-orange-Public/0d35f0f5ddb1d724"
 ] 
 api_gateway_ids: []
 global: false
@@ -98,7 +115,7 @@ protection_rules:
   #################################################################
   block_unauthorized_scanners:
     enabled: true
-    action: "count"
+    action: "block"
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -108,23 +125,23 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     
   sql_injection:
     enabled: true
-    action: "count"
+    action: "block"
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   linux_protection:
     enabled: false
-    action: "count"
+    action: "block"
 
   ip_reputation:
     enabled: true
