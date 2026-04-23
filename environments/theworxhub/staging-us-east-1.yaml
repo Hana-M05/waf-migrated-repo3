@@ -17,30 +17,16 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  # Sandbox
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/api-sandbox-alb/2b8ea45b0a004656",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-cl-sandbox-alb/ad77ea2822f4c494",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-healthcare-sandbox-alb/332b472a7dbf46c1",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-pvm-sandbox-alb/9be03a7993da3b9a",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-seniorliving-sandbox-alb/d603b56b51795fb7",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-slc-sandbox-alb/3160c6466ebabc66",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mothership-sandbox-alb/fbe9af65eb741748",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-01/3403b20dc76f121e",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-02/4a9c82c3fcdd0b5a",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-03/f29619f2d506bb3b",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-04/2eabc1df87454242",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-05/153a2458ba8d5c26",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-sandbox-06/34ed65c350c3d55d",
-  # Orange
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/api-orange-alb/d15bf95d0edceb7d",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-healthcare-orange-alb/a1ec655e71c24d1e",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-seniorliving-orange-alb/c6839b6b65e056da",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-slc-orange-alb/74b06862385b52ad",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-pvm-orange-alb/83f3c8062121bebf",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mothership-orange-alb/53b009ef59dd742d",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-cl-orange-alb/e77218dda400e198",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-orange-02/0508a1cc62193794",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-orange-Public/0d35f0f5ddb1d724"
+  # Staging ALBs
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-staging-reports/9e682aae5233b9e5",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/api-staging-alb/8b679a343a35891e",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-cl-staging-alb/8e2d36fddc1a7cd2",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-healthcare-staging-pntst/034e81099e39151a",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-healthcare-staging-alb/f1dfff2844aa0ec2",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-pvm-staging-alb/ae516475847248c2",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-seniorliving-staging-alb/8af60120784cca25",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-slc-staging-alb/4f1f58245efd5a44",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mothership-staging-alb/e058382eef2a6102",
 ] 
 api_gateway_ids: []
 global: false
@@ -48,7 +34,8 @@ redacted_headers: []
 region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
-  
+  - "productops@brightlysoftware.com"
+
 #################################################################
 # SECURITY PROTECTION RULES
 # 
@@ -98,7 +85,7 @@ protection_rules:
     enabled: true
     rules:
       - name: "login-auth-rate-limit"
-        action: "count"
+        action: "block"
         limit: 12000
         aggregate_key_type: "CUSTOM_KEYS"
         evaluation_window_sec: 300
@@ -119,8 +106,21 @@ protection_rules:
   # Create CAPTCHA challenges in defined cases
   #################################################################
   captcha:
-    enabled: false
-    rules: []
+    enabled: true
+    rules: [
+      {
+        name: "public-request-new-captcha",
+        uri_path: {
+          positional_constraint: "CONTAINS",
+          search_string: "/public/request/new"
+        },
+        header: {
+          name: "host",
+          positional_constraint: "CONTAINS",
+          search_string: "."
+        }
+      }
+    ]
 
   #################################################################
   # BLOCK UNAUTHORIZED SCANNERS
