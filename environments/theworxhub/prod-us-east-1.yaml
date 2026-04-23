@@ -88,7 +88,7 @@ protection_rules:
   rate_limiting:
     enabled: true
     rules:
-      - name: "login-auth-rate-limit"
+      - name: "custom-rate-limit"
         action: "block"
         limit: 12000
         aggregate_key_type: "CUSTOM_KEYS"
