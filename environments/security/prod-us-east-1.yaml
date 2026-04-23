@@ -148,6 +148,23 @@ protection_rules:
           search_string: "citizenportal"
         }
       },
+      {
+        name: "login-auth-rate-limit",
+        action: "block",
+        limit: 350,
+        aggregate_key_type: "CUSTOM_KEYS",
+        evaluation_window_sec: 300,
+        custom_keys: [
+          { type: "IP" },
+          { type: "HEADER", header_name: "user-agent" },
+          { type: "JA3_FINGERPRINT", fallback_behavior: "MATCH" }
+        ],
+        uri_paths: [
+          '(?i)^/(Global|Mobile|PasswordReset|ResidentPortal/Login|Public|v2|v3|adt|webhook|UnitFile|AssetFile|Dashboard|RoomBookings|StaffFile|OrganizationFile|Search|Reporting|Imports|Admin|SuperUsers)/',
+          '(?i)^/(Settings|Customer|Actions|Compliance|Permits|PurchaseOrder|Inventory|Transportation|Space|Surveys|Calendar|Security|AssetForm|AssetModel|Shared|Alerts|Importation|Location|Partner|Hub|Library)/',
+          '(?i)^/(oauth/token|SSO|Account/Login)(/|$)'
+        ]
+      },
     ]
 
   #################################################################
