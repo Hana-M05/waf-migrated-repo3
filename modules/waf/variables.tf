@@ -50,7 +50,7 @@ variable "protection_rules" {
         name                  = string
         action                = string
         limit                 = number
-        aggregate_key_type    = string # IP, FORWARDED_IP, or AUTHENTICATED_USER
+        aggregate_key_type    = string # IP, FORWARDED_IP, AUTHENTICATED_USER, or CUSTOM_KEYS
         evaluation_window_sec = number
         uri_path = optional(object({
           positional_constraint = string
@@ -62,6 +62,12 @@ variable "protection_rules" {
           positional_constraint = string
           search_string         = string
         }))
+        uri_paths = optional(list(string), [])
+        custom_keys = optional(list(object({
+          type              = string           # IP, HEADER, JA3_FINGERPRINT, or FORWARDED_IP
+          header_name       = optional(string)
+          fallback_behavior = optional(string) # MATCH or NO_MATCH (for JA3_FINGERPRINT)
+        })), [])
       }))
     })
 
