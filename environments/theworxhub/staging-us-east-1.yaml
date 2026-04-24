@@ -86,7 +86,7 @@ protection_rules:
     rules:
       - name: "custom-rate-limit"
         action: "block"
-        limit: 12000
+        limit: 30000
         aggregate_key_type: "CUSTOM_KEYS"
         evaluation_window_sec: 300
         custom_keys:
