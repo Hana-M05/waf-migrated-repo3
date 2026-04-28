@@ -149,13 +149,15 @@ disabled_rules:
     - "SizeRestrictions_BODY" # Triggered in large API requests 
     - "CrossSiteScripting_BODY" # Triggered by /api/package/invoice/apply
     - "SizeRestrictions_QUERYSTRING" # Triggered on reCAPTCHA
+    - "CrossSiteScripting_URIPATH" # /javascript:__doPostBack('ctl01$ctl00$ctl00$publicBody$siteBody$UCEventSearch$ViewBy$lbtnNext365','')
   malicious_requests: []
   sql_injection: 
     - "SQLi_QUERYARGUMENTS" # Triggered on query.ashx and /page/ical
     - "SQLi_BODY" # Triggered on `/api/products/template/search`
-    # - "SQLi_COOKIE" # Triggered once by what appeared to be an apple bot?
+    - "SQLi_COOKIE" # Triggers very rarely from genuine customers
   windows_protection: 
     - "WindowsShellCommands_QUERYARGUMENTS" # Some of our calendar event download paths trigger this
+    - "WindowsShellCommands_BODY" # Triggered on /api/package/invoice/apply
     # - "WindowsShellCommands_COOKIE" # Triggered once by a stonybrook customer
     - "PowerShellCommands_QUERYARGUMENTS" # Occasionally triggers on query.ashx for some events
   linux_protection: [] 

@@ -37,6 +37,34 @@ resource "aws_wafv2_ip_set" "unauthorized_scanner_ip_ranges" {
   }
 }
 
+resource "aws_wafv2_regex_pattern_set" "rate_limit_uri_paths" {
+  for_each = {
+    for rule in (var.protection_rules.rate_limiting.enabled ? var.protection_rules.rate_limiting.rules : []) :
+    rule.name => rule
+    if length(rule.uri_paths) > 0
+  }
+
+  name        = "rate-limit-paths-${each.key}-${var.environment}"
+  description = "URI paths for rate limiting rule ${each.key}"
+  scope       = var.global ? "CLOUDFRONT" : "REGIONAL"
+
+  dynamic "regular_expression" {
+    for_each = each.value.uri_paths
+    content {
+      regex_string = regular_expression.value
+    }
+  }
+
+  tags = {
+    Name        = "rate-limit-paths-${each.key}-${var.environment}"
+    Environment = var.environment
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_wafv2_web_acl" "waf_acl" {
   name        = "${var.environment}-waf-acl"
   scope       = var.global ? "CLOUDFRONT" : "REGIONAL"
@@ -359,9 +387,58 @@ resource "aws_wafv2_web_acl" "waf_acl" {
           aggregate_key_type    = rate_rule.value.aggregate_key_type
           evaluation_window_sec = rate_rule.value.evaluation_window_sec
 
-          # Scope down statement with AND conditions (if provided)
+          # Custom keys for CUSTOM_KEYS aggregate_key_type
+          dynamic "custom_key" {
+            for_each = rate_rule.value.custom_keys
+            iterator = ck
+            content {
+              dynamic "ip" {
+                for_each = ck.value.type == "IP" ? [1] : []
+                content {}
+              }
+
+              dynamic "header" {
+                for_each = ck.value.type == "HEADER" ? [ck.value] : []
+                content {
+                  name = header.value.header_name
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                }
+              }
+
+              dynamic "ja3_fingerprint" {
+                for_each = ck.value.type == "JA3_FINGERPRINT" ? [ck.value] : []
+                content {
+                  fallback_behavior = ja3_fingerprint.value.fallback_behavior
+                }
+              }
+            }
+          }
+
+          # Scope down to multiple URI paths via regex pattern set
           dynamic "scope_down_statement" {
-            for_each = rate_rule.value.uri_path != null || rate_rule.value.method != null || rate_rule.value.header != null ? [1] : []
+            for_each = length(rate_rule.value.uri_paths) > 0 ? [rate_rule.value] : []
+            content {
+              regex_pattern_set_reference_statement {
+                arn = aws_wafv2_regex_pattern_set.rate_limit_uri_paths[scope_down_statement.value.name].arn
+
+                field_to_match {
+                  uri_path {}
+                }
+
+                text_transformation {
+                  priority = 0
+                  type     = "NONE"
+                }
+              }
+            }
+          }
+
+          # Scope down statement with AND conditions (single uri_path/method/header)
+          dynamic "scope_down_statement" {
+            for_each = length(rate_rule.value.uri_paths) == 0 && (rate_rule.value.uri_path != null || rate_rule.value.method != null || rate_rule.value.header != null) ? [1] : []
             content {
               and_statement {
                 # URI path match statement
