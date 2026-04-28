@@ -20,8 +20,6 @@ alb_arns: [
   "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-training-01/1358a15ff35fb369", 
   "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-production-01/34f59dc6cd34f9ba", 
   "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/ALB-ue1-demo-01/e3a9263f6299ba75", 
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/pentest-staging-alb/659a13ad8553de12",
-  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/zionweb-staging-alb/3e937e36f25e2e32"
 ]
 api_gateway_ids: []
 global: false
