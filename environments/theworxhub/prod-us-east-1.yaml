@@ -17,17 +17,7 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  # Staging ALBs
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-staging-reports/9e682aae5233b9e5",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/api-staging-alb/8b679a343a35891e",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-cl-staging-alb/8e2d36fddc1a7cd2",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-healthcare-staging-pntst/034e81099e39151a",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-healthcare-staging-alb/f1dfff2844aa0ec2",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-pvm-staging-alb/ae516475847248c2",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-seniorliving-staging-alb/8af60120784cca25",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-slc-staging-alb/4f1f58245efd5a44",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mothership-staging-alb/e058382eef2a6102",
-  # Prod ALBs
+# Prod ALBs
   "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-01/0a05134a928df689", # No running instances in target group
   "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-02/e02abe388aa7e8df", # SL
   "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-prod-03/7ef8db59c77a1893", # API
@@ -96,8 +86,23 @@ protection_rules:
   # abuse or DDoS attacks. Customize rules as needed.
   #################################################################
   rate_limiting:
-    enabled: false
-    rules: []
+    enabled: true
+    rules:
+      - name: "custom-rate-limit"
+        action: "block"
+        limit: 30000
+        aggregate_key_type: "CUSTOM_KEYS"
+        evaluation_window_sec: 300
+        custom_keys:
+          - type: "IP"
+          - type: "HEADER"
+            header_name: "user-agent"
+          - type: "JA3_FINGERPRINT"
+            fallback_behavior: "MATCH"
+        uri_paths:
+          - '(?i)^/(Global|Mobile|PasswordReset|ResidentPortal/Login|Public|v2|v3|adt|webhook|UnitFile|AssetFile|Dashboard|RoomBookings|StaffFile|OrganizationFile|Search|Reporting|Imports|Admin|SuperUsers)/'
+          - '(?i)^/(Settings|Customer|Actions|Compliance|Permits|PurchaseOrder|Inventory|Transportation|Space|Surveys|Calendar|Security|AssetForm|AssetModel|Shared|Alerts|Importation|Location|Partner|Hub|Library)/'
+          - '(?i)^/(oauth/token|SSO|Account/Login)(/|$)'
 
   #################################################################
   # CAPTCHA PROTECTION

@@ -17,21 +17,20 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-01/b6879aab6f85cf27",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-02/9bad2634b914cc71",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-03/b3bd8db08da5cd5a",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-04/d42a55cfe1ce91dd",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-demo-05/66c2bb3cc5f3b73e",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-01/a78b1b051a9eb117",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-02/99d1afc50ffe3be4",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-03/c51fb6988895912e",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-04/447690893acd31d1",
-  "arn:aws:elasticloadbalancing:us-east-1:622913004475:loadbalancer/app/ALB-ue1-prod-05/42c08f63d8745b9b"
-]
+  # Staging ALBs
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-staging-reports/9e682aae5233b9e5",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/api-staging-alb/8b679a343a35891e",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-cl-staging-alb/8e2d36fddc1a7cd2",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-healthcare-staging-pntst/034e81099e39151a",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-healthcare-staging-alb/f1dfff2844aa0ec2",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-pvm-staging-alb/ae516475847248c2",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-seniorliving-staging-alb/8af60120784cca25",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-slc-staging-alb/4f1f58245efd5a44",
+  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mothership-staging-alb/e058382eef2a6102",
+] 
 api_gateway_ids: []
 global: false
-redacted_headers: 
-  - "eventstoken"
+redacted_headers: []
 region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
@@ -70,9 +69,11 @@ protection_rules:
   # In allow mode, creates a whitelist of countries
   #################################################################
   geolocation_blocking:
-    enabled: false
-    action: "count"
-    countries: []
+    enabled: true
+    action: "block"
+    countries: [
+      "RU"
+    ]
 
   #################################################################
   # RATE LIMITING
@@ -81,18 +82,45 @@ protection_rules:
   # abuse or DDoS attacks. Customize rules as needed.
   #################################################################
   rate_limiting:
-    enabled: false
-    rules: []
+    enabled: true
+    rules:
+      - name: "custom-rate-limit"
+        action: "block"
+        limit: 30000
+        aggregate_key_type: "CUSTOM_KEYS"
+        evaluation_window_sec: 300
+        custom_keys:
+          - type: "IP"
+          - type: "HEADER"
+            header_name: "user-agent"
+          - type: "JA3_FINGERPRINT"
+            fallback_behavior: "MATCH"
+        uri_paths:
+          - '(?i)^/(Global|Mobile|PasswordReset|ResidentPortal/Login|Public|v2|v3|adt|webhook|UnitFile|AssetFile|Dashboard|RoomBookings|StaffFile|OrganizationFile|Search|Reporting|Imports|Admin|SuperUsers)/'
+          - '(?i)^/(Settings|Customer|Actions|Compliance|Permits|PurchaseOrder|Inventory|Transportation|Space|Surveys|Calendar|Security|AssetForm|AssetModel|Shared|Alerts|Importation|Location|Partner|Hub|Library)/'
+          - '(?i)^/(oauth/token|SSO|Account/Login)(/|$)'
 
   #################################################################
-  # RATE LIMITING
+  # CAPTCHA PROTECTION
   # 
-  # Limit the number of requests from a single IP to prevent
-  # abuse or DDoS attacks. Customize rules as needed.
+  # Create CAPTCHA challenges in defined cases
   #################################################################
   captcha:
-    enabled: false
-    rules: []
+    enabled: true
+    rules: [
+      {
+        name: "public-request-new-captcha",
+        uri_path: {
+          positional_constraint: "CONTAINS",
+          search_string: "/public/request/new"
+        },
+        header: {
+          name: "host",
+          positional_constraint: "CONTAINS",
+          search_string: "."
+        }
+      }
+    ]
 
   #################################################################
   # BLOCK UNAUTHORIZED SCANNERS
@@ -104,7 +132,6 @@ protection_rules:
     enabled: true
     action: "block"
 
-
   #################################################################
   # AWS MANAGED SECURITY RULES
   # 
@@ -113,27 +140,27 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     
   sql_injection:
     enabled: true
-    action: "count"
+    action: "block"
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
 
   linux_protection:
     enabled: false
-    action: "count"
+    action: "block"
 
   ip_reputation:
     enabled: true
-    action: "count"
+    action: "block"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
@@ -147,20 +174,19 @@ protection_rules:
 #################################################################
 disabled_rules:
   basic_protection: 
-    - "NoUserAgent_HEADER" # Triggered by a variety of API requests
-    - "SizeRestrictions_BODY" # Triggered in large API requests 
-    - "CrossSiteScripting_BODY" # Triggered by /api/package/invoice/apply
-    - "SizeRestrictions_QUERYSTRING" # Triggered on reCAPTCHA
-    - "CrossSiteScripting_URIPATH" # /javascript:__doPostBack('ctl01$ctl00$ctl00$publicBody$siteBody$UCEventSearch$ViewBy$lbtnNext365','')
+    - "SizeRestrictions_BODY" # Triggered in large API requests  
+    - "SizeRestrictions_QUERYSTRING" # Triggered by some of our calendar event download paths
+    - "NoUserAgent_HEADER" # Some of our API requests don't include a user agent
+    - "CrossSiteScripting_BODY" # Triggered in file uploads and mobile database updates
+    - "GenericRFI_BODY" # Triggered on /UnitFile/WorkOrders/WorkOrderDetails and /UnitFile/WorkOrders/IsResidentAway
+    - "GenericLFI_BODY" # Triggered on /UnitFile/WorkOrders/WorkOrderDetails and /UnitFile/WorkOrders/IsResidentAway
   malicious_requests: []
   sql_injection: 
-    - "SQLi_QUERYARGUMENTS" # Triggered on query.ashx and /page/ical
-    - "SQLi_BODY" # Triggered on `/api/products/template/search`
-    - "SQLi_COOKIE" # Triggers very rarely from genuine customers
+    - "SQLi_COOKIE" # Triggered by mobile devices
+    - "SQLi_BODY" # Triggered on a variety of POST requests by genuine validated customers
+    - "SQLi_QUERYARGUMENTS" # Triggered primarily on encrypted query arguents
   windows_protection: 
-    - "WindowsShellCommands_QUERYARGUMENTS" # Some of our calendar event download paths trigger this
-    - "WindowsShellCommands_BODY" # Triggered on /api/package/invoice/apply
-    # - "WindowsShellCommands_COOKIE" # Triggered once by a stonybrook customer
-    - "PowerShellCommands_QUERYARGUMENTS" # Occasionally triggers on query.ashx for some events
+    - "WindowsShellCommands_BODY" # Triggered on a variety of POST requests
+    - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on /Dashboard/Requestor/NotifyOthersByUnit when encrypted args are used
+    - "PowerShellCommands_BODY" # Triggered very rarely on database update
   linux_protection: [] 
-  ip_reputation: []

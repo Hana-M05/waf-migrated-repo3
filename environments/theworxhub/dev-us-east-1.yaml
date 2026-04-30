@@ -40,7 +40,12 @@ alb_arns: [
   "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mothership-orange-alb/53b009ef59dd742d",
   "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mainapp-cl-orange-alb/e77218dda400e198",
   "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-orange-02/0508a1cc62193794",
-  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-orange-Public/0d35f0f5ddb1d724"
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/ALB-ue1-orange-Public/0d35f0f5ddb1d724",
+  # Performance
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/seniorliving-performance-alb/a6cea25c965e5af8",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/healthcare-performance-alb/3969ea02e92f8808",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/mothership-performance-alb/3f4b81c8890485d0",
+  "arn:aws:elasticloadbalancing:us-east-1:910562428656:loadbalancer/app/api-performance-alb/c7b2283f6a9e6476"
 ] 
 api_gateway_ids: []
 global: false
@@ -95,8 +100,23 @@ protection_rules:
   # abuse or DDoS attacks. Customize rules as needed.
   #################################################################
   rate_limiting:
-    enabled: false
-    rules: []
+    enabled: true
+    rules:
+      - name: "custom-rate-limit"
+        action: "count"
+        limit: 30000
+        aggregate_key_type: "CUSTOM_KEYS"
+        evaluation_window_sec: 300
+        custom_keys:
+          - type: "IP"
+          - type: "HEADER"
+            header_name: "user-agent"
+          - type: "JA3_FINGERPRINT"
+            fallback_behavior: "MATCH"
+        uri_paths:
+          - '(?i)^/(Global|Mobile|PasswordReset|ResidentPortal/Login|Public|v2|v3|adt|webhook|UnitFile|AssetFile|Dashboard|RoomBookings|StaffFile|OrganizationFile|Search|Reporting|Imports|Admin|SuperUsers)/'
+          - '(?i)^/(Settings|Customer|Actions|Compliance|Permits|PurchaseOrder|Inventory|Transportation|Space|Surveys|Calendar|Security|AssetForm|AssetModel|Shared|Alerts|Importation|Location|Partner|Hub|Library)/'
+          - '(?i)^/(oauth/token|SSO|Account/Login)(/|$)'
 
   #################################################################
   # CAPTCHA PROTECTION
