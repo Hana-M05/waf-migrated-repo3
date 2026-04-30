@@ -39,9 +39,11 @@ protection_rules:
   # Add IP addresses in CIDR format (use /32 for single IPs).
   #################################################################
   ip_blocking:
-    enabled: false
-    action: "count"
-    ips: []
+    enabled: true
+    action: "block"
+    ips: [
+      "157.125.210.250/32"
+    ]
   #################################################################
   # CUSTOM PATH BLOCKING
   # 
