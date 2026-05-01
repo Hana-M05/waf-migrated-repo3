@@ -18,7 +18,6 @@
 #################################################################
 alb_arns: [
   "arn:aws:elasticloadbalancing:us-east-1:379262058790:loadbalancer/app/k8s-kubesyst-maingate-f216c510b9/471fc9407100cc71",
-  "arn:aws:elasticloadbalancing:us-east-1:379262058790:loadbalancer/app/k8s-kubesyst-maingate-14fd5317b1/c867093b6941758f"
 ]
 api_gateway_ids: []
 global: false
