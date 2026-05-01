@@ -1,5 +1,4 @@
 @@@InformationSecurity @"Sam McManus" @"Lindsay Zastrow" @Dan @"Anthony Smaldone" @"Kevin Cai"
-@@@AI @@qaish.kanchwala
 @@@AssetEssentials @"Tyler Bassett" @"Brandon Miller" @"Anuj Tandon" @"Tejas Desai" @"jayscott999" @"Pradeep Bisht"
 @@@Confirm @"Ivan Oakley" @"John Castle"
 @@@TheWorxHub @"Dimitrios Baourdos" @"Ken Barnett"
@@ -8,7 +7,6 @@
 * @@"DefaultReviewers"
 
 environments/ @@"InformationSecurity"
-environments/ai/ @@"AI"
 environments/asset-essentials/ @@"AssetEssentials"
 environments/confirm/ @@"Confirm"
 environments/theworxhub/ @@"TheWorxHub"
