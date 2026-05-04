@@ -16,14 +16,21 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
-alb_arns: ["arn:aws:elasticloadbalancing:eu-west-2:425444504751:loadbalancer/app/OnDemand-ConfirmElb/926e45e660d95d01"]
+alb_arns: [
+  # Staging Load Balancers
+  "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/ALB-ue1-staging-01/d5d3ec51168ccc23",
+  "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/pentestweb-staging-alb/8e6178592aac86b9",
+  # Prod Load Balancers
+  "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/ALB-ue1-demo-01/4a7974d5db6a6f9b",
+  "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/ALB-ue1-training-01/35bf68b364156ebf",
+  "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/ALB-ue1-prod-01/7cb82376bed2ad0c"
+]
 api_gateway_ids: []
 global: false
 redacted_headers: []
-region: "eu-west-2"
+region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
-  - "productops@brightlysoftware.com"
 
 #################################################################
 # SECURITY PROTECTION RULES
@@ -39,11 +46,8 @@ protection_rules:
   # Add IP addresses in CIDR format (use /32 for single IPs).
   #################################################################
   ip_blocking:
-    enabled: true
-    action: "block"
-    ips: [
-      "157.125.210.250/32"
-    ]
+    enabled: false
+    ips: []
   #################################################################
   # CUSTOM PATH BLOCKING
   # 
@@ -52,7 +56,6 @@ protection_rules:
   #################################################################
   path_blocking:
     enabled: false
-    action: "count"
     paths: []
 
   #################################################################
@@ -63,7 +66,7 @@ protection_rules:
   #################################################################
   geolocation_blocking:
     enabled: false
-    action: "block"
+    action: "count"
     countries: []
 
   #################################################################
@@ -77,15 +80,6 @@ protection_rules:
     rules: []
 
   #################################################################
-  # BLOCK UNAUTHORIZED SCANNERS
-  # 
-  # Blocks requests from known vulnerability scanners that are
-  # not used by Brightly.
-  #################################################################
-  block_unauthorized_scanners:
-    enabled: false
-
-  #################################################################
   # RATE LIMITING
   # 
   # Limit the number of requests from a single IP to prevent
@@ -96,6 +90,16 @@ protection_rules:
     rules: []
 
   #################################################################
+  # BLOCK UNAUTHORIZED SCANNERS
+  # 
+  # Blocks requests from known vulnerability scanners that are
+  # not used by Brightly.
+  #################################################################
+  block_unauthorized_scanners:
+    enabled: true
+    action: "count"
+
+  #################################################################
   # AWS MANAGED SECURITY RULES
   # 
   # These are pre-built security rules provided by AWS that
@@ -103,31 +107,27 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "block"
-    version: "Version_1.20"
+    action: "count"
 
   malicious_requests:
     enabled: true
-    action: "block"
-    version: "Version_1.25"
+    action: "count"
     
   sql_injection:
     enabled: true
-    action: "block"
-    version: "Version_1.3"
+    action: "count"
 
   windows_protection:
     enabled: true
-    action: "block"
-    version: "Version_2.0"
+    action: "count"
 
   linux_protection:
     enabled: false
-    action: "block"
-    version: "Version_2.6"
-
+    action: "count"
+  
   ip_reputation:
-    enabled: false
+    enabled: true
+    action: "count"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
@@ -140,19 +140,9 @@ protection_rules:
 # IP or path blocking rules.
 #################################################################
 disabled_rules:
-  basic_protection: 
-    - "NoUserAgent_HEADER" # Triggered during API requests, possibly due to our web server config
-    - "CrossSiteScripting_BODY" # Triggered during confirmconnector.asmx queries and centralEnquiries"
-    - "SizeRestrictions_BODY" # Triggered in genuine usage across a variety of endpoints
-    - "SizeRestrictions_QUERYSTRING" # Triggered in genuine usage of GraphQL endpoints
-    - "EC2MetaDataSSRF_BODY" # Triggered by the mobile app
-    - "GenericLFI_BODY" # Triggered by the document upload endpoint
-    - "SizeRestrictions_URIPATH" # Triggered through Confirm Connect endpoint
+  basic_protection: []
   malicious_requests: []
-  sql_injection: 
-    - "SQLi_QUERYARGUMENTS" # Triggered during GraphQL queries
-    - "SQLi_BODY" # Triggered during document uploads
-  windows_protection: 
-    - "WindowsShellCommands_BODY" # Triggered during GraphQL queries and API queries
-    - "WindowsShellCommands_QUERYARGUMENTS" # Triggered by some confirm api endpoints
+  sql_injection: []
+  windows_protection: []
   linux_protection: [] 
+  ip_reputation: []
