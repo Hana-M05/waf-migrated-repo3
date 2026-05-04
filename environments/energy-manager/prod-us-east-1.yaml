@@ -17,9 +17,6 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  # Staging Load Balancers
-  "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/ALB-ue1-staging-01/d5d3ec51168ccc23",
-  "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/pentestweb-staging-alb/8e6178592aac86b9",
   # Prod Load Balancers
   "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/ALB-ue1-demo-01/4a7974d5db6a6f9b",
   "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/ALB-ue1-training-01/35bf68b364156ebf",
@@ -108,26 +105,32 @@ protection_rules:
   basic_protection:
     enabled: true
     action: "count"
+    version: "Default"
 
   malicious_requests:
     enabled: true
     action: "count"
+    version: "Default"
     
   sql_injection:
     enabled: true
     action: "count"
+    version: "Default"
 
   windows_protection:
     enabled: true
     action: "count"
+    version: "Default"
 
   linux_protection:
     enabled: false
     action: "count"
+    version: "Default"
   
   ip_reputation:
     enabled: true
     action: "count"
+    version: "Default"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
