@@ -112,26 +112,32 @@ protection_rules:
   basic_protection:
     enabled: true
     action: "count"
+    version: "Default"
 
   malicious_requests:
     enabled: true
     action: "count"
+    version: "Default"
     
   sql_injection:
     enabled: true
     action: "count" 
+    version: "Default"
 
   windows_protection:
     enabled: true
     action: "count"
+    version: "Default"
 
   linux_protection:
     enabled: true
     action: "count"
+    version: "Default"
 
   ip_reputation:
     enabled: true
     action: "block"
+    version: "Default"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES

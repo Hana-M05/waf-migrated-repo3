@@ -16,18 +16,10 @@
 # A set of general configurations for the WAF, including
 # the ALB name, environment, and region.
 #################################################################
-alb_arns: [
-  # Staging ALBs
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-staging-reports/9e682aae5233b9e5",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/api-staging-alb/8b679a343a35891e",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-cl-staging-alb/8e2d36fddc1a7cd2",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-healthcare-staging-pntst/034e81099e39151a",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-healthcare-staging-alb/f1dfff2844aa0ec2",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-pvm-staging-alb/ae516475847248c2",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-seniorliving-staging-alb/8af60120784cca25",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-slc-staging-alb/4f1f58245efd5a44",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mothership-staging-alb/e058382eef2a6102",
-] 
+alb_arns: [ 
+  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/pentest-staging-alb/659a13ad8553de12",
+  "arn:aws:elasticloadbalancing:us-east-1:748037917842:loadbalancer/app/zionweb-staging-alb/3e937e36f25e2e32"
+]
 api_gateway_ids: []
 global: false
 redacted_headers: []
@@ -50,8 +42,26 @@ protection_rules:
   # Add IP addresses in CIDR format (use /32 for single IPs).
   #################################################################
   ip_blocking:
-    enabled: false
-    ips: []
+    enabled: true
+    action: "block"
+    ips:
+      - "185.177.72.3/32"
+      - "146.148.91.67/32"
+      - "44.218.174.94/32"
+      - "178.18.252.24/32"
+      - "123.20.29.193/32"
+      - "150.129.80.32/32"
+      - "209.58.168.85/32"
+      - "107.175.244.0/24"
+      - "184.168.104.171/32"
+      - "66.19.230.146/32"
+      - "52.114.128.147/32"
+      - "115.132.182.208/32"
+      - "107.175.199.0/24"
+      - "34.41.10.143/32"
+      - "34.28.197.214/32"
+      - "134.29.246.229/32"
+  
   #################################################################
   # CUSTOM PATH BLOCKING
   # 
@@ -59,8 +69,10 @@ protection_rules:
   # areas, internal APIs, or sensitive endpoints.
   #################################################################
   path_blocking:
-    enabled: false
-    paths: []
+    enabled: true
+    action: "block"
+    paths:
+      - "/StrongholdDM/api/login"
 
   #################################################################
   # GEOLOCATION BLOCKING
@@ -69,11 +81,9 @@ protection_rules:
   # In allow mode, creates a whitelist of countries
   #################################################################
   geolocation_blocking:
-    enabled: true
+    enabled: false
     action: "block"
-    countries: [
-      "RU"
-    ]
+    countries: []
 
   #################################################################
   # RATE LIMITING
@@ -82,45 +92,18 @@ protection_rules:
   # abuse or DDoS attacks. Customize rules as needed.
   #################################################################
   rate_limiting:
-    enabled: true
-    rules:
-      - name: "custom-rate-limit"
-        action: "block"
-        limit: 30000
-        aggregate_key_type: "CUSTOM_KEYS"
-        evaluation_window_sec: 300
-        custom_keys:
-          - type: "IP"
-          - type: "HEADER"
-            header_name: "user-agent"
-          - type: "JA3_FINGERPRINT"
-            fallback_behavior: "MATCH"
-        uri_paths:
-          - '(?i)^/(Global|Mobile|PasswordReset|ResidentPortal/Login|Public|v2|v3|adt|webhook|UnitFile|AssetFile|Dashboard|RoomBookings|StaffFile|OrganizationFile|Search|Reporting|Imports|Admin|SuperUsers)/'
-          - '(?i)^/(Settings|Customer|Actions|Compliance|Permits|PurchaseOrder|Inventory|Transportation|Space|Surveys|Calendar|Security|AssetForm|AssetModel|Shared|Alerts|Importation|Location|Partner|Hub|Library)/'
-          - '(?i)^/(oauth/token|SSO|Account/Login)(/|$)'
+    enabled: false
+    rules: []
 
   #################################################################
-  # CAPTCHA PROTECTION
+  # RATE LIMITING
   # 
-  # Create CAPTCHA challenges in defined cases
+  # Limit the number of requests from a single IP to prevent
+  # abuse or DDoS attacks. Customize rules as needed.
   #################################################################
   captcha:
-    enabled: true
-    rules: [
-      {
-        name: "public-request-new-captcha",
-        uri_path: {
-          positional_constraint: "CONTAINS",
-          search_string: "/public/request/new"
-        },
-        header: {
-          name: "host",
-          positional_constraint: "CONTAINS",
-          search_string: "."
-        }
-      }
-    ]
+    enabled: false
+    rules: []
 
   #################################################################
   # BLOCK UNAUTHORIZED SCANNERS
@@ -129,8 +112,7 @@ protection_rules:
   # not used by Brightly.
   #################################################################
   block_unauthorized_scanners:
-    enabled: true
-    action: "block"
+    enabled: false
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -164,9 +146,7 @@ protection_rules:
     version: "Default"
 
   ip_reputation:
-    enabled: true
-    action: "block"
-    version: "Default"
+    enabled: false
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
@@ -180,19 +160,18 @@ protection_rules:
 #################################################################
 disabled_rules:
   basic_protection: 
-    - "SizeRestrictions_BODY" # Triggered in large API requests  
-    - "SizeRestrictions_QUERYSTRING" # Triggered by some of our calendar event download paths
-    - "NoUserAgent_HEADER" # Some of our API requests don't include a user agent
-    - "CrossSiteScripting_BODY" # Triggered in file uploads and mobile database updates
-    - "GenericRFI_BODY" # Triggered on /UnitFile/WorkOrders/WorkOrderDetails and /UnitFile/WorkOrders/IsResidentAway
-    - "GenericLFI_BODY" # Triggered on /UnitFile/WorkOrders/WorkOrderDetails and /UnitFile/WorkOrders/IsResidentAway
-  malicious_requests: []
+    - "SizeRestrictions_BODY" # Triggered in genuine usage across a variety of endpoints
+    - "NoUserAgent_HEADER" # Triggered during API requests, possibly due to our web server config
+    - "CrossSiteScripting_BODY" # Triggered during `/wotaskbulk` usage, because customers can specify CSS
+    - "GenericRFI_BODY" # Triggered when making genuine work order requests
+    - "GenericLFI_BODY" # Triggered during file upload through the API
+    - "SizeRestrictions_QUERYSTRING" # Triggered in genuine API queries
+  malicious_requests: 
+    - "JavaDeserializationRCE_BODY" # Triggered during some API calls. Very infrequent, but we don't use Java anyways.
   sql_injection: 
-    - "SQLi_COOKIE" # Triggered by mobile devices
-    - "SQLi_BODY" # Triggered on a variety of POST requests by genuine validated customers
-    - "SQLi_QUERYARGUMENTS" # Triggered primarily on encrypted query arguents
+    - "SQLi_BODY" # Triggered when customers ty to upload files
+    - "SQLi_QUERYARGUMENTS" # Triggered when trying to filter work orders and users through the API
+    - "SQLi_COOKIE" # Unclear why this is being triggered, but observed in logs across a variety of customers/IPs
   windows_protection: 
-    - "WindowsShellCommands_BODY" # Triggered on a variety of POST requests
-    - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on /Dashboard/Requestor/NotifyOthersByUnit when encrypted args are used
-    - "PowerShellCommands_BODY" # Triggered very rarely on database update
+    - "WindowsShellCommands_BODY" # Genuine cusotmer activity across a variety of tenants and endpoints
   linux_protection: [] 

@@ -97,7 +97,7 @@ locals {
     { header = "user-agent", value = "Amazonbot"},
     { header = "user-agent", value = "Tenable" }
   ]
-  
+
   # Define rule priorities to ensure consistent ordering
   rule_priorities = {
     ip_blocking                 = 1
@@ -114,7 +114,7 @@ locals {
     captcha_base                = 300 # Needs to be at the end so all block rules are evaluated
   }
 
-  # Build enabled AWS managed rulesets - FIXED VERSION
+  # Build enabled AWS managed rulesets with per-ruleset version control
   enabled_aws_rulesets = [
     for name, aws_name in local.ruleset_mapping : {
       friendly_name = name
@@ -122,6 +122,7 @@ locals {
       priority      = local.rule_priorities[name]
       action        = var.protection_rules[name].action
       overrides     = lookup(var.disabled_rules, name, [])
+      version       = trimspace(var.protection_rules[name].version)
     } if lookup(var.protection_rules, name, { enabled = false }).enabled
   ]
 }

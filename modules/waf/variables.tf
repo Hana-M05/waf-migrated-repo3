@@ -92,36 +92,42 @@ variable "protection_rules" {
     basic_protection = object({
       enabled = bool
       action  = optional(string, "count") # block, count, or allow
+      version = optional(string, "Default")
     })
 
     # Blocks known malicious requests
     malicious_requests = object({
       enabled = bool
       action  = optional(string, "count") # block, count, or allow
+      version = optional(string, "Default")
     }),
 
     # Protects against SQL injection attacks
     sql_injection = object({
       enabled = bool
       action  = optional(string, "count") # block, count, or allow
+      version = optional(string, "Default")
     }),
 
     # Windows system specific protection
     windows_protection = object({
       enabled = bool
       action  = optional(string, "count") # block, count, or allow
+      version = optional(string, "Default")
     }),
 
     # Linux system specific protection
     linux_protection = object({
       enabled = bool
       action  = optional(string, "count") # block, count, or allow
+      version = optional(string, "Default")
     }),
 
     # IP reputation based protection
     ip_reputation = object({
       enabled = bool
       action  = optional(string, "count") # block, count, or allow
+      version = optional(string, "Default")
     }),
 
     # Block unauthorized scanners

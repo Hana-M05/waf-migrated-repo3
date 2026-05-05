@@ -102,22 +102,27 @@ protection_rules:
   basic_protection:
     enabled: true
     action: "block"
+    version: "Version_1.21"
 
   malicious_requests:
     enabled: true
     action: "block"
+    version: "Version_1.25"
     
   sql_injection:
     enabled: true
     action: "block"
+    version: "Version_1.3"
 
   windows_protection:
     enabled: true
     action: "block"
+    version: "Version_2.0"
 
   linux_protection:
     enabled: false
     action: "block"
+    version: "Version_2.6"
 
   ip_reputation:
     enabled: false

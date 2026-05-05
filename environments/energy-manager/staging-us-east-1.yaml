@@ -17,24 +17,16 @@
 # the ALB name, environment, and region.
 #################################################################
 alb_arns: [
-  # Staging ALBs
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/ALB-ue1-staging-reports/9e682aae5233b9e5",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/api-staging-alb/8b679a343a35891e",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-cl-staging-alb/8e2d36fddc1a7cd2",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-healthcare-staging-pntst/034e81099e39151a",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-healthcare-staging-alb/f1dfff2844aa0ec2",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-pvm-staging-alb/ae516475847248c2",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-seniorliving-staging-alb/8af60120784cca25",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mainapp-slc-staging-alb/4f1f58245efd5a44",
-  "arn:aws:elasticloadbalancing:us-east-1:499436724538:loadbalancer/app/mothership-staging-alb/e058382eef2a6102",
-] 
+  # Staging Load Balancers
+  "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/ALB-ue1-staging-01/d5d3ec51168ccc23",
+  "arn:aws:elasticloadbalancing:us-east-1:875142387490:loadbalancer/app/pentestweb-staging-alb/8e6178592aac86b9",
+]
 api_gateway_ids: []
 global: false
 redacted_headers: []
 region: "us-east-1"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
-  - "productops@brightlysoftware.com"
 
 #################################################################
 # SECURITY PROTECTION RULES
@@ -69,11 +61,9 @@ protection_rules:
   # In allow mode, creates a whitelist of countries
   #################################################################
   geolocation_blocking:
-    enabled: true
-    action: "block"
-    countries: [
-      "RU"
-    ]
+    enabled: false
+    action: "count"
+    countries: []
 
   #################################################################
   # RATE LIMITING
@@ -82,45 +72,18 @@ protection_rules:
   # abuse or DDoS attacks. Customize rules as needed.
   #################################################################
   rate_limiting:
-    enabled: true
-    rules:
-      - name: "custom-rate-limit"
-        action: "block"
-        limit: 30000
-        aggregate_key_type: "CUSTOM_KEYS"
-        evaluation_window_sec: 300
-        custom_keys:
-          - type: "IP"
-          - type: "HEADER"
-            header_name: "user-agent"
-          - type: "JA3_FINGERPRINT"
-            fallback_behavior: "MATCH"
-        uri_paths:
-          - '(?i)^/(Global|Mobile|PasswordReset|ResidentPortal/Login|Public|v2|v3|adt|webhook|UnitFile|AssetFile|Dashboard|RoomBookings|StaffFile|OrganizationFile|Search|Reporting|Imports|Admin|SuperUsers)/'
-          - '(?i)^/(Settings|Customer|Actions|Compliance|Permits|PurchaseOrder|Inventory|Transportation|Space|Surveys|Calendar|Security|AssetForm|AssetModel|Shared|Alerts|Importation|Location|Partner|Hub|Library)/'
-          - '(?i)^/(oauth/token|SSO|Account/Login)(/|$)'
+    enabled: false
+    rules: []
 
   #################################################################
-  # CAPTCHA PROTECTION
+  # RATE LIMITING
   # 
-  # Create CAPTCHA challenges in defined cases
+  # Limit the number of requests from a single IP to prevent
+  # abuse or DDoS attacks. Customize rules as needed.
   #################################################################
   captcha:
-    enabled: true
-    rules: [
-      {
-        name: "public-request-new-captcha",
-        uri_path: {
-          positional_constraint: "CONTAINS",
-          search_string: "/public/request/new"
-        },
-        header: {
-          name: "host",
-          positional_constraint: "CONTAINS",
-          search_string: "."
-        }
-      }
-    ]
+    enabled: false
+    rules: []
 
   #################################################################
   # BLOCK UNAUTHORIZED SCANNERS
@@ -130,7 +93,7 @@ protection_rules:
   #################################################################
   block_unauthorized_scanners:
     enabled: true
-    action: "block"
+    action: "count"
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -140,32 +103,32 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "block"
+    action: "count"
     version: "Default"
 
   malicious_requests:
     enabled: true
-    action: "block"
+    action: "count"
     version: "Default"
     
   sql_injection:
     enabled: true
-    action: "block"
+    action: "count"
     version: "Default"
 
   windows_protection:
     enabled: true
-    action: "block"
+    action: "count"
     version: "Default"
 
   linux_protection:
     enabled: false
-    action: "block"
+    action: "count"
     version: "Default"
-
+  
   ip_reputation:
     enabled: true
-    action: "block"
+    action: "count"
     version: "Default"
 
 #################################################################
@@ -179,20 +142,9 @@ protection_rules:
 # IP or path blocking rules.
 #################################################################
 disabled_rules:
-  basic_protection: 
-    - "SizeRestrictions_BODY" # Triggered in large API requests  
-    - "SizeRestrictions_QUERYSTRING" # Triggered by some of our calendar event download paths
-    - "NoUserAgent_HEADER" # Some of our API requests don't include a user agent
-    - "CrossSiteScripting_BODY" # Triggered in file uploads and mobile database updates
-    - "GenericRFI_BODY" # Triggered on /UnitFile/WorkOrders/WorkOrderDetails and /UnitFile/WorkOrders/IsResidentAway
-    - "GenericLFI_BODY" # Triggered on /UnitFile/WorkOrders/WorkOrderDetails and /UnitFile/WorkOrders/IsResidentAway
+  basic_protection: []
   malicious_requests: []
-  sql_injection: 
-    - "SQLi_COOKIE" # Triggered by mobile devices
-    - "SQLi_BODY" # Triggered on a variety of POST requests by genuine validated customers
-    - "SQLi_QUERYARGUMENTS" # Triggered primarily on encrypted query arguents
-  windows_protection: 
-    - "WindowsShellCommands_BODY" # Triggered on a variety of POST requests
-    - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on /Dashboard/Requestor/NotifyOthersByUnit when encrypted args are used
-    - "PowerShellCommands_BODY" # Triggered very rarely on database update
+  sql_injection: []
+  windows_protection: []
   linux_protection: [] 
+  ip_reputation: []
