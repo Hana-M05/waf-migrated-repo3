@@ -1,0 +1,151 @@
+#################################################################
+# WAF Security Configuration
+# 
+# This file controls what gets blocked and what security 
+# protections are enabled for your website/application.
+#
+# ACTIONS EXPLAINED:
+# - "block": Completely blocks the request (recommended for production)
+# - "count": Logs the request but allows it through (good for testing)
+# - "allow": Explicitly allows the request (rarely used)
+#################################################################
+
+#################################################################
+# General Configurations
+# 
+# A set of general configurations for the WAF, including
+# the ALB name, environment, and region.
+#################################################################
+alb_arns: [
+  "arn:aws:elasticloadbalancing:us-east-1:894669428830:loadbalancer/app/k8s-kubesyst-maingate-b1d767e23d/d58523701c7932fb",
+]
+api_gateway_ids: []
+global: false
+redacted_headers: []
+region: "us-east-1"
+waf_error_subscribers:
+  - "sam.mcmanus@siemens.com"
+  
+#################################################################
+# SECURITY PROTECTION RULES
+# 
+# Configure different types of automated security protections.
+# Each rule can be enabled/disabled and set to block, count, or allow.
+#################################################################
+protection_rules:
+  #################################################################
+  # IP BLOCKING
+  # 
+  # Block specific IP addresses from accessing your website.
+  # Add IP addresses in CIDR format (use /32 for single IPs).
+  #################################################################
+  ip_blocking:
+    enabled: false
+    action: "block"
+    ips: []
+
+  #################################################################
+  # CUSTOM PATH BLOCKING
+  # 
+  # Block access to specific parts of your website like admin
+  # areas, internal APIs, or sensitive endpoints.
+  #################################################################
+  path_blocking:
+    enabled: false
+    action: "block"
+    paths: []
+
+  #################################################################
+  # GEOLOCATION BLOCKING
+  #
+  # In block mode, creates a blacklist of countries
+  # In allow mode, creates a whitelist of countries
+  #################################################################
+  geolocation_blocking:
+    enabled: true
+    action: "block"
+    countries: [
+      "CN",
+      "CU",
+      "IR",
+      "KP",
+      "RU",
+      "VE"
+    ]
+
+  #################################################################
+  # RATE LIMITING
+  # 
+  # Limit the number of requests from a single IP to prevent
+  # abuse or DDoS attacks. Customize rules as needed.
+  #################################################################
+  rate_limiting:
+    enabled: false
+    rules: []
+
+  #################################################################
+  # CAPTCHA
+  # 
+  # Limit the number of requests from a single IP to prevent
+  # abuse or DDoS attacks. Customize rules as needed.
+  #################################################################
+  captcha:
+    enabled: false
+    rules: []
+
+  #################################################################
+  # BLOCK UNAUTHORIZED SCANNERS
+  # 
+  # Blocks requests from known vulnerability scanners that are
+  # not used by Brightly.
+  #################################################################
+  block_unauthorized_scanners:
+    enabled: true
+    action: "block"
+
+  #################################################################
+  # AWS MANAGED SECURITY RULES
+  # 
+  # These are pre-built security rules provided by AWS that
+  # protect against common attacks and threats.
+  #################################################################
+  basic_protection:
+    enabled: true
+    action: "count"
+
+  malicious_requests:
+    enabled: true
+    action: "count"
+    
+  sql_injection:
+    enabled: true
+    action: "count" 
+
+  windows_protection:
+    enabled: true
+    action: "count"
+
+  linux_protection:
+    enabled: true
+    action: "count"
+
+  ip_reputation:
+    enabled: true
+    action: "block"
+
+#################################################################
+# DISABLE SPECIFIC SECURITY RULES
+# 
+# If legitimate traffic is being blocked by AWS managed rules,
+# you can disable specific rules here. Only do this if you 
+# understand the security implications.
+# 
+# Note: This only applies to AWS managed rules, not custom
+# IP or path blocking rules.
+#################################################################
+disabled_rules:
+  basic_protection: []
+  malicious_requests: []
+  sql_injection: []
+  windows_protection: []
+  linux_protection: [] 
