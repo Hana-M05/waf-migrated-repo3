@@ -145,7 +145,7 @@ protection_rules:
   basic_protection:
     enabled: true
     action: "block"
-    version: "Version_1.20"
+    version: "Version_1.21"
 
   malicious_requests:
     enabled: true
