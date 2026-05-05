@@ -163,7 +163,7 @@ protection_rules:
   windows_protection:
     enabled: true
     action: "count"
-    version: "Version_2.0"
+    version: "Version_2.4"
 
   linux_protection:
     enabled: false
@@ -204,5 +204,7 @@ disabled_rules:
   windows_protection: 
     - "WindowsShellCommands_BODY" # Triggered on work order db updates and work order updates
     - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on work order updates and FDMarketing searches
+    - "WindowsShellCommands_HEADER" # TEMP
+    - "WindowsShellCommands_URIPATH" # TEMP
   linux_protection: [] 
   ip_reputation: []

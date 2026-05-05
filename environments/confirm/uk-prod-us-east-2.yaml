@@ -117,7 +117,7 @@ protection_rules:
   windows_protection:
     enabled: true
     action: "block"
-    version: "Version_2.0"
+    version: "Version_2.4"
 
   linux_protection:
     enabled: false
@@ -153,4 +153,6 @@ disabled_rules:
   windows_protection: 
     - "WindowsShellCommands_BODY" # Triggered during GraphQL queries and API queries
     - "WindowsShellCommands_QUERYARGUMENTS" # Triggered by some confirm api endpoints
+    - "WindowsShellCommands_HEADER" # TEMP
+    - "WindowsShellCommands_URIPATH" # TEMP
   linux_protection: [] 

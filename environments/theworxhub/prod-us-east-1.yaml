@@ -160,7 +160,7 @@ protection_rules:
   windows_protection:
     enabled: true
     action: "block"
-    version: "Version_2.0"
+    version: "Version_2.4"
 
   linux_protection:
     enabled: false
@@ -198,4 +198,6 @@ disabled_rules:
     - "WindowsShellCommands_BODY" # Triggered on a variety of POST requests
     - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on /Dashboard/Requestor/NotifyOthersByUnit when encrypted args are used
     - "PowerShellCommands_BODY" # Triggered very rarely on database update
+    - "WindowsShellCommands_HEADER" # TEMP
+    - "WindowsShellCommands_URIPATH" # TEMP
   linux_protection: [] 
