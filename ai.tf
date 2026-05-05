@@ -9,6 +9,16 @@ provider "aws" {
   }
 }
 
+###########################################################################
+########################### AI Staging Providers ##########################
+###########################################################################
+provider "aws" {
+  alias  = "ai_staging_us_east_1"
+  region = "us-east-1"
+  assume_role {
+    role_arn = "arn:aws:iam::894669428830:role/WAF_Provisioner"
+  }
+}
 
 ###########################################################################
 ############################ AI Prod Providers ############################
@@ -30,6 +40,16 @@ module "firehose_role_policy_ai_dev" {
 
   providers = {
     aws = aws.ai_dev_us_east_1
+  }
+
+  s3_bucket_arns = values(local.alloy_s3_buckets)
+}
+
+module "firehose_role_policy_ai_staging" {
+  source = "./modules/firehose-role-policy"
+
+  providers = {
+    aws = aws.ai_staging_us_east_1
   }
 
   s3_bucket_arns = values(local.alloy_s3_buckets)
@@ -68,6 +88,31 @@ module "waf_wrapper_ai_dev_us_east_1" {
   protection_rules        = local.environments["ai-dev-us-east-1"].protection_rules
   redacted_headers        = local.environments["ai-dev-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["ai-dev-us-east-1"].waf_error_subscribers
+}
+
+########################################################################
+########################## AI Staging Modules ##########################
+########################################################################
+module "waf_wrapper_ai_staging_us_east_1" {
+  depends_on = [module.firehose_role_policy_ai_staging]
+  source     = "./modules/waf-wrapper"
+
+  providers = {
+    aws = aws.ai_staging_us_east_1
+  }
+
+  # Key = environments/<subpath>/<filename>
+  alb_arns                = local.environments["ai-staging-us-east-1"].alb_arns
+  api_gateway_ids         = local.environments["ai-staging-us-east-1"].api_gateway_ids
+  disabled_rules          = local.environments["ai-staging-us-east-1"].disabled_rules
+  environment             = "ai-staging-us-east-1"
+  firehose_destination    = local.alloy_s3_buckets[local.environments["ai-staging-us-east-1"].region]
+  firehose_role_arn       = module.firehose_role_policy_ai_staging.firehose_role_arn
+  global                  = local.environments["ai-staging-us-east-1"].global
+  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
+  protection_rules        = local.environments["ai-staging-us-east-1"].protection_rules
+  redacted_headers        = local.environments["ai-staging-us-east-1"].redacted_headers
+  waf_error_subscribers   = local.environments["ai-staging-us-east-1"].waf_error_subscribers
 }
 
 #########################################################################
