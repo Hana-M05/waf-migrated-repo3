@@ -204,7 +204,5 @@ disabled_rules:
   windows_protection: 
     - "WindowsShellCommands_BODY" # Triggered on work order db updates and work order updates
     - "WindowsShellCommands_QUERYARGUMENTS" # Triggered on work order updates and FDMarketing searches
-    - "WindowsShellCommands_HEADER" # TEMP
-    - "WindowsShellCommands_URIPATH" # TEMP
   linux_protection: [] 
   ip_reputation: []
