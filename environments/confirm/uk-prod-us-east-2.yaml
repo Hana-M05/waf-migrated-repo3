@@ -117,7 +117,7 @@ protection_rules:
   windows_protection:
     enabled: true
     action: "block"
-    version: "Version_2.0"
+    version: "Version_2.4"
 
   linux_protection:
     enabled: false

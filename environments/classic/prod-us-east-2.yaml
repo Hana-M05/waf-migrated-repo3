@@ -163,7 +163,7 @@ protection_rules:
   windows_protection:
     enabled: true
     action: "count"
-    version: "Version_2.0"
+    version: "Version_2.4"
 
   linux_protection:
     enabled: false

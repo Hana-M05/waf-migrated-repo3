@@ -134,7 +134,7 @@ protection_rules:
   windows_protection:
     enabled: true
     action: "block"
-    version: "Version_2.0"
+    version: "Version_2.4"
 
   linux_protection:
     enabled: false
@@ -170,4 +170,6 @@ disabled_rules:
     - "SQLi_COOKIE" # Unclear why this is being triggered, but observed in logs across a variety of customers/IPs
   windows_protection: 
     - "WindowsShellCommands_BODY" # Genuine cusotmer activity across a variety of tenants and endpoints
+    - "WindowsShellCommands_HEADER" # TEMP
+    - "WindowsShellCommands_URIPATH" # TEMP
   linux_protection: [] 
