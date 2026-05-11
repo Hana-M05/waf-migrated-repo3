@@ -148,7 +148,8 @@ disabled_rules:
     - "SizeRestrictions_BODY" # Triggered when customers perform file uploads
     - "GenericLFI_BODY" # Triggered during file uploads or path-like strings in request bodies
     - "CrossSiteScripting_BODY"
-    - "PowerShellCommands_BODY"   
+    - "PowerShellCommands_BODY"
+    - "WindowsShellCommands_BODY"
   malicious_requests: []
   sql_injection: []
   windows_protection: []
