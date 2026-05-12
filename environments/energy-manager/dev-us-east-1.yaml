@@ -144,7 +144,8 @@ disabled_rules:
     - "SizeRestrictions_BODY" # Triggered when customers perform file uploads
     - "NoUserAgent_HEADER" # Triggered when customers use API testing tools like Postman or on internal traffic
   malicious_requests: []
-  sql_injection: []
+  sql_injection: 
+    - "SQLi_BODY" # Triggered on bill imports
   windows_protection: []
   linux_protection: [] 
   ip_reputation: []
