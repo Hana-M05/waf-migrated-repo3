@@ -173,6 +173,4 @@ disabled_rules:
     - "SQLi_COOKIE" # Unclear why this is being triggered, but observed in logs across a variety of customers/IPs
   windows_protection: 
     - "WindowsShellCommands_BODY" # Genuine cusotmer activity across a variety of tenants and 
-    - "WindowsShellCommands_HEADER" # TEMP
-    - "WindowsShellCommands_URIPATH" # TEMP
   linux_protection: [] 
