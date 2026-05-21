@@ -112,27 +112,27 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
     
   sql_injection:
     enabled: true
-    action: "count" 
+    action: "block" 
     version: "Default"
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
 
   linux_protection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
 
   ip_reputation:
@@ -159,7 +159,9 @@ disabled_rules:
     - "WindowsShellCommands_BODY"  # Triggered when customers perform Windows shell-like commands in request bodies, such as during search or filtering operations
     - "EC2MetaDataSSRF_BODY" # Triggered when customers perform SSRF-like attacks in request bodies, such as during search or filtering operations
     - "GenericRFI_BODY" # Triggered during file uploads or path-like strings in request bodies
-  malicious_requests: []
+  malicious_requests: 
+    - "Log4JRCE_BODY"
+    - "ReactJSRCE_BODY"
   sql_injection: 
     - "SQLi_BODY" # Triggered when customers perform SQL-like queries in request bodies, such as during search or filtering operations
   windows_protection: 
