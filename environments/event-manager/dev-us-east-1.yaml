@@ -21,7 +21,12 @@ alb_arns: [
   "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/api-orange-alb/c1ece0d701b1ab42",
   "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/api2-orange-alb/01b17825d6b8599b",
   "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ui-orange-alb/c1ae26430ee2b6dc",
-  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/surveysweb-orange-alb/1db3b59900eb8ac6"
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/surveysweb-orange-alb/1db3b59900eb8ac6",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/ui-master-alb/117539d29b9846be",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/api2-master-alb/795d599db4a953c6",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/api-master-alb/5fdd237a431bf9cf",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/management-master-alb/5c21e943334e4ec2",
+  "arn:aws:elasticloadbalancing:us-east-1:993748385324:loadbalancer/app/surveysweb-master-alb/36c1b05d89d72acc"
 ]
 api_gateway_ids: []
 global: false
@@ -65,7 +70,7 @@ protection_rules:
   #################################################################
   geolocation_blocking:
     enabled: false
-    action: "count"
+    action: "block"
     countries: []
 
   #################################################################
@@ -96,7 +101,7 @@ protection_rules:
   #################################################################
   block_unauthorized_scanners:
     enabled: true
-    action: "count"
+    action: "block"
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -106,32 +111,32 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
     
   sql_injection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
 
   linux_protection:
     enabled: false
-    action: "count"
+    action: "block"
     version: "Default"
   
   ip_reputation:
     enabled: true
-    action: "count"
+    action: "block"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
