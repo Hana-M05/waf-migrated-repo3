@@ -44,3 +44,23 @@ resource "aws_iam_role_policy" "firehose_s3_policy" {
     ]
   })
 }
+
+# Optional IAM policy granting Firehose permission to invoke the penalty-box Lambda.
+# Only created when a Lambda ARN is supplied.
+resource "aws_iam_role_policy" "firehose_lambda_policy" {
+  count = var.lambda_processor_arn != null ? 1 : 0
+
+  name = "waf-log-firehose-lambda-invoke-policy"
+  role = aws_iam_role.firehose_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "lambda:InvokeFunction"
+        Resource = var.lambda_processor_arn
+      }
+    ]
+  })
+}
