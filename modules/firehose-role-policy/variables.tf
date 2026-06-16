@@ -4,7 +4,13 @@ variable "s3_bucket_arns" {
 }
 
 variable "lambda_processor_arn" {
-  description = "ARN of the Lambda processor that Firehose is allowed to invoke. Set to null if not using a processor."
+  description = "ARN of the Lambda processor that Firehose is allowed to invoke. Required when enable_lambda_processor = true."
   type        = string
   default     = null
+}
+
+variable "enable_lambda_processor" {
+  description = "Set to true to create the Lambda invoke policy on the Firehose role. Must be a static bool (not computed) to avoid plan-time errors."
+  type        = bool
+  default     = false
 }

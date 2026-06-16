@@ -31,6 +31,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "penalty_box_logs" {
     id     = "expire-waf-logs"
     status = "Enabled"
 
+    filter {} # required by AWS provider v5 — applies rule to all objects
+
     expiration {
       days = var.log_retention_days
     }

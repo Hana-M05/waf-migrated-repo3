@@ -41,8 +41,9 @@ module "firehose_role_policy_energy_manager_dev" {
     aws = aws.energy_manager_dev_us_east_1
   }
 
-  s3_bucket_arns       = concat(values(local.alloy_s3_buckets), [module.penalty_box_energy_manager_dev.log_bucket_arn])
-  lambda_processor_arn = module.penalty_box_energy_manager_dev.lambda_arn
+  s3_bucket_arns          = concat(values(local.alloy_s3_buckets), [module.penalty_box_energy_manager_dev.log_bucket_arn])
+  lambda_processor_arn    = module.penalty_box_energy_manager_dev.lambda_arn
+  enable_lambda_processor = true
 }
 
 module "firehose_role_policy_energy_manager_prod" {
