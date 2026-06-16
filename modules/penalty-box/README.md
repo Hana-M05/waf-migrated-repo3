@@ -62,7 +62,6 @@ S3 (bsw-waf-penalty-box-logs-<environment>, backup — same account as Firehose)
 | Variable | Type | Default | Description |
 |----------|------|---------|-------------|
 | `environment` | `string` | — | Environment name used to namespace all resources |
-| `lambda_zip_path` | `string` | — | Local path to `lambda.zip`. Build with the command below. |
 | `log_retention_days` | `number` | `90` | Days to retain WAF log backups in S3 |
 | `penalty_ttl_seconds` | `number` | `1800` | Seconds until a penalised IP is removed from DynamoDB (30 min) |
 | `tier2_block_threshold` | `number` | `20` | WAF BLOCK actions per batch to trigger Tier 2 |
@@ -81,20 +80,11 @@ S3 (bsw-waf-penalty-box-logs-<environment>, backup — same account as Firehose)
 
 ---
 
-## Building the Lambda zip
+## Lambda deployment package
 
-The zip must exist on disk before `terraform plan` because the provider calls `filebase64sha256` at plan time.
+The zip is built automatically by Terraform using the `hashicorp/archive` provider's `data "archive_file"` data source. `lambda_function.py` is the only file that needs to be committed — no manual build step, no pre-built artifact required in CI.
 
-```bash
-cd modules/penalty-box/lambda
-python3 -c "
-import zipfile
-with zipfile.ZipFile('lambda.zip', 'w', zipfile.ZIP_DEFLATED) as zf:
-    zf.write('lambda_function.py')
-"
-```
-
-The zip is excluded from version control via `.gitignore`. Rebuild it whenever `lambda_function.py` changes.
+Terraform re-zips and re-deploys the Lambda whenever `lambda_function.py` changes (detected via `output_base64sha256`).
 
 ---
 
@@ -114,8 +104,7 @@ module "penalty_box_<product>_<env>" {
     aws = aws.<product>_<env>_<region>   # match the existing provider alias in this file
   }
 
-  environment     = "<product>-<env>-<region>"                                    # e.g. "asset-essentials-dev-us-east-1"
-  lambda_zip_path = "${path.module}/modules/penalty-box/lambda/lambda.zip"
+  environment = "<product>-<env>-<region>"   # e.g. "asset-essentials-dev-us-east-1"
 }
 ```
 
@@ -129,8 +118,7 @@ module "penalty_box_asset_essentials_dev" {
     aws = aws.asset_essentials_dev_us_east_1
   }
 
-  environment     = "asset-essentials-dev-us-east-1"
-  lambda_zip_path = "${path.module}/modules/penalty-box/lambda/lambda.zip"
+  environment = "asset-essentials-dev-us-east-1"
 }
 ```
 

@@ -3,11 +3,6 @@ variable "environment" {
   type        = string
 }
 
-variable "lambda_zip_path" {
-  description = "Local path to the Lambda deployment zip. Build with: cd lambda && zip lambda.zip lambda_function.py"
-  type        = string
-}
-
 variable "log_retention_days" {
   description = "Number of days to retain WAF log backups in the penalty-box S3 bucket"
   type        = number

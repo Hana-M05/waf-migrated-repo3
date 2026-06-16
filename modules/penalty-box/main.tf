@@ -135,6 +135,17 @@ resource "aws_iam_role_policy" "penalty_box_lambda" {
 }
 
 # ---------------------------------------------------------------------------
+# Lambda deployment package — built by Terraform from committed source.
+# The archive provider zips lambda_function.py at plan time so no manual
+# build step is required and the pipeline never needs a pre-built artifact.
+# ---------------------------------------------------------------------------
+data "archive_file" "penalty_box_lambda" {
+  type        = "zip"
+  source_file = "${path.module}/lambda/lambda_function.py"
+  output_path = "${path.module}/lambda/lambda.zip"
+}
+
+# ---------------------------------------------------------------------------
 # Lambda function — Firehose processor (pass-through with DynamoDB side-effect)
 # ---------------------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "penalty_box_lambda" {
@@ -147,8 +158,8 @@ resource "aws_lambda_function" "penalty_box" {
   description   = "Firehose processor: detects scanning IPs in WAF logs and writes to DynamoDB"
   role          = aws_iam_role.penalty_box_lambda.arn
 
-  filename         = var.lambda_zip_path
-  source_code_hash = filebase64sha256(var.lambda_zip_path)
+  filename         = data.archive_file.penalty_box_lambda.output_path
+  source_code_hash = data.archive_file.penalty_box_lambda.output_base64sha256
   handler          = "lambda_function.lambda_handler"
   runtime          = "python3.12"
   timeout          = 60 # Firehose processor max timeout is 5 min; 60s is safe for a 5MB batch
