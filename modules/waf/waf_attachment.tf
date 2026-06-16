@@ -23,8 +23,8 @@ data "aws_apigatewayv2_api" "target_apis" {
 
 # Associate WAF with API Gateways
 resource "aws_wafv2_web_acl_association" "api_gateway_v2_association" {
-  for_each = data.aws_apigatewayv2_api.target_apis
+  for_each = toset(var.api_gateway_ids)
 
-  resource_arn = each.value.arn
+  resource_arn = data.aws_apigatewayv2_api.target_apis[each.value].arn
   web_acl_arn  = aws_wafv2_web_acl.waf_acl.arn
 }
