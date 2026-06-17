@@ -10,10 +10,3 @@ terraform {
     }
   }
 }
-
-# Configure the AWS Provider
-provider "aws" {
-  alias  = "deployment"
-  region = "us-east-1"
-}
-

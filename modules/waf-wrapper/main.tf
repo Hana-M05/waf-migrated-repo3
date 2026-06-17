@@ -3,10 +3,12 @@ data "aws_caller_identity" "current" {}
 module "firehose" {
   source = "../firehose"
 
-  firehose_name     = "aws-waf-logs-firehose-${var.environment}"
-  firehose_role_arn = var.firehose_role_arn
-  s3_bucket_arn     = var.firehose_destination
-  s3_prefix         = "AWSLogs/${data.aws_caller_identity.current.account_id}/WAFLogs/"
+  firehose_name        = "aws-waf-logs-firehose-${var.environment}"
+  firehose_role_arn    = var.firehose_role_arn
+  s3_bucket_arn        = var.firehose_destination
+  s3_prefix            = "AWSLogs/${data.aws_caller_identity.current.account_id}/WAFLogs/"
+  lambda_processor_arn = var.lambda_processor_arn
+  s3_backup_bucket_arn = var.s3_backup_bucket_arn
 }
 
 module "waf" {
