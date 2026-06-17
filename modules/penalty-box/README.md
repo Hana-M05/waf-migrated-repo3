@@ -45,7 +45,7 @@ S3 (bsw-waf-penalty-box-logs-<environment>, backup — same account as Firehose)
 
 > **Tier 1 path matching:** URIs are percent-decoded before matching, so encoded variants like `/.%65nv` are caught the same as `/.env`.
 
-> **DynamoDB writes:** All violations detected in a batch are written to DynamoDB in a single `batch_writer()` call at the end of each Lambda invocation. This reduces API calls and handles retries automatically. If an IP qualifies for multiple tiers, only the highest tier is written.
+> **DynamoDB writes:** All violations detected in a batch are written to DynamoDB at the end of each Lambda invocation using `UpdateItem` with a conditional expression. If an IP qualifies for multiple tiers in the same batch, only the highest tier is written. If the IP already exists in the table (i.e. it was penalised in a previous batch), **the ban is extended** — another `penalty_ttl_seconds` (default 30 min) is added to the existing `expires_at` rather than overwriting it. The tier is escalated if the new violation is higher severity; it is never downgraded. The original `detected_at` timestamp is preserved.
 
 ---
 

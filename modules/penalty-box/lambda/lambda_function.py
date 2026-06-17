@@ -137,24 +137,77 @@ def _build_violation(ip: str, tier: int, reason: str) -> dict:
     }
 
 
-def _batch_write_violations(violations: list) -> None:
-    """Write all violations to DynamoDB in a single batch.
+def _upsert_violations(violations: list) -> None:
+    """Write violations to DynamoDB, extending the ban if the IP is already penalised.
 
-    boto3's batch_writer automatically handles the 25-item limit per request
-    and retries any unprocessed items, so callers can pass any number of items.
+    For each violating IP:
+    - If the IP is NOT already in the table → create a fresh item.
+    - If the IP IS already in the table:
+        - Add PENALTY_TTL_SECONDS to the existing expires_at (accumulate, not overwrite).
+        - Escalate the stored tier if the new violation is higher severity.
+        - Preserve the original detected_at so audit history is intact.
+
+    This implements the DSO-35 requirement: "if an IP is already in the table,
+    add 30 min to their ban time."
     """
     if not violations:
         return
+
     table = _get_dynamodb().Table(DYNAMODB_TABLE)
-    with table.batch_writer() as batch:
-        for item in violations:
-            batch.put_item(Item=item)
+
+    for item in violations:
+        ip  = item["ip_address"]
+        try:
+            table.update_item(
+                Key={"ip_address": ip},
+                # Condition: item already exists (attribute_exists) OR does not yet exist.
+                # Two separate expressions handle the two branches via a single UpdateItem:
+                #
+                #   SET expires_at  = expires_at + TTL   (if item existed) — accumulate
+                #   SET expires_at  = :new_exp           (if item is new)  — via if_not_exists
+                #   SET tier        = max(current, new)  — never downgrade tier
+                #   SET detected_at = keep original      — if_not_exists preserves first seen
+                #   SET reason      = new reason         — always latest reason
+                UpdateExpression=(
+                    "SET expires_at  = if_not_exists(expires_at, :zero) + :ttl, "
+                    "    tier        = if_not_exists(tier, :zero_tier), "
+                    "    detected_at = if_not_exists(detected_at, :now), "
+                    "    reason      = :reason"
+                ),
+                # After the SET above, conditionally escalate tier if new violation is higher
+                ConditionExpression=(
+                    "attribute_not_exists(ip_address) OR tier <= :new_tier"
+                ),
+                ExpressionAttributeValues={
+                    ":ttl":       PENALTY_TTL_SECONDS,
+                    ":zero":      0,
+                    ":zero_tier": item["tier"],
+                    ":now":       item["detected_at"],
+                    ":new_tier":  item["tier"],
+                    ":reason":    item["reason"],
+                },
+            )
             print(json.dumps({
-                "event":      "violation_detected",
-                "ip":         item["ip_address"],
+                "event":      "violation_upserted",
+                "ip":         ip,
                 "tier":       item["tier"],
                 "reason":     item["reason"],
                 "expires_at": item["expires_at"],
+            }))
+        except _get_dynamodb().meta.client.exceptions.ConditionalCheckFailedException:
+            # Existing record has a higher tier — keep it, but still extend the TTL
+            table.update_item(
+                Key={"ip_address": ip},
+                UpdateExpression="SET expires_at = if_not_exists(expires_at, :zero) + :ttl",
+                ExpressionAttributeValues={
+                    ":ttl":  PENALTY_TTL_SECONDS,
+                    ":zero": 0,
+                },
+            )
+            print(json.dumps({
+                "event":  "violation_ttl_extended",
+                "ip":     ip,
+                "reason": "existing tier is higher — TTL extended only",
             }))
 
 
@@ -261,8 +314,8 @@ def lambda_handler(event: dict, context) -> dict:
                     f"(threshold: {TIER3_404_RATIO:.0%} with min {TIER3_MIN_REQUESTS} reqs)"
                 )
 
-    # Write all violations to DynamoDB in one batch
-    _batch_write_violations(list(violations.values()))
+    # Upsert all violations — extends TTL if IP is already penalised
+    _upsert_violations(list(violations.values()))
 
     # Return all records unchanged — Firehose processor must not modify payload
     return {
