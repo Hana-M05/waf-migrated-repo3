@@ -44,3 +44,24 @@ resource "aws_iam_role_policy" "firehose_s3_policy" {
     ]
   })
 }
+
+# Optional IAM policy granting Firehose permission to invoke the penalty-box Lambda.
+# Use enable_lambda_processor = true (a static bool) rather than checking the ARN
+# at plan time — the ARN is computed and would cause "count depends on apply" errors.
+resource "aws_iam_role_policy" "firehose_lambda_policy" {
+  count = var.enable_lambda_processor ? 1 : 0
+
+  name = "waf-log-firehose-lambda-invoke-policy"
+  role = aws_iam_role.firehose_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "lambda:InvokeFunction"
+        Resource = var.lambda_processor_arn
+      }
+    ]
+  })
+}
