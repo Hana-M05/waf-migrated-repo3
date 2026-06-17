@@ -13,9 +13,16 @@ Tiers:
 Note on Tier 3: WAF logs do not carry HTTP response codes. We approximate 404s
 by counting ALLOW actions with no terminatingRuleId (no rule matched the request).
 True 404 detection requires ALB access log correlation — flag this if precision matters.
+
+Known-good IPs (e.g. ZScaler proxies, Cisco VPN):
+  Loaded from SSM at cold start via KNOWN_GOOD_IPS_SSM_PARAM env var.
+  IPs in this list are never added to the penalty box. WAF rules are unaffected —
+  individual bad requests from these IPs are still blocked normally by the WAF.
+  To update the list, change the SSM parameter value — no Lambda redeploy needed.
 """
 
 import base64
+import ipaddress
 import json
 import os
 import time
@@ -26,11 +33,12 @@ import boto3
 # ---------------------------------------------------------------------------
 # Configuration (override via Lambda environment variables)
 # ---------------------------------------------------------------------------
-DYNAMODB_TABLE        = os.environ.get("DYNAMODB_TABLE", "penalty-box")
-PENALTY_TTL_SECONDS   = int(os.environ.get("PENALTY_TTL_SECONDS", "1800"))   # 30 min
-TIER2_BLOCK_THRESHOLD = int(os.environ.get("TIER2_BLOCK_THRESHOLD", "20"))
-TIER3_404_RATIO       = float(os.environ.get("TIER3_404_RATIO", "0.40"))
-TIER3_MIN_REQUESTS    = int(os.environ.get("TIER3_MIN_REQUESTS", "20"))
+DYNAMODB_TABLE           = os.environ.get("DYNAMODB_TABLE", "penalty-box")
+PENALTY_TTL_SECONDS      = int(os.environ.get("PENALTY_TTL_SECONDS", "1800"))   # 30 min
+TIER2_BLOCK_THRESHOLD    = int(os.environ.get("TIER2_BLOCK_THRESHOLD", "20"))
+TIER3_404_RATIO          = float(os.environ.get("TIER3_404_RATIO", "0.40"))
+TIER3_MIN_REQUESTS       = int(os.environ.get("TIER3_MIN_REQUESTS", "20"))
+KNOWN_GOOD_IPS_SSM_PARAM = os.environ.get("KNOWN_GOOD_IPS_SSM_PARAM", "")
 
 # Tier 1 — bad paths (case-insensitive prefix/exact match)
 TIER1_BAD_PATHS = [
@@ -51,6 +59,7 @@ TIER1_BAD_PATHS = [
 ]
 
 _dynamodb = None
+_known_good_networks = None  # loaded once at cold start
 
 
 def _get_dynamodb():
@@ -58,6 +67,51 @@ def _get_dynamodb():
     if _dynamodb is None:
         _dynamodb = boto3.resource("dynamodb", region_name=os.environ.get("AWS_REGION", "us-east-1"))
     return _dynamodb
+
+
+def _load_known_good_networks():
+    """
+    Load the known-good CIDR list from SSM on cold start.
+    Returns a list of ipaddress.ip_network objects, or an empty list
+    if the SSM parameter name is not configured or the call fails.
+    """
+    global _known_good_networks
+    if _known_good_networks is not None:
+        return _known_good_networks
+
+    if not KNOWN_GOOD_IPS_SSM_PARAM:
+        _known_good_networks = []
+        return _known_good_networks
+
+    try:
+        ssm = boto3.client("ssm", region_name=os.environ.get("AWS_REGION", "us-east-1"))
+        response = ssm.get_parameter(Name=KNOWN_GOOD_IPS_SSM_PARAM)
+        raw = response["Parameter"]["Value"]
+        networks = []
+        for cidr in raw.split(","):
+            cidr = cidr.strip()
+            if cidr:
+                networks.append(ipaddress.ip_network(cidr, strict=False))
+        _known_good_networks = networks
+        print(json.dumps({"event": "known_good_loaded", "count": len(networks)}))
+    except Exception as exc:
+        # Log and continue — a missing SSM param should not break WAF log processing
+        print(json.dumps({"event": "known_good_load_error", "error": str(exc)}))
+        _known_good_networks = []
+
+    return _known_good_networks
+
+
+def _is_known_good(ip: str) -> bool:
+    """Return True if the IP falls within any known-good CIDR."""
+    networks = _load_known_good_networks()
+    if not networks:
+        return False
+    try:
+        addr = ipaddress.ip_address(ip)
+        return any(addr in net for net in networks)
+    except ValueError:
+        return False
 
 
 def _is_bad_path(uri: str) -> bool:
@@ -135,7 +189,7 @@ def lambda_handler(event: dict, context) -> dict:
     """
     Firehose transformation handler.
     All records are returned as result=Ok with the original data unchanged.
-    Side-effect: violating IPs are written to DynamoDB.
+    Side-effect: violating IPs are written to DynamoDB (unless they are known-good).
     """
     records = event.get("records", [])
     parsed_events, per_ip = _process_records(records)
@@ -150,18 +204,24 @@ def lambda_handler(event: dict, context) -> dict:
                 or waf_event.get("clientIp", "unknown")
             )
             if ip not in tier1_ips:
-                tier1_ips.add(ip)
-                _write_violation(ip, 1, f"bad path hit: {uri}")
+                if _is_known_good(ip):
+                    print(json.dumps({"event": "known_good_skipped", "ip": ip, "tier": 1}))
+                else:
+                    tier1_ips.add(ip)
+                    _write_violation(ip, 1, f"bad path hit: {uri}")
 
     # --- Tier 2: 20+ WAF BLOCK actions per batch ---
     for ip, stats in per_ip.items():
         if ip in tier1_ips:
             continue  # already written
         if stats["blocks"] >= TIER2_BLOCK_THRESHOLD:
-            _write_violation(
-                ip, 2,
-                f"{stats['blocks']} WAF BLOCK actions in batch (threshold: {TIER2_BLOCK_THRESHOLD})"
-            )
+            if _is_known_good(ip):
+                print(json.dumps({"event": "known_good_skipped", "ip": ip, "tier": 2}))
+            else:
+                _write_violation(
+                    ip, 2,
+                    f"{stats['blocks']} WAF BLOCK actions in batch (threshold: {TIER2_BLOCK_THRESHOLD})"
+                )
 
     # --- Tier 3: 40%+ heuristic-404 rate with >=20 requests ---
     for ip, stats in per_ip.items():
@@ -171,11 +231,14 @@ def lambda_handler(event: dict, context) -> dict:
             continue
         ratio = stats["not_found"] / stats["requests"]
         if ratio >= TIER3_404_RATIO:
-            _write_violation(
-                ip, 3,
-                f"{ratio:.0%} heuristic-404 rate over {stats['requests']} requests "
-                f"(threshold: {TIER3_404_RATIO:.0%} with min {TIER3_MIN_REQUESTS} reqs)"
-            )
+            if _is_known_good(ip):
+                print(json.dumps({"event": "known_good_skipped", "ip": ip, "tier": 3}))
+            else:
+                _write_violation(
+                    ip, 3,
+                    f"{ratio:.0%} heuristic-404 rate over {stats['requests']} requests "
+                    f"(threshold: {TIER3_404_RATIO:.0%} with min {TIER3_MIN_REQUESTS} reqs)"
+                )
 
     # Return all records unchanged — Firehose processor must not modify payload
     return {

@@ -45,6 +45,26 @@ S3 (bsw-waf-penalty-box-logs-<environment>, backup — same account as Firehose)
 
 ---
 
+## Known-good IP list
+
+Some IPs are shared by many legitimate users (ZScaler proxy exits, Cisco VPN, internal scanners). If one user behind a shared IP trips the penalty threshold, the whole proxy gets penalised — blocking everyone behind it.
+
+The Lambda skips DynamoDB writes for any IP that falls within the known-good CIDR list. **WAF rules are not affected** — if a request from a known-good IP is malicious (SQLi, bad path, etc.), the WAF still blocks it. The Lambda just won't escalate the IP into the penalty box.
+
+### Updating the list
+
+The CIDRs are stored in an SSM parameter:
+
+```
+/waf/penalty-box/<environment>/known-good-ips
+```
+
+To update, change the parameter value in SSM (comma-separated CIDRs). The Lambda picks up the new list on its next cold start — no redeploy needed.
+
+The initial list is set by Terraform and includes ZScaler proxy exit nodes, the Cisco VPN EIP, and the QA environment EIP.
+
+---
+
 ## Resources created
 
 | Resource | Name pattern |
@@ -52,6 +72,7 @@ S3 (bsw-waf-penalty-box-logs-<environment>, backup — same account as Firehose)
 | `aws_lambda_function` | `penalty-box-<environment>` |
 | `aws_dynamodb_table` | `penalty-box-<environment>` |
 | `aws_s3_bucket` | `bsw-waf-penalty-box-logs-<environment>` |
+| `aws_ssm_parameter` | `/waf/penalty-box/<environment>/known-good-ips` |
 | `aws_iam_role` (Lambda exec) | `penalty-box-lambda-<environment>` |
 | `aws_cloudwatch_log_group` | `/aws/lambda/penalty-box-<environment>` |
 
@@ -77,6 +98,7 @@ S3 (bsw-waf-penalty-box-logs-<environment>, backup — same account as Firehose)
 | `dynamodb_table_arn` | DynamoDB table ARN |
 | `log_bucket_arn` | ARN of the S3 backup bucket |
 | `log_bucket_id` | Name of the S3 backup bucket |
+| `known_good_ips_ssm_param` | SSM parameter name for the known-good IP list |
 
 ---
 

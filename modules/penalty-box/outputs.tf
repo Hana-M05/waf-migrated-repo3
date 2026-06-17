@@ -22,3 +22,8 @@ output "log_bucket_id" {
   description = "Name of the S3 bucket receiving Firehose log backups"
   value       = aws_s3_bucket.penalty_box_logs.id
 }
+
+output "known_good_ips_ssm_param" {
+  description = "SSM parameter name for the known-good IP list (update to change CIDRs without redeploying Lambda)"
+  value       = aws_ssm_parameter.known_good_ips.name
+}

@@ -85,6 +85,86 @@ resource "aws_dynamodb_table" "penalty_box" {
 }
 
 # ---------------------------------------------------------------------------
+# SSM parameter — known-good IPs that should never be added to the penalty box.
+# Shared IPs (ZScaler proxies, Cisco VPN, internal scanners) exit through a
+# handful of IPs used by many users, which would cause false positives if penalised.
+# The Lambda reads this list on cold start and skips DynamoDB writes for these IPs.
+# WAF rules are NOT affected — individual bad requests from these IPs are still blocked.
+# Update the value in SSM to change the list without redeploying the Lambda.
+# ---------------------------------------------------------------------------
+resource "aws_ssm_parameter" "known_good_ips" {
+  name        = "/waf/penalty-box/${var.environment}/known-good-ips"
+  description = "Comma-separated CIDRs that should never be added to the WAF penalty box"
+  type        = "StringList"
+
+  # ZScaler proxy exit nodes (shared by many users) + Cisco VPN + QA EIP
+  value = join(",", [
+    # ZScaler IPv4 — https://config.zscaler.com/zscaler.net/cenr
+    "136.226.0.0/16",
+    "165.225.0.0/17",
+    "165.225.128.0/17",
+    "147.161.128.0/17",
+    "165.225.192.0/18",
+    "185.46.212.0/22",
+    "165.225.8.0/21",
+    "165.225.16.0/21",
+    "165.225.24.0/21",
+    "165.225.80.0/21",
+    "165.225.88.0/21",
+    "165.225.196.0/22",
+    "165.225.200.0/22",
+    "165.225.204.0/22",
+    "165.225.72.0/22",
+    "165.225.76.0/22",
+    "147.161.160.0/20",
+    "104.129.192.0/20",
+    "185.46.212.0/24",
+    "185.46.213.0/24",
+    "185.46.214.0/24",
+    "185.46.215.0/24",
+    "165.225.32.0/20",
+    "165.225.48.0/20",
+    "165.225.64.0/20",
+    "165.225.96.0/20",
+    "165.225.112.0/20",
+    "165.225.128.0/20",
+    "165.225.144.0/20",
+    "165.225.160.0/20",
+    "165.225.176.0/20",
+    "165.225.208.0/20",
+    "165.225.224.0/20",
+    "165.225.240.0/20",
+    "147.161.128.0/20",
+    "147.161.144.0/20",
+    "147.161.160.0/20",
+    "147.161.176.0/20",
+    "147.161.192.0/20",
+    "147.161.208.0/20",
+    "147.161.224.0/20",
+    "147.161.240.0/20",
+    "136.226.0.0/20",
+    "136.226.16.0/20",
+    "136.226.32.0/20",
+    "136.226.48.0/20",
+    "136.226.64.0/20",
+    "136.226.80.0/20",
+    "136.226.96.0/20",
+    "136.226.112.0/20",
+    "136.226.128.0/20",
+    # Cisco VPN
+    "3.92.93.50/32",
+    # QA EIP
+    "3.136.75.45/32",
+  ])
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "terraform"
+    Purpose     = "waf-penalty-box"
+  }
+}
+
+# ---------------------------------------------------------------------------
 # Lambda execution role
 # ---------------------------------------------------------------------------
 resource "aws_iam_role" "penalty_box_lambda" {
@@ -129,6 +209,14 @@ resource "aws_iam_role_policy" "penalty_box_lambda" {
           "dynamodb:UpdateItem"
         ]
         Resource = aws_dynamodb_table.penalty_box.arn
+      },
+      {
+        # SSM — read the known-good IP list on Lambda cold start
+        Effect = "Allow"
+        Action = [
+          "ssm:GetParameter"
+        ]
+        Resource = aws_ssm_parameter.known_good_ips.arn
       }
     ]
   })
@@ -166,11 +254,12 @@ resource "aws_lambda_function" "penalty_box" {
 
   environment {
     variables = {
-      DYNAMODB_TABLE        = aws_dynamodb_table.penalty_box.name
-      PENALTY_TTL_SECONDS   = tostring(var.penalty_ttl_seconds)
-      TIER2_BLOCK_THRESHOLD = tostring(var.tier2_block_threshold)
-      TIER3_404_RATIO       = tostring(var.tier3_404_ratio)
-      TIER3_MIN_REQUESTS    = tostring(var.tier3_min_requests)
+      DYNAMODB_TABLE            = aws_dynamodb_table.penalty_box.name
+      PENALTY_TTL_SECONDS       = tostring(var.penalty_ttl_seconds)
+      TIER2_BLOCK_THRESHOLD     = tostring(var.tier2_block_threshold)
+      TIER3_404_RATIO           = tostring(var.tier3_404_ratio)
+      TIER3_MIN_REQUESTS        = tostring(var.tier3_min_requests)
+      KNOWN_GOOD_IPS_SSM_PARAM  = aws_ssm_parameter.known_good_ips.name
     }
   }
 
