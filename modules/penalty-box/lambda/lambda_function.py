@@ -27,6 +27,7 @@ import json
 import os
 import time
 from collections import defaultdict
+from urllib.parse import unquote
 
 import boto3
 
@@ -115,31 +116,46 @@ def _is_known_good(ip: str) -> bool:
 
 
 def _is_bad_path(uri: str) -> bool:
-    """Return True if the request URI matches any Tier 1 bad path."""
-    lower = uri.lower().split("?")[0]  # strip query string
-    return any(lower == p.lower() or lower.startswith(p.lower() + "/") for p in TIER1_BAD_PATHS)
+    """Return True if the request URI matches any Tier 1 bad path.
+
+    URI is percent-decoded before matching so encoded variants like
+    /.%65nv are caught the same as /.env.
+    """
+    decoded = unquote(uri).lower().split("?")[0]  # decode + strip query string
+    return any(decoded == p.lower() or decoded.startswith(p.lower() + "/") for p in TIER1_BAD_PATHS)
 
 
-def _write_violation(ip: str, tier: int, reason: str) -> None:
-    """Write a violating IP to DynamoDB with a TTL of PENALTY_TTL_SECONDS."""
-    expires_at = int(time.time()) + PENALTY_TTL_SECONDS
+def _build_violation(ip: str, tier: int, reason: str) -> dict:
+    """Build a DynamoDB item dict for a violating IP."""
+    now = int(time.time())
+    return {
+        "ip_address":  ip,
+        "tier":        tier,
+        "reason":      reason,
+        "expires_at":  now + PENALTY_TTL_SECONDS,
+        "detected_at": now,
+    }
+
+
+def _batch_write_violations(violations: list) -> None:
+    """Write all violations to DynamoDB in a single batch.
+
+    boto3's batch_writer automatically handles the 25-item limit per request
+    and retries any unprocessed items, so callers can pass any number of items.
+    """
+    if not violations:
+        return
     table = _get_dynamodb().Table(DYNAMODB_TABLE)
-    table.put_item(
-        Item={
-            "ip_address":  ip,
-            "tier":        tier,
-            "reason":      reason,
-            "expires_at":  expires_at,
-            "detected_at": int(time.time()),
-        }
-    )
-    print(json.dumps({
-        "event":      "violation_detected",
-        "ip":         ip,
-        "tier":       tier,
-        "reason":     reason,
-        "expires_at": expires_at,
-    }))
+    with table.batch_writer() as batch:
+        for item in violations:
+            batch.put_item(Item=item)
+            print(json.dumps({
+                "event":      "violation_detected",
+                "ip":         item["ip_address"],
+                "tier":       item["tier"],
+                "reason":     item["reason"],
+                "expires_at": item["expires_at"],
+            }))
 
 
 def _process_records(records: list) -> tuple:
@@ -167,7 +183,7 @@ def _process_records(records: list) -> tuple:
                     event.get("httpRequest", {}).get("clientIp")
                     or event.get("clientIp", "unknown")
                 )
-                action          = event.get("action", "")
+                action           = event.get("action", "")
                 terminating_rule = event.get("terminatingRuleId", "")
 
                 per_ip[ip]["requests"] += 1
@@ -189,44 +205,49 @@ def lambda_handler(event: dict, context) -> dict:
     """
     Firehose transformation handler.
     All records are returned as result=Ok with the original data unchanged.
-    Side-effect: violating IPs are written to DynamoDB (unless they are known-good).
+    Side-effect: violating IPs are collected across all tiers and written to
+    DynamoDB in a single batch at the end. Known-good IPs are skipped.
+    If an IP qualifies for multiple tiers, only the highest tier is written.
     """
     records = event.get("records", [])
     parsed_events, per_ip = _process_records(records)
 
+    # violations is a dict keyed by IP — ensures one write per IP (highest tier wins)
+    violations: dict = {}
+
     # --- Tier 1: bad path (per-request, single hit = violation) ---
-    tier1_ips: set = set()
     for waf_event in parsed_events:
         uri = waf_event.get("httpRequest", {}).get("uri", "")
-        if _is_bad_path(uri):
-            ip = (
-                waf_event.get("httpRequest", {}).get("clientIp")
-                or waf_event.get("clientIp", "unknown")
-            )
-            if ip not in tier1_ips:
-                if _is_known_good(ip):
-                    print(json.dumps({"event": "known_good_skipped", "ip": ip, "tier": 1}))
-                else:
-                    tier1_ips.add(ip)
-                    _write_violation(ip, 1, f"bad path hit: {uri}")
+        if not _is_bad_path(uri):
+            continue
+        ip = (
+            waf_event.get("httpRequest", {}).get("clientIp")
+            or waf_event.get("clientIp", "unknown")
+        )
+        if ip in violations:
+            continue  # already flagged at a higher or equal tier
+        if _is_known_good(ip):
+            print(json.dumps({"event": "known_good_skipped", "ip": ip, "tier": 1}))
+        else:
+            violations[ip] = _build_violation(ip, 1, f"bad path hit: {uri}")
 
     # --- Tier 2: 20+ WAF BLOCK actions per batch ---
     for ip, stats in per_ip.items():
-        if ip in tier1_ips:
-            continue  # already written
+        if ip in violations:
+            continue  # already flagged at Tier 1
         if stats["blocks"] >= TIER2_BLOCK_THRESHOLD:
             if _is_known_good(ip):
                 print(json.dumps({"event": "known_good_skipped", "ip": ip, "tier": 2}))
             else:
-                _write_violation(
+                violations[ip] = _build_violation(
                     ip, 2,
                     f"{stats['blocks']} WAF BLOCK actions in batch (threshold: {TIER2_BLOCK_THRESHOLD})"
                 )
 
     # --- Tier 3: 40%+ heuristic-404 rate with >=20 requests ---
     for ip, stats in per_ip.items():
-        if ip in tier1_ips:
-            continue
+        if ip in violations:
+            continue  # already flagged at Tier 1 or 2
         if stats["requests"] < TIER3_MIN_REQUESTS:
             continue
         ratio = stats["not_found"] / stats["requests"]
@@ -234,11 +255,14 @@ def lambda_handler(event: dict, context) -> dict:
             if _is_known_good(ip):
                 print(json.dumps({"event": "known_good_skipped", "ip": ip, "tier": 3}))
             else:
-                _write_violation(
+                violations[ip] = _build_violation(
                     ip, 3,
                     f"{ratio:.0%} heuristic-404 rate over {stats['requests']} requests "
                     f"(threshold: {TIER3_404_RATIO:.0%} with min {TIER3_MIN_REQUESTS} reqs)"
                 )
+
+    # Write all violations to DynamoDB in one batch
+    _batch_write_violations(list(violations.values()))
 
     # Return all records unchanged — Firehose processor must not modify payload
     return {

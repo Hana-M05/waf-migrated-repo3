@@ -43,6 +43,10 @@ S3 (bsw-waf-penalty-box-logs-<environment>, backup — same account as Firehose)
 
 > **Tier 3 note:** WAF logs do not carry HTTP response codes. The 404 signal is approximated by counting `ALLOW` actions with a blank `terminatingRuleId` (no WAF rule matched). True 404 detection requires ALB access log correlation.
 
+> **Tier 1 path matching:** URIs are percent-decoded before matching, so encoded variants like `/.%65nv` are caught the same as `/.env`.
+
+> **DynamoDB writes:** All violations detected in a batch are written to DynamoDB in a single `batch_writer()` call at the end of each Lambda invocation. This reduces API calls and handles retries automatically. If an IP qualifies for multiple tiers, only the highest tier is written.
+
 ---
 
 ## Known-good IP list
