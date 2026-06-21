@@ -32,3 +32,14 @@ variable "tier3_min_requests" {
   type        = number
   default     = 20
 }
+
+variable "waf_scope" {
+  description = "WAFv2 scope for the penalty-box IP set: REGIONAL (ALB/API Gateway) or CLOUDFRONT"
+  type        = string
+  default     = "REGIONAL"
+
+  validation {
+    condition     = contains(["REGIONAL", "CLOUDFRONT"], var.waf_scope)
+    error_message = "waf_scope must be REGIONAL or CLOUDFRONT."
+  }
+}
