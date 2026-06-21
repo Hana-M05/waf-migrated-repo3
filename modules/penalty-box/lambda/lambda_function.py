@@ -62,12 +62,27 @@ TIER1_BAD_PATHS = [
 _dynamodb = None
 _known_good_networks = None  # loaded once at cold start
 
+# WAFv2 client — initialised once at cold start
+_wafv2 = None
+
+# WAFv2 IP set configuration (from env vars)
+WAF_IP_SET_ID   = os.environ.get("WAF_IP_SET_ID", "")
+WAF_IP_SET_NAME = os.environ.get("WAF_IP_SET_NAME", "")
+WAF_SCOPE       = os.environ.get("WAF_SCOPE", "REGIONAL")
+
 
 def _get_dynamodb():
     global _dynamodb
     if _dynamodb is None:
         _dynamodb = boto3.resource("dynamodb", region_name=os.environ.get("AWS_REGION", "us-east-1"))
     return _dynamodb
+
+
+def _get_wafv2():
+    global _wafv2
+    if _wafv2 is None:
+        _wafv2 = boto3.client("wafv2", region_name=os.environ.get("AWS_REGION", "us-east-1"))
+    return _wafv2
 
 
 def _load_known_good_networks():
@@ -254,6 +269,52 @@ def _process_records(records: list) -> tuple:
     return parsed, per_ip
 
 
+def _add_ips_to_waf_ip_set(ips: list) -> None:
+    """
+    Add the given IP addresses (plain IPs, not CIDRs) to the WAFv2 penalty-box IP set.
+    Each IP is converted to a /32 CIDR before being added.
+    Skipped silently if WAF_IP_SET_ID or WAF_IP_SET_NAME is not configured.
+    Uses optimistic locking (LockToken) required by the WAFv2 UpdateIPSet API.
+    """
+    if not WAF_IP_SET_ID or not WAF_IP_SET_NAME or not ips:
+        return
+
+    wafv2 = _get_wafv2()
+    new_cidrs = {f"{ip}/32" for ip in ips}
+
+    try:
+        response = wafv2.get_ip_set(
+            Name=WAF_IP_SET_NAME,
+            Scope=WAF_SCOPE,
+            Id=WAF_IP_SET_ID,
+        )
+        current_addresses = set(response["IPSet"]["Addresses"])
+        lock_token = response["LockToken"]
+
+        to_add = new_cidrs - current_addresses
+        if not to_add:
+            print(json.dumps({"event": "waf_ip_set_no_change", "ips": list(new_cidrs)}))
+            return
+
+        updated_addresses = sorted(current_addresses | to_add)
+        wafv2.update_ip_set(
+            Name=WAF_IP_SET_NAME,
+            Scope=WAF_SCOPE,
+            Id=WAF_IP_SET_ID,
+            Addresses=updated_addresses,
+            LockToken=lock_token,
+        )
+        print(json.dumps({
+            "event":   "waf_ip_set_updated",
+            "added":   sorted(to_add),
+            "total":   len(updated_addresses),
+        }))
+    except Exception as exc:
+        # Log and continue — a WAF update failure must never break the Firehose processor.
+        # The IP is already in DynamoDB; DSO-37 unban Lambda will handle consistency.
+        print(json.dumps({"event": "waf_ip_set_error", "error": str(exc)}))
+
+
 def lambda_handler(event: dict, context) -> dict:
     """
     Firehose transformation handler.
@@ -316,6 +377,10 @@ def lambda_handler(event: dict, context) -> dict:
 
     # Upsert all violations — extends TTL if IP is already penalised
     _upsert_violations(list(violations.values()))
+
+    # Add violating IPs to the WAFv2 IP set so the WAF blocks them immediately
+    if violations:
+        _add_ips_to_waf_ip_set(list(violations.keys()))
 
     # Return all records unchanged — Firehose processor must not modify payload
     return {
