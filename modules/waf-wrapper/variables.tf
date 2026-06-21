@@ -198,3 +198,9 @@ variable "s3_backup_bucket_arn" {
   type        = string
   default     = null
 }
+
+variable "penalty_box_ip_set_arn" {
+  description = "ARN of the WAFv2 penalty-box IP set. Passed through to the WAF module to enable the priority-0 block rule."
+  type        = string
+  default     = null
+}
