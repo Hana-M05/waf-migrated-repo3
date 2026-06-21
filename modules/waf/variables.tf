@@ -167,3 +167,9 @@ variable "waf_log_destination_arn" {
   description = "The ARN of the firehose delivery stream to store WAF logs"
   type        = string
 }
+
+variable "penalty_box_ip_set_arn" {
+  description = "ARN of the WAFv2 IP set managed by the penalty-box module. When set, a BLOCK rule is added at priority 0 that blocks all IPs currently in the set."
+  type        = string
+  default     = null
+}
