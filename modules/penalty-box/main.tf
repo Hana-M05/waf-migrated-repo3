@@ -165,6 +165,29 @@ resource "aws_ssm_parameter" "known_good_ips" {
 }
 
 # ---------------------------------------------------------------------------
+# WAFv2 IP set — holds penalised IPs so the WAF can block them at priority 0.
+# The Lambda updates this set at runtime; Terraform MUST NOT overwrite the
+# addresses list on every apply (lifecycle ignore_changes).
+# ---------------------------------------------------------------------------
+resource "aws_wafv2_ip_set" "penalty_box" {
+  name               = "penalty-box-${var.environment}"
+  description        = "IPs currently in the penalty box — managed at runtime by Lambda"
+  scope              = var.waf_scope
+  ip_address_version = "IPV4"
+  addresses          = [] # bootstrapped empty; Lambda fills at runtime
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "terraform+lambda"
+    Purpose     = "waf-penalty-box"
+  }
+
+  lifecycle {
+    ignore_changes = [addresses]
+  }
+}
+
+# ---------------------------------------------------------------------------
 # Lambda execution role
 # ---------------------------------------------------------------------------
 resource "aws_iam_role" "penalty_box_lambda" {
