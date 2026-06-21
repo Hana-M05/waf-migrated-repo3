@@ -100,6 +100,7 @@ locals {
 
   # Define rule priorities to ensure consistent ordering
   rule_priorities = {
+    penalty_box                 = 0
     ip_blocking                 = 1
     path_blocking               = 2
     geolocation_blocking        = 3
