@@ -240,6 +240,15 @@ resource "aws_iam_role_policy" "penalty_box_lambda" {
           "ssm:GetParameter"
         ]
         Resource = aws_ssm_parameter.known_good_ips.arn
+      },
+      {
+        # WAFv2 — add penalised IPs to the penalty-box IP set
+        Effect = "Allow"
+        Action = [
+          "wafv2:GetIPSet",
+          "wafv2:UpdateIPSet"
+        ]
+        Resource = aws_wafv2_ip_set.penalty_box.arn
       }
     ]
   })
@@ -283,6 +292,9 @@ resource "aws_lambda_function" "penalty_box" {
       TIER3_404_RATIO           = tostring(var.tier3_404_ratio)
       TIER3_MIN_REQUESTS        = tostring(var.tier3_min_requests)
       KNOWN_GOOD_IPS_SSM_PARAM  = aws_ssm_parameter.known_good_ips.name
+      WAF_IP_SET_ID             = aws_wafv2_ip_set.penalty_box.id
+      WAF_IP_SET_NAME           = aws_wafv2_ip_set.penalty_box.name
+      WAF_SCOPE                 = var.waf_scope
     }
   }
 
