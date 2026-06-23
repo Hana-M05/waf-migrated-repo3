@@ -26,6 +26,7 @@ api_gateway_ids: []
 global: false
 redacted_headers: []
 region: "us-east-1"
+waf_scope: "REGIONAL"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
 
@@ -37,8 +38,19 @@ waf_error_subscribers:
 #################################################################
 protection_rules:
   #################################################################
+  # PENALTY BOX
+  #
+  # Automated IP blocking: IPs detected as scanning/attacking are
+  # temporarily added to a WAFv2 IP set and blocked at priority 0.
+  # Use "count" initially to validate detections before switching to "block".
+  #################################################################
+  penalty_box:
+    enabled: false
+    action: "count"
+
+  #################################################################
   # IP BLOCKING
-  # 
+  #
   # Block specific IP addresses from accessing your website.
   # Add IP addresses in CIDR format (use /32 for single IPs).
   #################################################################

@@ -85,9 +85,11 @@ resource "aws_wafv2_web_acl" "waf_acl" {
     sampled_requests_enabled   = true
   }
 
-  # Penalty Box Rule (Priority 0) — blocks IPs currently in the penalty box
+  # Penalty Box Rule (Priority 0) — blocks or counts IPs currently in the penalty box.
   # The IP set is managed at runtime by the penalty-box Lambda (DSO-36).
   # This rule is only added when penalty_box_ip_set_arn is provided.
+  # Use penalty_box_action = "count" during initial rollout to validate detections
+  # before switching to "block" in production.
   dynamic "rule" {
     for_each = var.penalty_box_ip_set_arn != null ? [1] : []
     content {
@@ -95,7 +97,15 @@ resource "aws_wafv2_web_acl" "waf_acl" {
       priority = local.rule_priorities.penalty_box
 
       action {
-        block {}
+        dynamic "block" {
+          for_each = var.penalty_box_action == "block" ? [1] : []
+          content {}
+        }
+
+        dynamic "count" {
+          for_each = var.penalty_box_action == "count" ? [1] : []
+          content {}
+        }
       }
 
       statement {

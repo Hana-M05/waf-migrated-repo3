@@ -25,4 +25,5 @@ module "waf" {
   waf_error_subscribers   = var.waf_error_subscribers
   waf_log_destination_arn = module.firehose.firehose_arn
   penalty_box_ip_set_arn  = var.penalty_box_ip_set_arn
+  penalty_box_action      = var.penalty_box_action
 }

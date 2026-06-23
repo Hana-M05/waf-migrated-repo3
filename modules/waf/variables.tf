@@ -22,6 +22,13 @@ variable "global" {
 variable "protection_rules" {
   description = "Security protection rules configuration for the WAF"
   type = object({
+    # Penalty box rule — automated IP blocking managed by the penalty-box Lambda
+    # Optional so existing environments without this field still validate.
+    penalty_box = optional(object({
+      enabled = bool
+      action  = optional(string, "count") # block or count
+    }))
+
     # Custom IP blocking rule
     ip_blocking = object({
       enabled = bool
@@ -169,7 +176,18 @@ variable "waf_log_destination_arn" {
 }
 
 variable "penalty_box_ip_set_arn" {
-  description = "ARN of the WAFv2 IP set managed by the penalty-box module. When set, a BLOCK rule is added at priority 0 that blocks all IPs currently in the set."
+  description = "ARN of the WAFv2 IP set managed by the penalty-box module. When set, a rule is added at priority 0 for IPs currently in the set."
   type        = string
   default     = null
+}
+
+variable "penalty_box_action" {
+  description = "Action for the penalty-box WAF rule: 'block' to actively block penalised IPs, 'count' to log only (use during initial rollout/validation)."
+  type        = string
+  default     = "block"
+
+  validation {
+    condition     = contains(["block", "count"], var.penalty_box_action)
+    error_message = "penalty_box_action must be 'block' or 'count'."
+  }
 }
