@@ -18,6 +18,7 @@
 #################################################################
 alb_arns: [
   "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-fd-prod-external-alb/74dfeb28d98b9b6f",
+  "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-sd-prod-external-alb/b2d576d6a8e4c838"
 ]
 api_gateway_ids: []
 global: false
@@ -136,7 +137,7 @@ protection_rules:
   #################################################################
   block_unauthorized_scanners:
     enabled: true
-    action: "count"
+    action: "block"
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -151,7 +152,7 @@ protection_rules:
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Version_1.25"
     
   sql_injection:
@@ -161,7 +162,7 @@ protection_rules:
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Version_2.4"
 
   linux_protection:
@@ -171,7 +172,7 @@ protection_rules:
 
   ip_reputation:
     enabled: true
-    action: "count"
+    action: "block"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
