@@ -171,7 +171,7 @@ resource "aws_ssm_parameter" "known_good_ips" {
 # ---------------------------------------------------------------------------
 resource "aws_wafv2_ip_set" "penalty_box" {
   name               = "penalty-box-${var.environment}"
-  description        = "IPs currently in the penalty box — managed at runtime by Lambda"
+  description        = "IPs currently in the penalty box - managed at runtime by Lambda"
   scope              = var.waf_scope
   ip_address_version = "IPV4"
   addresses          = [] # bootstrapped empty; Lambda fills at runtime

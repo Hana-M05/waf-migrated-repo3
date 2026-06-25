@@ -18,6 +18,7 @@
 #################################################################
 alb_arns: [
   "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-fd-prod-external-alb/74dfeb28d98b9b6f",
+  "arn:aws:elasticloadbalancing:us-east-2:989263075007:loadbalancer/app/classic-sd-prod-external-alb/b2d576d6a8e4c838"
 ]
 api_gateway_ids: []
 global: false
