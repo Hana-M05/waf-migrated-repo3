@@ -137,7 +137,7 @@ protection_rules:
   #################################################################
   block_unauthorized_scanners:
     enabled: true
-    action: "count"
+    action: "block"
 
   #################################################################
   # AWS MANAGED SECURITY RULES
@@ -152,7 +152,7 @@ protection_rules:
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Version_1.25"
     
   sql_injection:
@@ -162,7 +162,7 @@ protection_rules:
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Version_2.4"
 
   linux_protection:
@@ -172,7 +172,7 @@ protection_rules:
 
   ip_reputation:
     enabled: true
-    action: "count"
+    action: "block"
 
 #################################################################
 # DISABLE SPECIFIC SECURITY RULES
