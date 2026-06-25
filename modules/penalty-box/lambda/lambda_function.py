@@ -2,17 +2,21 @@
 penalty-box-detector — Kinesis Firehose Lambda processor
 =========================================================
 Receives WAF JSON log records from Firehose, detects violating IPs
-across three tiers, writes them to DynamoDB with a 30-minute TTL,
+across two active tiers, writes them to DynamoDB with a 30-minute TTL,
 and returns all records as Ok (pass-through — no data modification).
 
 Tiers:
   Tier 1 — A single request hits a known-bad path (1 hit = block)
-  Tier 2 — An IP accumulates 20+ WAF BLOCK actions in one batch
-  Tier 3 — An IP has 40%+ heuristic-404 rate AND at least 20 requests in the batch
+  Tier 2 — An IP accumulates 20+ WAF BLOCK actions AND those blocks exceed
+            20% of the IP's total requests in the batch. The ratio gate
+            prevents penalising gateway IPs where many users share one IP
+            (e.g. 20 blocks out of 1,000 requests = 2% → not penalised).
 
-Note on Tier 3: WAF logs do not carry HTTP response codes. We approximate 404s
-by counting ALLOW actions with no terminatingRuleId (no rule matched the request).
-True 404 detection requires ALB access log correlation — flag this if precision matters.
+  Tier 3 — ON HOLD (walk phase). Requires a reliable HTTP response-code source
+            (ALB access logs or API Gateway logs) which is not consistently
+            enabled across all customers. WAF logs only expose codes for
+            WAF-generated responses (BLOCKs); pass-through 404s are invisible
+            to WAF. Will be revisited when a consistent log source is confirmed.
 
 Known-good IPs (e.g. ZScaler proxies, Cisco VPN):
   Loaded from SSM at cold start via KNOWN_GOOD_IPS_SSM_PARAM env var.
@@ -37,8 +41,10 @@ import boto3
 DYNAMODB_TABLE           = os.environ.get("DYNAMODB_TABLE", "penalty-box")
 PENALTY_TTL_SECONDS      = int(os.environ.get("PENALTY_TTL_SECONDS", "1800"))   # 30 min
 TIER2_BLOCK_THRESHOLD    = int(os.environ.get("TIER2_BLOCK_THRESHOLD", "20"))
-TIER3_404_RATIO          = float(os.environ.get("TIER3_404_RATIO", "0.40"))
-TIER3_MIN_REQUESTS       = int(os.environ.get("TIER3_MIN_REQUESTS", "20"))
+TIER2_BLOCK_RATIO        = float(os.environ.get("TIER2_BLOCK_RATIO", "0.20"))   # 20% of requests
+# Tier 3 is on hold — see module docstring for explanation.
+# TIER3_404_RATIO and TIER3_MIN_REQUESTS are removed until a reliable
+# HTTP response-code source is confirmed for all customers.
 KNOWN_GOOD_IPS_SSM_PARAM = os.environ.get("KNOWN_GOOD_IPS_SSM_PARAM", "")
 
 # Tier 1 — bad paths (case-insensitive prefix/exact match)
@@ -228,11 +234,11 @@ def _upsert_violations(violations: list) -> None:
 
 def _process_records(records: list) -> tuple:
     """
-    Decode and parse all Firehose records; aggregate per-IP stats for Tier 2/3.
+    Decode and parse all Firehose records; aggregate per-IP stats for Tier 2.
     Returns (parsed_waf_events, per_ip_stats).
     """
     parsed = []
-    per_ip = defaultdict(lambda: {"blocks": 0, "requests": 0, "not_found": 0})
+    per_ip = defaultdict(lambda: {"blocks": 0, "requests": 0})
 
     for rec in records:
         try:
@@ -251,17 +257,12 @@ def _process_records(records: list) -> tuple:
                     event.get("httpRequest", {}).get("clientIp")
                     or event.get("clientIp", "unknown")
                 )
-                action           = event.get("action", "")
-                terminating_rule = event.get("terminatingRuleId", "")
+                action = event.get("action", "")
 
                 per_ip[ip]["requests"] += 1
 
                 if action == "BLOCK":
                     per_ip[ip]["blocks"] += 1
-
-                # Heuristic 404: ALLOW with no matching rule → likely not-found
-                if action == "ALLOW" and not terminating_rule:
-                    per_ip[ip]["not_found"] += 1
 
         except (json.JSONDecodeError, KeyError, UnicodeDecodeError) as exc:
             print(json.dumps({"event": "parse_error", "error": str(exc)}))
@@ -345,35 +346,32 @@ def lambda_handler(event: dict, context) -> dict:
         else:
             violations[ip] = _build_violation(ip, 1, f"bad path hit: {uri}")
 
-    # --- Tier 2: 20+ WAF BLOCK actions per batch ---
+    # --- Tier 2: 20+ WAF BLOCKs AND blocks exceed 20% of the IP's total requests ---
+    # The ratio gate prevents penalising shared gateway IPs where legitimate high-volume
+    # traffic could accumulate 20 blocks without being malicious
+    # (e.g. 20 blocks / 1000 requests = 2% → not penalised).
     for ip, stats in per_ip.items():
         if ip in violations:
             continue  # already flagged at Tier 1
-        if stats["blocks"] >= TIER2_BLOCK_THRESHOLD:
+        if stats["requests"] == 0:
+            continue
+        block_ratio = stats["blocks"] / stats["requests"]
+        if stats["blocks"] >= TIER2_BLOCK_THRESHOLD and block_ratio > TIER2_BLOCK_RATIO:
             if _is_known_good(ip):
                 print(json.dumps({"event": "known_good_skipped", "ip": ip, "tier": 2}))
             else:
                 violations[ip] = _build_violation(
                     ip, 2,
-                    f"{stats['blocks']} WAF BLOCK actions in batch (threshold: {TIER2_BLOCK_THRESHOLD})"
+                    f"{stats['blocks']} WAF BLOCKs in batch ({block_ratio:.0%} of "
+                    f"{stats['requests']} requests; thresholds: >={TIER2_BLOCK_THRESHOLD} blocks, "
+                    f">{TIER2_BLOCK_RATIO:.0%} ratio)"
                 )
 
-    # --- Tier 3: 40%+ heuristic-404 rate with >=20 requests ---
-    for ip, stats in per_ip.items():
-        if ip in violations:
-            continue  # already flagged at Tier 1 or 2
-        if stats["requests"] < TIER3_MIN_REQUESTS:
-            continue
-        ratio = stats["not_found"] / stats["requests"]
-        if ratio >= TIER3_404_RATIO:
-            if _is_known_good(ip):
-                print(json.dumps({"event": "known_good_skipped", "ip": ip, "tier": 3}))
-            else:
-                violations[ip] = _build_violation(
-                    ip, 3,
-                    f"{ratio:.0%} heuristic-404 rate over {stats['requests']} requests "
-                    f"(threshold: {TIER3_404_RATIO:.0%} with min {TIER3_MIN_REQUESTS} reqs)"
-                )
+    # --- Tier 3: ON HOLD ---
+    # Requires a reliable HTTP response-code source (ALB/APIGW access logs).
+    # WAF logs only expose codes for WAF-generated responses; origin 404s are
+    # invisible. Will be implemented in the walk phase once a consistent log
+    # source is confirmed across all customers.
 
     # Upsert all violations — extends TTL if IP is already penalised
     _upsert_violations(list(violations.values()))
