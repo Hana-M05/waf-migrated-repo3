@@ -289,8 +289,7 @@ resource "aws_lambda_function" "penalty_box" {
       DYNAMODB_TABLE            = aws_dynamodb_table.penalty_box.name
       PENALTY_TTL_SECONDS       = tostring(var.penalty_ttl_seconds)
       TIER2_BLOCK_THRESHOLD     = tostring(var.tier2_block_threshold)
-      TIER3_404_RATIO           = tostring(var.tier3_404_ratio)
-      TIER3_MIN_REQUESTS        = tostring(var.tier3_min_requests)
+      TIER2_BLOCK_RATIO         = tostring(var.tier2_block_ratio)
       KNOWN_GOOD_IPS_SSM_PARAM  = aws_ssm_parameter.known_good_ips.name
       WAF_IP_SET_ID             = aws_wafv2_ip_set.penalty_box.id
       WAF_IP_SET_NAME           = aws_wafv2_ip_set.penalty_box.name
