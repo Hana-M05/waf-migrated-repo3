@@ -238,7 +238,7 @@ data "archive_file" "penalty_box_lambda" {
 # ---------------------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "penalty_box_lambda" {
   name              = "/aws/lambda/penalty-box-${var.environment}"
-  retention_in_days = 30
+  retention_in_days = 90
 }
 
 resource "aws_lambda_function" "penalty_box" {
