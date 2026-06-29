@@ -27,3 +27,13 @@ output "known_good_ips_ssm_param" {
   description = "SSM parameter name for the known-good IP list (update to change CIDRs without redeploying Lambda)"
   value       = aws_ssm_parameter.known_good_ips.name
 }
+
+output "ip_set_arn" {
+  description = "ARN of the WAFv2 penalty-box IP set (pass to waf-wrapper as penalty_box_ip_set_arn)"
+  value       = aws_wafv2_ip_set.penalty_box.arn
+}
+
+output "ip_set_id" {
+  description = "ID of the WAFv2 penalty-box IP set (used by the Lambda to call UpdateIPSet)"
+  value       = aws_wafv2_ip_set.penalty_box.id
+}

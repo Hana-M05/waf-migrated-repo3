@@ -85,6 +85,43 @@ resource "aws_wafv2_web_acl" "waf_acl" {
     sampled_requests_enabled   = true
   }
 
+  # Penalty Box Rule (Priority 0) — blocks or counts IPs currently in the penalty box.
+  # The IP set is managed at runtime by the penalty-box Lambda (DSO-36).
+  # This rule is only added when penalty_box_ip_set_arn is provided.
+  # Use penalty_box_action = "count" during initial rollout to validate detections
+  # before switching to "block" in production.
+  dynamic "rule" {
+    for_each = var.penalty_box_ip_set_arn != null ? [1] : []
+    content {
+      name     = "PenaltyBoxRule"
+      priority = local.rule_priorities.penalty_box
+
+      action {
+        dynamic "block" {
+          for_each = var.penalty_box_action == "block" ? [1] : []
+          content {}
+        }
+
+        dynamic "count" {
+          for_each = var.penalty_box_action == "count" ? [1] : []
+          content {}
+        }
+      }
+
+      statement {
+        ip_set_reference_statement {
+          arn = var.penalty_box_ip_set_arn
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "PenaltyBoxRule-${var.environment}"
+        sampled_requests_enabled   = true
+      }
+    }
+  }
+
   # IP Blocking Rule (Priority 1)
   dynamic "rule" {
     for_each = var.protection_rules.ip_blocking.enabled && length(var.protection_rules.ip_blocking.ips) > 0 ? [1] : []

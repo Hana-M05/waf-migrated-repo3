@@ -28,6 +28,7 @@ module "penalty_box_energy_manager_dev" {
   }
 
   environment = "energy-manager-dev-us-east-1"
+  waf_scope   = local.environments["energy-manager-dev-us-east-1"].waf_scope
 }
 
 #########################################################################
@@ -81,6 +82,8 @@ module "waf_wrapper_energy_manager_dev_us_east_1" {
   waf_error_subscribers   = local.environments["energy-manager-dev-us-east-1"].waf_error_subscribers
   lambda_processor_arn    = module.penalty_box_energy_manager_dev.lambda_arn
   s3_backup_bucket_arn    = module.penalty_box_energy_manager_dev.log_bucket_arn
+  penalty_box_ip_set_arn  = module.penalty_box_energy_manager_dev.ip_set_arn
+  penalty_box_action      = local.environments["energy-manager-dev-us-east-1"].protection_rules.penalty_box.action
 }
 
 #########################################################################

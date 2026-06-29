@@ -16,19 +16,35 @@ variable "penalty_ttl_seconds" {
 }
 
 variable "tier2_block_threshold" {
-  description = "Number of WAF BLOCK actions in a single Firehose batch that triggers a Tier 2 penalty"
+  description = "Minimum number of WAF BLOCK actions in a single Firehose batch before Tier 2 is considered (must also exceed tier2_block_ratio)"
   type        = number
   default     = 20
 }
 
-variable "tier3_404_ratio" {
-  description = "Fraction of requests (0–1) that must be heuristic-404 to trigger a Tier 3 penalty"
+variable "tier2_block_ratio" {
+  description = "Minimum fraction (0–1) of an IP's requests that must be WAF BLOCKs to trigger a Tier 2 penalty. Guards against penalising high-volume gateway IPs where a small percentage of requests happen to be blocked (e.g. 20 blocks / 1000 requests = 2% → not penalised)."
   type        = number
-  default     = 0.40
+  default     = 0.20
+
+  validation {
+    condition     = var.tier2_block_ratio > 0 && var.tier2_block_ratio <= 1
+    error_message = "tier2_block_ratio must be between 0 (exclusive) and 1 (inclusive)."
+  }
 }
 
-variable "tier3_min_requests" {
-  description = "Minimum requests in a batch before Tier 3 ratio is evaluated"
-  type        = number
-  default     = 20
+# Tier 3 variables removed — on hold for the walk phase.
+# Detecting 404-rate requires a reliable HTTP response-code log source
+# (ALB/API GW access logs) which is not consistently enabled across all customers.
+# WAF logs only expose codes for WAF-generated responses (BLOCKs); origin 404s
+# are invisible to WAF. Will be re-added once a consistent log source is confirmed.
+
+variable "waf_scope" {
+  description = "WAFv2 scope for the penalty-box IP set: REGIONAL (ALB/API Gateway) or CLOUDFRONT"
+  type        = string
+  default     = "REGIONAL"
+
+  validation {
+    condition     = contains(["REGIONAL", "CLOUDFRONT"], var.waf_scope)
+    error_message = "waf_scope must be REGIONAL or CLOUDFRONT."
+  }
 }
