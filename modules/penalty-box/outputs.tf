@@ -37,3 +37,8 @@ output "ip_set_id" {
   description = "ID of the WAFv2 penalty-box IP set (used by the Lambda to call UpdateIPSet)"
   value       = aws_wafv2_ip_set.penalty_box.id
 }
+
+output "unban_lambda_arn" {
+  description = "ARN of the scheduled unban Lambda (removes expired IPs from WAFv2 every 5 minutes)"
+  value       = aws_lambda_function.penalty_box_unban.arn
+}
