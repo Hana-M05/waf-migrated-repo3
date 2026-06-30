@@ -113,22 +113,22 @@ protection_rules:
   #################################################################
   basic_protection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
 
   malicious_requests:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
     
   sql_injection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
 
   windows_protection:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
 
   linux_protection:
@@ -138,7 +138,7 @@ protection_rules:
   
   ip_reputation:
     enabled: true
-    action: "count"
+    action: "block"
     version: "Default"
 
 #################################################################
