@@ -63,7 +63,6 @@ module "waf_wrapper_classic_dev_us_east_2" {
   firehose_destination        = local.alloy_s3_buckets[local.environments["classic-dev-us-east-2"].region]
   firehose_role_arn           = module.firehose_role_policy_classic_dev.firehose_role_arn
   global                      = local.environments["classic-dev-us-east-2"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["classic-dev-us-east-2"].protection_rules
   redacted_headers            = local.environments["classic-dev-us-east-2"].redacted_headers
   waf_error_subscribers       = local.environments["classic-dev-us-east-2"].waf_error_subscribers
@@ -88,7 +87,6 @@ module "waf_wrapper_classic_staging_us_east_2" {
   firehose_destination        = local.alloy_s3_buckets[local.environments["classic-staging-us-east-2"].region]
   firehose_role_arn           = module.firehose_role_policy_classic_prod.firehose_role_arn
   global                      = local.environments["classic-staging-us-east-2"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["classic-staging-us-east-2"].protection_rules
   redacted_headers            = local.environments["classic-staging-us-east-2"].redacted_headers
   waf_error_subscribers       = local.environments["classic-staging-us-east-2"].waf_error_subscribers
@@ -110,7 +108,6 @@ module "waf_wrapper_classic_prod_us_east_2" {
   firehose_destination        = local.alloy_s3_buckets[local.environments["classic-prod-us-east-2"].region]
   firehose_role_arn           = module.firehose_role_policy_classic_prod.firehose_role_arn
   global                      = local.environments["classic-prod-us-east-2"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["classic-prod-us-east-2"].protection_rules
   redacted_headers            = local.environments["classic-prod-us-east-2"].redacted_headers
   waf_error_subscribers       = local.environments["classic-prod-us-east-2"].waf_error_subscribers

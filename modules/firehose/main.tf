@@ -10,6 +10,8 @@ resource "aws_kinesis_firehose_delivery_stream" "waf_logs" {
 
     compression_format = "GZIP"
 
+    s3_backup_mode = var.s3_backup_bucket_arn != null ? "Enabled" : "Disabled"
+
     cloudwatch_logging_options {
       enabled         = true
       log_group_name  = aws_cloudwatch_log_group.firehose_logs.name
