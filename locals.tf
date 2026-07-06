@@ -9,6 +9,8 @@ locals {
     replace(replace(config_file, "/", "-"), ".yaml", "") => yamldecode(file("${path.module}/environments/${config_file}"))
   }
 
+  security_waf_bucket_arn = "arn:aws:s3:::bsw-siem-waf"
+
   waf_update_monitors = [
     "productops@brightlysoftware.com",
     "amritpal.singh@brightlysoftware.com",

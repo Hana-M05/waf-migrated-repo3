@@ -84,7 +84,6 @@ module "waf_wrapper_ai_dev_us_east_1" {
   firehose_destination    = local.alloy_s3_buckets[local.environments["ai-dev-us-east-1"].region]
   firehose_role_arn       = module.firehose_role_policy_ai_dev.firehose_role_arn
   global                  = local.environments["ai-dev-us-east-1"].global
-  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["ai-dev-us-east-1"].protection_rules
   redacted_headers        = local.environments["ai-dev-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["ai-dev-us-east-1"].waf_error_subscribers
@@ -106,7 +105,6 @@ module "waf_wrapper_ai_dev_global" {
   firehose_destination    = local.alloy_s3_buckets[local.environments["ai-dev-global"].region]
   firehose_role_arn       = module.firehose_role_policy_ai_dev.firehose_role_arn
   global                  = local.environments["ai-dev-global"].global
-  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["ai-dev-global"].protection_rules
   redacted_headers        = local.environments["ai-dev-global"].redacted_headers
   waf_error_subscribers   = local.environments["ai-dev-global"].waf_error_subscribers
@@ -131,7 +129,6 @@ module "waf_wrapper_ai_staging_us_east_1" {
   firehose_destination    = local.alloy_s3_buckets[local.environments["ai-staging-us-east-1"].region]
   firehose_role_arn       = module.firehose_role_policy_ai_staging.firehose_role_arn
   global                  = local.environments["ai-staging-us-east-1"].global
-  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["ai-staging-us-east-1"].protection_rules
   redacted_headers        = local.environments["ai-staging-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["ai-staging-us-east-1"].waf_error_subscribers
@@ -153,7 +150,6 @@ module "waf_wrapper_ai_staging_global" {
   firehose_destination    = local.alloy_s3_buckets[local.environments["ai-staging-global"].region]
   firehose_role_arn       = module.firehose_role_policy_ai_staging.firehose_role_arn
   global                  = local.environments["ai-staging-global"].global
-  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["ai-staging-global"].protection_rules
   redacted_headers        = local.environments["ai-staging-global"].redacted_headers
   waf_error_subscribers   = local.environments["ai-staging-global"].waf_error_subscribers
@@ -179,7 +175,6 @@ module "waf_wrapper_ai_prod_us_east_1" {
   firehose_destination    = local.alloy_s3_buckets[local.environments["ai-prod-us-east-1"].region]
   firehose_role_arn       = module.firehose_role_policy_ai_prod.firehose_role_arn
   global                  = local.environments["ai-prod-us-east-1"].global
-  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["ai-prod-us-east-1"].protection_rules
   redacted_headers        = local.environments["ai-prod-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["ai-prod-us-east-1"].waf_error_subscribers
@@ -201,7 +196,6 @@ module "waf_wrapper_ai_prod_global" {
   firehose_destination    = local.alloy_s3_buckets[local.environments["ai-prod-global"].region]
   firehose_role_arn       = module.firehose_role_policy_ai_prod.firehose_role_arn
   global                  = local.environments["ai-prod-global"].global
-  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["ai-prod-global"].protection_rules
   redacted_headers        = local.environments["ai-prod-global"].redacted_headers
   waf_error_subscribers   = local.environments["ai-prod-global"].waf_error_subscribers

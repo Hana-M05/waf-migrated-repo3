@@ -39,7 +39,6 @@ module "waf_wrapper_horizontal_core_dev_global" {
   firehose_destination        = local.alloy_s3_buckets[local.environments["horizontal-core-dev-global"].region]
   firehose_role_arn           = module.firehose_role_policy_horizontal_core.firehose_role_arn
   global                      = local.environments["horizontal-core-dev-global"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["horizontal-core-dev-global"].protection_rules
   redacted_headers            = local.environments["horizontal-core-dev-global"].redacted_headers
   waf_error_subscribers       = local.environments["horizontal-core-dev-global"].waf_error_subscribers
@@ -61,7 +60,6 @@ module "waf_wrapper_horizontal_core_staging_global" {
   firehose_destination        = local.alloy_s3_buckets[local.environments["horizontal-core-staging-global"].region]
   firehose_role_arn           = module.firehose_role_policy_horizontal_core.firehose_role_arn
   global                      = local.environments["horizontal-core-staging-global"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["horizontal-core-staging-global"].protection_rules
   redacted_headers            = local.environments["horizontal-core-staging-global"].redacted_headers
   waf_error_subscribers       = local.environments["horizontal-core-staging-global"].waf_error_subscribers
@@ -83,7 +81,6 @@ module "waf_wrapper_horizontal_core_prod_global" {
   firehose_destination        = local.alloy_s3_buckets[local.environments["horizontal-core-prod-global"].region]
   firehose_role_arn           = module.firehose_role_policy_horizontal_core.firehose_role_arn
   global                      = local.environments["horizontal-core-prod-global"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["horizontal-core-prod-global"].protection_rules
   redacted_headers            = local.environments["horizontal-core-prod-global"].redacted_headers
   waf_error_subscribers       = local.environments["horizontal-core-prod-global"].waf_error_subscribers

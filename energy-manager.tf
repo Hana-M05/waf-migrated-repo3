@@ -41,7 +41,7 @@ module "firehose_role_policy_energy_manager_dev" {
     aws = aws.energy_manager_dev_us_east_1
   }
 
-  s3_bucket_arns          = concat(values(local.alloy_s3_buckets), [module.penalty_box_energy_manager_dev.log_bucket_arn])
+  s3_bucket_arns          = concat(values(local.alloy_s3_buckets), [local.security_waf_bucket_arn])
   lambda_processor_arn    = module.penalty_box_energy_manager_dev.lambda_arn
   enable_lambda_processor = true
 }
@@ -76,12 +76,11 @@ module "waf_wrapper_energy_manager_dev_us_east_1" {
   firehose_destination    = local.alloy_s3_buckets[local.environments["energy-manager-dev-us-east-1"].region]
   firehose_role_arn       = module.firehose_role_policy_energy_manager_dev.firehose_role_arn
   global                  = local.environments["energy-manager-dev-us-east-1"].global
-  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["energy-manager-dev-us-east-1"].protection_rules
   redacted_headers        = local.environments["energy-manager-dev-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["energy-manager-dev-us-east-1"].waf_error_subscribers
   lambda_processor_arn    = module.penalty_box_energy_manager_dev.lambda_arn
-  s3_backup_bucket_arn    = module.penalty_box_energy_manager_dev.log_bucket_arn
+  s3_backup_bucket_arn    = local.security_waf_bucket_arn
   penalty_box_ip_set_arn  = module.penalty_box_energy_manager_dev.ip_set_arn
   penalty_box_action      = local.environments["energy-manager-dev-us-east-1"].protection_rules.penalty_box.action
 }
@@ -106,7 +105,6 @@ module "waf_wrapper_energy_manager_prod_us_east_1" {
   firehose_destination    = local.alloy_s3_buckets[local.environments["energy-manager-prod-us-east-1"].region]
   firehose_role_arn       = module.firehose_role_policy_energy_manager_prod.firehose_role_arn
   global                  = local.environments["energy-manager-prod-us-east-1"].global
-  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["energy-manager-prod-us-east-1"].protection_rules
   redacted_headers        = local.environments["energy-manager-prod-us-east-1"].redacted_headers
   waf_error_subscribers   = local.environments["energy-manager-prod-us-east-1"].waf_error_subscribers
