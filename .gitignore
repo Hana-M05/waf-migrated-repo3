@@ -1,6 +1,9 @@
-.terraform/**/* 
+.terraform/**/*
 .terraform.lock.hcl
 **/.terraform/
 .vscode/
 .env
 **/*.zip
+
+# Implementation plan docs — kept locally, not committed to the repo
+docs/superpowers/plans/
