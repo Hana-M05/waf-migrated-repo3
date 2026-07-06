@@ -255,3 +255,132 @@ resource "aws_lambda_function" "penalty_box" {
 
   depends_on = [aws_cloudwatch_log_group.penalty_box_lambda]
 }
+
+# ---------------------------------------------------------------------------
+# Unban Lambda — runs every 5 minutes, removes expired IPs from WAFv2
+# ---------------------------------------------------------------------------
+data "archive_file" "penalty_box_unban_lambda" {
+  type        = "zip"
+  source_file = "${path.module}/lambda/unban_function.py"
+  output_path = "${path.module}/lambda/unban_lambda.zip"
+}
+
+resource "aws_cloudwatch_log_group" "penalty_box_unban_lambda" {
+  name              = "/aws/lambda/penalty-box-unban-${var.environment}"
+  retention_in_days = 30
+}
+
+resource "aws_iam_role" "penalty_box_unban_lambda" {
+  name = "penalty-box-unban-lambda-${var.environment}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Action    = "sts:AssumeRole"
+      Principal = { Service = "lambda.amazonaws.com" }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "penalty_box_unban_lambda" {
+  name = "penalty-box-unban-lambda-policy-${var.environment}"
+  role = aws_iam_role.penalty_box_unban_lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        # CloudWatch Logs — write Lambda execution logs
+        Effect   = "Allow"
+        Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
+        Resource = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/penalty-box-unban-${var.environment}:*"
+      },
+      {
+        # DynamoDB — GetItem to check expiry; DeleteItem for cleanup alongside TTL
+        Effect   = "Allow"
+        Action   = ["dynamodb:GetItem", "dynamodb:DeleteItem"]
+        Resource = aws_dynamodb_table.penalty_box.arn
+      },
+      {
+        # WAFv2 — read current IP set and update it to remove expired IPs
+        Effect   = "Allow"
+        Action   = ["wafv2:GetIPSet", "wafv2:UpdateIPSet"]
+        Resource = aws_wafv2_ip_set.penalty_box.arn
+      }
+    ]
+  })
+}
+
+resource "aws_lambda_function" "penalty_box_unban" {
+  function_name = "penalty-box-unban-${var.environment}"
+  description   = "Removes expired IPs from the WAFv2 penalty-box IP set every 5 minutes"
+  role          = aws_iam_role.penalty_box_unban_lambda.arn
+
+  filename         = data.archive_file.penalty_box_unban_lambda.output_path
+  source_code_hash = data.archive_file.penalty_box_unban_lambda.output_base64sha256
+  handler          = "unban_function.lambda_handler"
+  runtime          = "python3.12"
+  timeout          = 60
+
+  environment {
+    variables = {
+      DYNAMODB_TABLE  = aws_dynamodb_table.penalty_box.name
+      WAF_IP_SET_ID   = aws_wafv2_ip_set.penalty_box.id
+      WAF_IP_SET_NAME = aws_wafv2_ip_set.penalty_box.name
+      WAF_SCOPE       = var.waf_scope
+    }
+  }
+
+  depends_on = [aws_cloudwatch_log_group.penalty_box_unban_lambda]
+}
+
+resource "aws_lambda_permission" "penalty_box_unban_scheduler" {
+  statement_id  = "AllowEventBridgeScheduler"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.penalty_box_unban.function_name
+  principal     = "scheduler.amazonaws.com"
+}
+
+resource "aws_iam_role" "penalty_box_unban_scheduler" {
+  name = "penalty-box-unban-scheduler-${var.environment}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Action    = "sts:AssumeRole"
+      Principal = { Service = "scheduler.amazonaws.com" }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "penalty_box_unban_scheduler" {
+  name = "penalty-box-unban-scheduler-policy-${var.environment}"
+  role = aws_iam_role.penalty_box_unban_scheduler.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["lambda:InvokeFunction"]
+      Resource = aws_lambda_function.penalty_box_unban.arn
+    }]
+  })
+}
+
+resource "aws_scheduler_schedule" "penalty_box_unban" {
+  name                         = "penalty-box-unban-${var.environment}"
+  description                  = "Fires every 5 minutes to remove expired IPs from the WAFv2 penalty-box IP set"
+  schedule_expression          = "rate(5 minutes)"
+  schedule_expression_timezone = "UTC"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+
+  target {
+    arn      = aws_lambda_function.penalty_box_unban.arn
+    role_arn = aws_iam_role.penalty_box_unban_scheduler.arn
+  }
+}
