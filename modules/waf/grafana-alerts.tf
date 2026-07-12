@@ -29,14 +29,15 @@ resource "grafana_contact_point" "waf_alerts" {
 # ============================================================================
 # Alert Rules: One per enabled WAF rule group using grafana_rule_group
 # ============================================================================
-# Each rule fires when its block rate exceeds 1% over 2 consecutive 5-min periods
+# Each rule fires when its block rate exceeds 1% over 5 minute window
 
 resource "grafana_rule_group" "waf_high_block_rate" {
-  for_each = var.grafana_enabled ? local.enabled_aws_rulesets : {}
+  # Convert list of rulesets to map for for_each
+  for_each = var.grafana_enabled ? { for ruleset in local.enabled_aws_rulesets : ruleset.friendly_name => ruleset } : {}
 
-  name             = "waf-${each.key}-${var.environment}"
-  folder           = "WAF Alerts"
-  interval         = "1m"
+  name                = "waf-${each.key}-${var.environment}"
+  folder              = "WAF Alerts"
+  interval            = "1m"
   evaluation_interval = "1m"
 
   rule {
@@ -47,12 +48,12 @@ resource "grafana_rule_group" "waf_high_block_rate" {
     for         = "5m"
 
     data {
-      ref_id      = "A"
-      query_type  = "metrics"
+      ref_id         = "A"
+      query_type     = "metrics"
       datasource_uid = local.loki_datasource_uid
 
       model = jsonencode({
-        expr           = "sum(rate(${each.value.metric_label}[5m])) / sum(rate(waf_requests_total{environment=\"${var.environment}\"}[5m])) * 100"
+        expr           = "sum(rate(${lookup(local.rule_group_metrics, each.key, "")}[5m])) / sum(rate(waf_requests_total{environment=\"${var.environment}\"}[5m])) * 100"
         interval       = "1m"
         step           = "60"
         refId          = "A"
@@ -77,7 +78,7 @@ resource "grafana_rule_group" "waf_high_block_rate" {
       }
     }
 
-    # Notification routing
+    # Notification configuration
     no_data_state  = "NoData"
     exec_err_state = "Alerting"
 
@@ -89,17 +90,11 @@ resource "grafana_rule_group" "waf_high_block_rate" {
       key   = "runbook_url"
       value = "https://wiki.brightlysoftware.io/runbooks/waf/high-block-rate"
     }
-
-    # Link to contact point for notifications
-    alert {
-      title = "${each.value.aws_name} - ${var.environment} - High Block Rate"
-      message = "WAF rule ${each.value.aws_name} is blocking > 1% of requests"
-    }
   }
 }
 
 # ============================================================================
-# Local values: Support for region-specific datasources
+# Local values: Support for region-specific datasources and Grafana alerts
 # ============================================================================
 
 locals {
@@ -108,7 +103,7 @@ locals {
 
   # Determine which Loki datasource UID to use based on environment/region
   # For now, default to us1; future: make region configurable per product
-  loki_datasource_uid = var.grafana_enabled ? (var.grafana_datasource_ids["us1"] != "" ? var.grafana_datasource_ids["us1"] : "") : ""
+  loki_datasource_uid = var.grafana_enabled && length(keys(var.grafana_datasource_ids)) > 0 ? var.grafana_datasource_ids["us1"] : ""
 
   # Map each rule group to its Loki metric label for querying
   # Format: waf_blocks{rule="AWSManagedRulesCommonRuleSet", action="BLOCK"}
@@ -120,14 +115,5 @@ locals {
     linux_protection   = "waf_blocks{rule=\"AWSManagedRulesLinuxRuleSet\", action=\"BLOCK\"}"
     ip_reputation      = "waf_blocks{rule=\"AWSManagedRulesAmazonIpReputationList\", action=\"BLOCK\"}"
   }
-
-  # Translate from WAF protection_rules keys to AWS rule set names and metric labels
-  enabled_aws_rulesets = {
-    for name, config in local.protection_rule_status :
-    name => {
-      aws_name    = local.protection_rule_names[name]
-      metric_label = lookup(local.rule_group_metrics, name, "")
-    }
-    if config
-  }
 }
+# Note: enabled_aws_rulesets is defined in locals.tf and reused here
