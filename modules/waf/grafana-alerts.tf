@@ -35,10 +35,8 @@ resource "grafana_rule_group" "waf_high_block_rate" {
   # Convert list of rulesets to map for for_each
   for_each = var.grafana_enabled ? { for ruleset in local.enabled_aws_rulesets : ruleset.friendly_name => ruleset } : {}
 
-  name                = "waf-${each.key}-${var.environment}"
-  folder              = "WAF Alerts"
-  interval            = "1m"
-  evaluation_interval = "1m"
+  name   = "waf-${each.key}-${var.environment}"
+  folder = "WAF Alerts"
 
   rule {
     uid         = "waf-rule-${var.environment}-${each.key}"
