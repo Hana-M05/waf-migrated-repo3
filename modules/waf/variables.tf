@@ -191,3 +191,25 @@ variable "penalty_box_action" {
     error_message = "penalty_box_action must be 'block' or 'count'."
   }
 }
+
+#############################################################################
+# Grafana Alert Configuration
+#############################################################################
+
+variable "grafana_enabled" {
+  description = "Enable Grafana alert rules for WAF monitoring (replaces CloudWatch alarms)"
+  type        = bool
+  default     = false
+}
+
+variable "grafana_datasource_ids" {
+  description = "Map of region -> Grafana datasource UID for Loki (e.g., { us1 = 'xxx', au1 = 'yyy' })"
+  type        = map(string)
+  default     = {}
+}
+
+variable "grafana_alert_recipients" {
+  description = "List of email addresses to receive WAF alerts from Grafana"
+  type        = list(string)
+  default     = []
+}
