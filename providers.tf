@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/archive"
       version = "~> 2.0"
     }
+    grafana = {
+      source  = "grafana/grafana"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -15,5 +19,11 @@ terraform {
 provider "aws" {
   alias  = "deployment"
   region = "us-east-1"
+}
+
+# Configure the Grafana Provider
+# auth is read from the GRAFANA_AUTH environment variable
+provider "grafana" {
+  url = "https://grafana.brightlysoftware.io/"
 }
 

@@ -83,6 +83,10 @@ module "waf_wrapper_energy_manager_dev_us_east_1" {
   s3_backup_bucket_arn    = local.security_waf_bucket_arn
   penalty_box_ip_set_arn  = module.penalty_box_energy_manager_dev.ip_set_arn
   penalty_box_action      = local.environments["energy-manager-dev-us-east-1"].protection_rules.penalty_box.action
+
+  # Grafana Alert Configuration (DSO-8)
+  grafana_enabled         = local.environments["energy-manager-dev-us-east-1"].grafana_enabled
+  grafana_datasource_ids  = local.environments["energy-manager-dev-us-east-1"].grafana_datasource_ids
 }
 
 #########################################################################

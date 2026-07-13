@@ -26,6 +26,19 @@ region: "us-east-1"
 waf_scope: "REGIONAL"
 waf_error_subscribers:
   - "sam.mcmanus@siemens.com"
+  - "mohamed.elbeltagy@siemens.com"
+
+#################################################################
+# GRAFANA ALERT CONFIGURATION
+#
+# Enable Grafana alerts for WAF monitoring (replaces CloudWatch alarms)
+# During migration phase, both CloudWatch and Grafana alerts run in parallel
+#################################################################
+grafana_enabled: true
+grafana_datasource_ids:
+  us1: "d7979fbb-a775-4c34-889b-bf66253af443"  # loki-application-flow-logs-us1
+  au1: "b017a49f-62df-4cd5-b49f-54a709deea18"  # loki-application-flow-logs-au1
+  uk1: "3d1c73fa-45cc-4cea-9fa8-935982d05d84"  # loki-application-flow-logs-uk1
 
 #################################################################
 # SECURITY PROTECTION RULES

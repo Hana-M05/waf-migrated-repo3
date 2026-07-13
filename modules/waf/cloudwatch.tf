@@ -1,12 +1,14 @@
 # SNS topic for WAF alarms
+# Note: During migration to Grafana, both CloudWatch and Grafana alerts run in parallel
+# Set var.grafana_enabled = false to skip CloudWatch creation and rely on Grafana only
 resource "aws_sns_topic" "waf_alarms" {
-  count = length(var.waf_error_subscribers) > 0 ? 1 : 0
+  count = length(var.waf_error_subscribers) > 0 && !var.grafana_enabled ? 1 : 0
   name  = "${var.environment}-waf-alarms"
 }
 
 # Subscribe email addresses to WAF alarms topic
 resource "aws_sns_topic_subscription" "waf_alarm_emails" {
-  for_each = length(var.waf_error_subscribers) > 0 ? toset(var.waf_error_subscribers) : []
+  for_each = length(var.waf_error_subscribers) > 0 && !var.grafana_enabled ? toset(var.waf_error_subscribers) : []
 
   topic_arn = aws_sns_topic.waf_alarms[0].arn
   protocol  = "email"
@@ -14,8 +16,9 @@ resource "aws_sns_topic_subscription" "waf_alarm_emails" {
 }
 
 # Send a specific notification when any managed rule set blocks more than 1% of requests over 10 minutes
+# During migration: disabled when var.grafana_enabled = true (Grafana handles alerts instead)
 resource "aws_cloudwatch_metric_alarm" "waf_rule_high_block_rate" {
-  for_each = length(var.waf_error_subscribers) > 0 && length(local.enabled_aws_rulesets) > 0 ? { for ruleset in local.enabled_aws_rulesets : ruleset.aws_name => ruleset } : {}
+  for_each = length(var.waf_error_subscribers) > 0 && length(local.enabled_aws_rulesets) > 0 && !var.grafana_enabled ? { for ruleset in local.enabled_aws_rulesets : ruleset.aws_name => ruleset } : {}
 
   alarm_name          = "${each.value.aws_name}-${var.environment}-waf-high-block-rate"
   comparison_operator = "GreaterThanThreshold"
