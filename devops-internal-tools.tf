@@ -41,7 +41,6 @@ module "waf_wrapper_devops_internal_tools_prod_helpsite" {
   firehose_destination    = local.alloy_s3_buckets[local.environments["devops-internal-tools-prod-helpsite"].region]
   firehose_role_arn       = module.firehose_role_policy_devops_internal_tools.firehose_role_arn
   global                  = local.environments["devops-internal-tools-prod-helpsite"].global
-  log_forward_destination = "arn:aws:s3:::bsw-siem-waf"
   protection_rules        = local.environments["devops-internal-tools-prod-helpsite"].protection_rules
   redacted_headers        = local.environments["devops-internal-tools-prod-helpsite"].redacted_headers
   waf_error_subscribers   = local.environments["devops-internal-tools-prod-helpsite"].waf_error_subscribers

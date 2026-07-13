@@ -58,7 +58,6 @@ module "waf_wrapper_event_manager_dev_us_east_1" {
   firehose_destination        = local.alloy_s3_buckets[local.environments["event-manager-dev-us-east-1"].region]
   firehose_role_arn           = module.firehose_role_policy_event_manager_dev.firehose_role_arn
   global                      = local.environments["event-manager-dev-us-east-1"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["event-manager-dev-us-east-1"].protection_rules
   redacted_headers            = local.environments["event-manager-dev-us-east-1"].redacted_headers
   waf_error_subscribers       = local.environments["event-manager-dev-us-east-1"].waf_error_subscribers
@@ -85,7 +84,6 @@ module "waf_wrapper_event_manager_prod_us_east_1" {
   firehose_destination        = local.alloy_s3_buckets[local.environments["event-manager-prod-us-east-1"].region]
   firehose_role_arn           = module.firehose_role_policy_event_manager_prod.firehose_role_arn
   global                      = local.environments["event-manager-prod-us-east-1"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["event-manager-prod-us-east-1"].protection_rules
   redacted_headers            = local.environments["event-manager-prod-us-east-1"].redacted_headers
   waf_error_subscribers       = local.environments["event-manager-prod-us-east-1"].waf_error_subscribers
@@ -107,7 +105,6 @@ module "waf_wrapper_event_manager_staging_us_east_1" {
   firehose_destination        = local.alloy_s3_buckets[local.environments["event-manager-staging-us-east-1"].region]
   firehose_role_arn           = module.firehose_role_policy_event_manager_prod.firehose_role_arn
   global                      = local.environments["event-manager-staging-us-east-1"].global
-  log_forward_destination     = "arn:aws:s3:::bsw-siem-waf"
   protection_rules            = local.environments["event-manager-staging-us-east-1"].protection_rules
   redacted_headers            = local.environments["event-manager-staging-us-east-1"].redacted_headers
   waf_error_subscribers       = local.environments["event-manager-staging-us-east-1"].waf_error_subscribers

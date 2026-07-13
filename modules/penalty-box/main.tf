@@ -15,50 +15,6 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 # ---------------------------------------------------------------------------
-# S3 backup bucket — receives a copy of every WAF log record via Firehose
-# S3BackupMode. Lives in the same account as the Firehose stream (EM-DEV).
-# Note: S3BackupMode is a one-way switch; once enabled it cannot be disabled
-# without recreating the Firehose stream.
-# ---------------------------------------------------------------------------
-resource "aws_s3_bucket" "penalty_box_logs" {
-  bucket = "bsw-waf-penalty-box-logs-${var.environment}"
-}
-
-resource "aws_s3_bucket_lifecycle_configuration" "penalty_box_logs" {
-  bucket = aws_s3_bucket.penalty_box_logs.id
-
-  rule {
-    id     = "expire-waf-logs"
-    status = "Enabled"
-
-    filter {} # required by AWS provider v5 — applies rule to all objects
-
-    expiration {
-      days = var.log_retention_days
-    }
-  }
-}
-
-resource "aws_s3_bucket_server_side_encryption_configuration" "penalty_box_logs" {
-  bucket = aws_s3_bucket.penalty_box_logs.id
-
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
-
-resource "aws_s3_bucket_public_access_block" "penalty_box_logs" {
-  bucket = aws_s3_bucket.penalty_box_logs.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-# ---------------------------------------------------------------------------
 # DynamoDB table — stores violating IPs with a 30-minute TTL.
 # The expires_at attribute drives automatic item deletion.
 # ---------------------------------------------------------------------------

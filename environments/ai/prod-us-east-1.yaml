@@ -160,6 +160,7 @@ disabled_rules:
     - "EC2MetaDataSSRF_BODY" # Triggered when customers perform SSRF-like attacks in request bodies, such as during search or filtering operations
     - "GenericRFI_BODY" # Triggered during file uploads or path-like strings in request bodies
   malicious_requests: 
+    - "JavaDeserializationRCE_BODY"
     - "Log4JRCE_BODY"
     - "ReactJSRCE_BODY"
   sql_injection: 
