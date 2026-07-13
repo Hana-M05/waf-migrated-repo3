@@ -22,10 +22,8 @@ provider "aws" {
 }
 
 # Configure the Grafana Provider
-# Note: Credentials should be set via environment variables or Terraform variables
-# GRAFANA_AUTH environment variable can contain the API token
+# auth is read from the GRAFANA_AUTH environment variable
 provider "grafana" {
-  # URL and authentication configured via environment or variables
-  # Example: GRAFANA_AUTH="Bearer <token>" or via grafana_auth variable
+  url = "https://grafana.brightlysoftware.io/"
 }
 

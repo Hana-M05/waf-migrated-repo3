@@ -7,7 +7,7 @@
 #############################################################################
 
 # ============================================================================
-# Folder: WAF Alerts
+# Folders: WAF Alerts / environment (nested)
 # ============================================================================
 
 resource "grafana_folder" "waf_alerts" {
@@ -15,19 +15,22 @@ resource "grafana_folder" "waf_alerts" {
   title = "WAF Alerts"
 }
 
+resource "grafana_folder" "waf_alerts_environment" {
+  count             = var.grafana_enabled ? 1 : 0
+  title             = var.environment
+  parent_folder_uid = grafana_folder.waf_alerts[0].uid
+}
+
 # ============================================================================
 # Contact Point: Email notifications for WAF alerts
 # ============================================================================
 
 resource "grafana_contact_point" "waf_alerts" {
-  count = var.grafana_enabled ? 1 : 0
+  count = var.grafana_enabled && length(var.waf_error_subscribers) > 0 ? 1 : 0
   name  = "waf-alerts-${var.environment}"
 
   email {
-    addresses = [
-      "mohamed.elbeltagy@siemens.com",
-      "sam.mcmanus@siemens.com"
-    ]
+    addresses = var.waf_error_subscribers
   }
 }
 
@@ -40,7 +43,7 @@ resource "grafana_rule_group" "waf_high_block_rate" {
   for_each = var.grafana_enabled ? { for r in local.enabled_aws_rulesets : r.friendly_name => r } : {}
 
   name             = "waf-${each.key}-${var.environment}"
-  folder_uid       = grafana_folder.waf_alerts[0].uid
+  folder_uid       = grafana_folder.waf_alerts_environment[0].uid
   interval_seconds = 300 # evaluate every 5 minutes
 
   rule {
@@ -60,20 +63,25 @@ resource "grafana_rule_group" "waf_high_block_rate" {
       rule_group  = each.value.aws_name
     }
 
+    notification_settings {
+      contact_point = grafana_contact_point.waf_alerts[0].name
+    }
+
     # Query A: LogQL block rate from Loki
     data {
       ref_id     = "A"
-      query_type = ""
+      query_type = "range"
       relative_time_range {
         from = 300 # last 5 minutes
         to   = 0
       }
       datasource_uid = local.loki_datasource_uid
       model = jsonencode({
-        expr         = "sum(rate(${lookup(local.rule_group_metrics, each.key, "")}[5m])) / sum(rate(waf_requests_total{environment=\"${var.environment}\"}[5m])) * 100"
-        intervalMs   = 1000
+        expr          = "sum(rate({webacl=~\".*${var.environment}.*\"} | json | action=\"BLOCK\" |~ \"${each.value.aws_name}\" [5m])) / sum(rate({webacl=~\".*${var.environment}.*\"} [5m])) * 100"
+        queryType     = "range"
+        intervalMs    = 1000
         maxDataPoints = 43200
-        refId        = "A"
+        refId         = "A"
       })
     }
 
@@ -128,13 +136,5 @@ locals {
   datasource_regions  = var.grafana_enabled ? keys(var.grafana_datasource_ids) : []
   loki_datasource_uid = var.grafana_enabled && contains(keys(var.grafana_datasource_ids), "us1") ? var.grafana_datasource_ids["us1"] : ""
 
-  rule_group_metrics = {
-    basic_protection   = "waf_blocks{rule=\"AWSManagedRulesCommonRuleSet\",action=\"BLOCK\"}"
-    malicious_requests = "waf_blocks{rule=\"AWSManagedRulesKnownBadInputsRuleSet\",action=\"BLOCK\"}"
-    sql_injection      = "waf_blocks{rule=\"AWSManagedRulesSQLiRuleSet\",action=\"BLOCK\"}"
-    windows_protection = "waf_blocks{rule=\"AWSManagedRulesWindowsRuleSet\",action=\"BLOCK\"}"
-    linux_protection   = "waf_blocks{rule=\"AWSManagedRulesLinuxRuleSet\",action=\"BLOCK\"}"
-    ip_reputation      = "waf_blocks{rule=\"AWSManagedRulesAmazonIpReputationList\",action=\"BLOCK\"}"
-  }
 }
 # Note: enabled_aws_rulesets is defined in locals.tf

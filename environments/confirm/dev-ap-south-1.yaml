@@ -19,7 +19,6 @@
 alb_arns: [
   "arn:aws:elasticloadbalancing:ap-south-1:870519644306:loadbalancer/app/OnDemand-ConfirmElb/0626a2fe7aff3649", 
   "arn:aws:elasticloadbalancing:ap-south-1:870519644306:loadbalancer/app/Amber-ConfirmElb/907a2325bb27cfd0", 
-  "arn:aws:elasticloadbalancing:ap-south-1:870519644306:loadbalancer/app/OnDemand-3scale-Public/1c269ede41d27963"
 ]
 api_gateway_ids: []
 global: false
