@@ -21,9 +21,15 @@ provider "aws" {
   region = "us-east-1"
 }
 
+data "aws_secretsmanager_secret_version" "grafana_auth" {                                  
+    provider  = aws.deployment                                                               
+    secret_id = "waf-provisioner/grafana-config"
+  }   
+
 # Configure the Grafana Provider
 # auth is read from the GRAFANA_AUTH environment variable
 provider "grafana" {
-  url = "https://grafana.brightlysoftware.io/"
+  url = jsondecode(data.aws_secretsmanager_secret_version.grafana_auth.secret_string)["url"]
+  auth = jsondecode(data.aws_secretsmanager_secret_version.grafana_auth.secret_string)["api_token"]
 }
 
