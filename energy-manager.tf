@@ -92,6 +92,27 @@ module "waf_wrapper_energy_manager_dev_us_east_1" {
 #########################################################################
 ########################### EVM Prod Modules ############################
 #########################################################################
+module "waf_wrapper_energy_manager_staging_us_east_1" {
+  depends_on = [module.firehose_role_policy_energy_manager_prod]
+  source     = "./modules/waf-wrapper"
+
+  providers = {
+    aws = aws.energy_manager_prod_us_east_1
+  }
+
+  # Key = environments/<subpath>/<filename>
+  alb_arns                = local.environments["energy-manager-staging-us-east-1"].alb_arns
+  api_gateway_ids         = local.environments["energy-manager-staging-us-east-1"].api_gateway_ids
+  disabled_rules          = local.environments["energy-manager-staging-us-east-1"].disabled_rules
+  environment             = "energy-manager-staging-us-east-1"
+  firehose_destination    = local.alloy_s3_buckets[local.environments["energy-manager-staging-us-east-1"].region]
+  firehose_role_arn       = module.firehose_role_policy_energy_manager_prod.firehose_role_arn
+  global                  = local.environments["energy-manager-staging-us-east-1"].global
+  protection_rules        = local.environments["energy-manager-staging-us-east-1"].protection_rules
+  redacted_headers        = local.environments["energy-manager-staging-us-east-1"].redacted_headers
+  waf_error_subscribers   = local.environments["energy-manager-staging-us-east-1"].waf_error_subscribers
+}
+
 
 module "waf_wrapper_energy_manager_prod_us_east_1" {
   depends_on = [module.firehose_role_policy_energy_manager_prod]

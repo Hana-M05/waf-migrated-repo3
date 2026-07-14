@@ -154,9 +154,16 @@ protection_rules:
 # IP or path blocking rules.
 #################################################################
 disabled_rules:
-  basic_protection: []
+  basic_protection:
+    - "SizeRestrictions_BODY" # Triggered when customers perform file uploads
+    - "NoUserAgent_HEADER" # Triggered when customers use API testing tools like Postman or on internal traffic
+    - "CrossSiteScripting_BODY" # Triggered when customers perform bills uploads or have form data with HTML-like content
+    - "GenericLFI_BODY" # Triggered during file uploads or path-like strings in request bodies
+    - "GenericRFI_BODY" # Triggered during file uploads or remote path-like strings in request bodies
+    - "EC2MetaDataSSRF_BODY" # Triggered by metadata-like URL patterns in legitimate report or form body data
   malicious_requests: []
-  sql_injection: []
+  sql_injection:
+    - "SQLi_BODY" # Triggered on bill imports
   windows_protection: []
-  linux_protection: [] 
+  linux_protection: []
   ip_reputation: []
