@@ -77,7 +77,7 @@ resource "grafana_rule_group" "waf_high_block_rate" {
       }
       datasource_uid = local.loki_datasource_uid
       model = jsonencode({
-        expr          = "sum(rate({webacl=~\".*${var.environment}.*\"} | json | action=\"BLOCK\" |~ \"${each.value.aws_name}\" [5m])) / sum(rate({webacl=~\".*${var.environment}.*\"} [5m])) * 100"
+        expr          = "sum(rate({webacl=\"${var.environment}-waf-acl\"} | json | action=\"BLOCK\" | terminating_rule_id=\"AWS-${each.value.aws_name}\" [5m])) / sum(rate({webacl=\"${var.environment}-waf-acl\"} [5m])) * 100"
         queryType     = "range"
         intervalMs    = 1000
         maxDataPoints = 43200
